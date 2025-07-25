@@ -57,7 +57,7 @@ const ResetPassword = () => {
     setLoading(true);
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/auth/reset-password/${userId}/${token}`,
+        `https://medlogbook-website.onrender.com/api/auth/reset-password/${userId}/${token}`,
         { password }
       );
 

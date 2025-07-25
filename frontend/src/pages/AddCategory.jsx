@@ -112,7 +112,7 @@ const AddCategory = () => {
           setSelectedCategory(category);
 
           if (category) {
-            const response = await fetch(`http://localhost:5000/api/category/exists?name=${encodeURIComponent(category)}&email=${encodeURIComponent(userEmail)}`);
+            const response = await fetch(`https://medlogbook-website.onrender.com/api/category/exists?name=${encodeURIComponent(category)}&email=${encodeURIComponent(userEmail)}`);
             const data = await response.json();
             setCategoryExists(data.exists);
           }

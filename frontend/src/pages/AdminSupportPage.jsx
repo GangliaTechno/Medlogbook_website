@@ -14,7 +14,7 @@ const AdminSupport = () => {
 
   // ✅ Fetch queries
   useEffect(() => {
-    fetch("http://localhost:5000/api/support/all")
+    fetch("https://medlogbook-website.onrender.com/api/support/all")
       .then((res) => res.json())
       .then((data) => setQueries(data))
       .catch((err) => console.error(err));
@@ -23,7 +23,7 @@ const AdminSupport = () => {
   // ✅ Handle resolve
   const handleResolve = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/support/resolve/${id}`, {
+      const res = await fetch(`https://medlogbook-website.onrender.com/api/support/resolve/${id}`, {
         method: "PUT",
       });
 

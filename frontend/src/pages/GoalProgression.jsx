@@ -9,7 +9,7 @@
 // //   const fetchTasks = async () => {
 // //     try {
 // //       if (student && student.specialty) {
-// //         const response = await fetch(`http://localhost:5000/api/tasks?specialty=${student.specialty}`);
+// //         const response = await fetch(`https://medlogbook-website.onrender.com/api/tasks?specialty=${student.specialty}`);
         
 // //         if (!response.ok) {
 // //           const errorData = await response.json();
@@ -183,7 +183,7 @@
 // //     setLoading(true);
 // //     try {
 // //       // const res = await axios.post('/api/goal/suggest', { speciality: selectedSpecialty });
-// //       const res = await axios.post('http://localhost:5000/api/suggest-courses', { specialty: selectedSpecialty });
+// //       const res = await axios.post('https://medlogbook-website.onrender.com/api/suggest-courses', { specialty: selectedSpecialty });
 
 // //       setResources(res.data.suggestions);
 // //     } catch (err) {
@@ -236,7 +236,7 @@
 //     if (!selectedSpecialty) return;
 //     setLoading(true);
 //     try {
-//       const res = await axios.post('http://localhost:5000/api/suggest-courses', {
+//       const res = await axios.post('https://medlogbook-website.onrender.com/api/suggest-courses', {
 //         specialty: selectedSpecialty
 //       });
 //       setResources(res.data.suggestions);
@@ -350,7 +350,7 @@ function GoalProgression() {
     if (!selectedSpecialty) return;
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/suggest-courses', {
+      const res = await axios.post('https://medlogbook-website.onrender.com/api/suggest-courses', {
         specialty: selectedSpecialty
       });
       setResources(res.data.suggestions);

@@ -48,7 +48,7 @@ const AssignTaskPage = () => {
 
   const fetchTasks = async () => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/tasks?assignedBy=${doctor.email}`);
+    const response = await axios.get(`https://medlogbook-website.onrender.com/api/tasks?assignedBy=${doctor.email}`);
     const sortedTasks = response.data.sort((a, b) => {
       const dateA = new Date(a.dateAssigned || a.createdAt);
       const dateB = new Date(b.dateAssigned || b.createdAt);
@@ -63,7 +63,7 @@ const AssignTaskPage = () => {
 
   const fetchStudents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/students");
+      const res = await axios.get("https://medlogbook-website.onrender.com/api/students");
       setStudentsList(res.data);
     } catch (err) {
       console.error("Failed to fetch students:", err);
@@ -90,7 +90,7 @@ const handleSubmit = async (e) => {
   };
 
   try {
-    const response = await axios.post("http://localhost:5000/api/assign-task", taskData);
+    const response = await axios.post("https://medlogbook-website.onrender.com/api/assign-task", taskData);
     if (response.status === 201) {
       setNotification({ message: "Task assigned successfully!", type: "success" });
       // Reset form fields
