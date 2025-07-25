@@ -50,7 +50,7 @@ const AccountPage = () => {
   useEffect(() => {
     if (!userEmail) return;
 
-    fetch(`http://localhost:5000/api/auth/user/${encodeURIComponent(userEmail)}`)
+    fetch(`https://medlogbook-website.onrender.com/api/auth/user/${encodeURIComponent(userEmail)}`)
       .then((res) => res.json())
       .then((data) => {
         if (!data || data.error) {
@@ -110,7 +110,7 @@ const AccountPage = () => {
       delete updatedUser.trainingYear;
     }
 
-    fetch("http://localhost:5000/api/auth/user/update", {
+    fetch("https://medlogbook-website.onrender.com/api/auth/user/update", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedUser),
@@ -148,7 +148,7 @@ const AccountPage = () => {
 
     setLoading(true);
 
-    fetch(`http://localhost:5000/api/auth/user/delete/${encodeURIComponent(formData.email)}`, {
+    fetch(`https://medlogbook-website.onrender.com/api/auth/user/delete/${encodeURIComponent(formData.email)}`, {
       method: "DELETE",
     })
       .then((res) => res.json())

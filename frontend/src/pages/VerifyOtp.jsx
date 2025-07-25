@@ -36,7 +36,7 @@ const VerifyOtp = () => {
     }
 
     try {
-      const { data } = await axios.post("http://localhost:5000/api/auth/verify-otp", formData);
+      const { data } = await axios.post("https://medlogbook-website.onrender.com/api/auth/verify-otp", formData);
       setNotification({ isOpen: true, title: "Success", message: data.message, type: "success" });
 
       setTimeout(() => {

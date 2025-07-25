@@ -17,7 +17,7 @@ const DoctorLogbook = () => {
     }
 
     // ✅ FIXED: Use backticks for template literal
-    fetch(`http://localhost:5000/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
+    fetch(`https://medlogbook-website.onrender.com/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch students");

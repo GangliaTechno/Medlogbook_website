@@ -18,7 +18,7 @@ const ManageLogbook = () => {
 
 const fetchCategories = async () => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/category/all?email=${encodeURIComponent(userEmail)}`);
+    const response = await axios.get(`https://medlogbook-website.onrender.com/api/category/all?email=${encodeURIComponent(userEmail)}`);
 
         setCategoryList(response.data);
       } catch (error) {
@@ -35,7 +35,7 @@ const fetchCategories = async () => {
     setNotification({ isOpen: true, title: "Info", message: `Deleting category with ID: ${id}`, type: "info" }); 
   
     try {
-      const response = await axios.delete(`http://localhost:5000/api/category/delete/${id}`);
+      const response = await axios.delete(`https://medlogbook-website.onrender.com/api/category/delete/${id}`);
       console.log("Delete response:", response.data);
       setNotification({ isOpen: true, title: "Success", message: "Category deleted successfully!", type: "success" });
       
@@ -58,7 +58,7 @@ const fetchCategories = async () => {
     e.stopPropagation();
     try {
       const updatedName = editedCategories[id];
-      await axios.put(`http://localhost:5000/api/category/update/${id}`, { name: updatedName });
+      await axios.put(`https://medlogbook-website.onrender.com/api/category/update/${id}`, { name: updatedName });
       setCategoryList(
         categoryList.map((category) =>
           category._id === id ? { ...category, name: updatedName } : category
