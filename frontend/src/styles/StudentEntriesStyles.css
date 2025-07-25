@@ -1,0 +1,148 @@
+/* .student-entries-container {
+    display: flex;
+    height: 100vh;
+}
+
+.entries-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.student-entries-title {
+    text-align: center;
+    font-size: 24px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.entry-box {
+    background: rgb(41, 39, 39);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.score-box {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.score-box input {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.score-box button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.score-box button:hover {
+    background: #45a049;
+}
+
+.entry-category-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.entry-details-container {
+    margin-bottom: 15px;
+}
+
+.entry-detail {
+    font-size: 14px;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.comment-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-box textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    color: white;
+}
+
+.comment-box button {
+    margin-left: auto;
+    margin-right: auto;
+    background: #007BFF;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 10%;
+}
+
+.comment-box button:hover {
+    background: #0056b3;
+}
+
+.no-entries-text {
+    text-align: center;
+    font-size: 16px;
+    color: #888;
+}
+
+.back-btn {
+    display: block;
+    margin: 10px auto;
+    background: #ff4b4b;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 80px;
+    margin-left: 10px;
+}
+
+.back-btn:hover {
+    background: #d43f3f;
+}
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.toggle-btn {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: #444;
+    color: white;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.toggle-btn.active {
+    background-color: teal;
+    font-weight: bold;
+} */
