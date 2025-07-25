@@ -49,7 +49,7 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const { data } = await axios.post("http://localhost:5000/api/auth/forgot-password", { email });
+      const { data } = await axios.post("https://medlogbook-website.onrender.com/api/auth/forgot-password", { email });
 
       if (data.success) {
         setNotification({

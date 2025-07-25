@@ -1,7 +1,7 @@
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-const API_URL = "http://localhost:5000/api/logentry";
+const API_URL = "https://medlogbook-website.onrender.com/api/logentry";
 
 export const addLogEntry = createAsyncThunk(
   "logentry/add",

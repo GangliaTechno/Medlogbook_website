@@ -15,12 +15,12 @@
 // // // // //     }
 
 // // // // //     // Fetch students based on doctor's specialty
-// // // // //     fetch(`http://localhost:5000/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
+// // // // //     fetch(`https://medlogbook-website.onrender.com/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
 // // // // //       .then((response) => response.json())
 // // // // //       .then((students) => {
 // // // // //         // Fetch average scores for each student
 // // // // //         const studentPromises = students.map((student) =>
-// // // // //           fetch(`http://localhost:5000/api/logentry/average-score/${encodeURIComponent(student.email)}`)
+// // // // //           fetch(`https://medlogbook-website.onrender.com/api/logentry/average-score/${encodeURIComponent(student.email)}`)
 // // // // //             .then((res) => res.json())
 // // // // //             .then((data) => ({
 // // // // //               name: student.fullName,
@@ -73,12 +73,12 @@
 // // // //     }
 
 // // // //     // Fetch students based on doctor's specialty
-// // // //     fetch(`http://localhost:5000/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
+// // // //     fetch(`https://medlogbook-website.onrender.com/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
 // // // //       .then((response) => response.json())
 // // // //       .then((students) => {
 // // // //         // Fetch average scores for each student
 // // // //         const studentPromises = students.map((student) =>
-// // // //           fetch(`http://localhost:5000/api/logentry/average-score/${encodeURIComponent(student.email)}`)
+// // // //           fetch(`https://medlogbook-website.onrender.com/api/logentry/average-score/${encodeURIComponent(student.email)}`)
 // // // //             .then((res) => res.json())
 // // // //             .then((data) => ({
 // // // //               name: student.fullName,
@@ -160,7 +160,7 @@
 // // // //   useEffect(() => {
 // // // //     if (!studentEmail) return;
 
-// // // //     fetch(`http://localhost:5000/api/logentry/${encodeURIComponent(studentEmail)}`)
+// // // //     fetch(`https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(studentEmail)}`)
 // // // //       .then((res) => res.json())
 // // // //       .then((data) => {
 // // // //         setEntries(data);
@@ -259,12 +259,12 @@
 // //     }
 
 // //     // Fetch students based on doctor's specialty
-// //     fetch(`http://localhost:5000/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
+// //     fetch(`https://medlogbook-website.onrender.com/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
 // //       .then((response) => response.json())
 // //       .then((students) => {
 // //         // Fetch average scores for each student
 // //         const studentPromises = students.map((student) =>
-// //           fetch(`http://localhost:5000/api/logentry/average-score/${encodeURIComponent(student.email)}`)
+// //           fetch(`https://medlogbook-website.onrender.com/api/logentry/average-score/${encodeURIComponent(student.email)}`)
 // //             .then((res) => res.json())
 // //             .then((data) => ({
 // //               name: student.fullName,
@@ -362,12 +362,12 @@
 //     }
 
 //     // Fetch students based on doctor's specialty
-//     fetch(`http://localhost:5000/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
+//     fetch(`https://medlogbook-website.onrender.com/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
 //       .then((response) => response.json())
 //       .then((students) => {
 //         // Fetch average scores for each student
 //         const studentPromises = students.map((student) =>
-//           fetch(`http://localhost:5000/api/logentry/average-score/${encodeURIComponent(student.email)}`)
+//           fetch(`https://medlogbook-website.onrender.com/api/logentry/average-score/${encodeURIComponent(student.email)}`)
 //             .then((res) => res.json())
 //             .then((data) => ({
 //               name: student.fullName,
@@ -489,11 +489,11 @@ const [selectedStudentEntries, setSelectedStudentEntries] = useState([]);
       return;
     }
 
-    fetch(`http://localhost:5000/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
+    fetch(`https://medlogbook-website.onrender.com/api/auth/users?specialty=${encodeURIComponent(doctor.specialty)}`)
       .then((response) => response.json())
       .then((students) => {
         const studentPromises = students.map((student) =>
-          fetch(`http://localhost:5000/api/logentry/average-score/${encodeURIComponent(student.email)}`)
+          fetch(`https://medlogbook-website.onrender.com/api/logentry/average-score/${encodeURIComponent(student.email)}`)
             .then((res) => res.json())
             .then((data) => ({
               name: student.fullName,
@@ -516,7 +516,7 @@ const [selectedStudentEntries, setSelectedStudentEntries] = useState([]);
   // ✅ Fetch Selected Student's Log Entries
   useEffect(() => {
     if (selectedStudent) {
-      fetch(`http://localhost:5000/api/logentry/${encodeURIComponent(selectedStudent)}`)
+      fetch(`https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(selectedStudent)}`)
         .then((res) => res.json())
         .then((data) => {
           console.log("📊 Fetched log entries:", data);
@@ -532,7 +532,7 @@ const handleViewEntries = (studentEmail) => {
   setIsPopupOpen(true);
 
   // Fetch the entries for the selected student
-  fetch(`http://localhost:5000/api/logentry/${encodeURIComponent(studentEmail)}`)
+  fetch(`https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(studentEmail)}`)
     .then((res) => res.json())
     .then((data) => {
       console.log("📊 Fetched log entries for selected student:", data);

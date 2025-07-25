@@ -25,7 +25,7 @@ const ViewEntriesPage = () => {
 
     const userEmail = user.email.email || user.email;
 
-    fetch(`http://localhost:5000/api/logentry/${encodeURIComponent(userEmail)}`)
+    fetch(`https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(userEmail)}`)
       .then((response) => response.json())
       .then((data) => {
         console.log("Raw API Data:", data);
@@ -77,7 +77,7 @@ const ViewEntriesPage = () => {
         <a
           href={
             value.startsWith("/uploads/")
-              ? `http://localhost:5000${value}`
+              ? `https://medlogbook-website.onrender.com${value}`
               : value
           }
           download
