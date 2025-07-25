@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import LogbookCategory from "../components/logbookCategory";
+import LogbookCategory from "../Components/logbookCategory";
 import { FaClipboardList, FaChevronRight } from "react-icons/fa"; 
 import axios from "axios";
 
