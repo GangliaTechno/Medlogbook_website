@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "https://medlogbook-website.onrender.com/api/auth";
 
 export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAPI) => {
   try {

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL = "http://localhost:5000/api/category";
+const API_URL = "https://medlogbook-website.onrender.com/api/category";
 
 // ✅ Async action to add a new category
 export const addCategory = createAsyncThunk(

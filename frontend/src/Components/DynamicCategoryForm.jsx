@@ -158,7 +158,7 @@ const DynamicCategoryForm = () => {
         });
         
         // ✅ Use the correct endpoint: /api/ai/generateform
-        const response = await axios.post("http://localhost:5000/api/ai/generateform", {
+        const response = await axios.post("https://medlogbook-website.onrender.com/api/ai/generateform", {
             speechText: speechText,
             category: selectedCategory?.name || category
         });

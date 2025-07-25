@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 
-const API_URL = "http://localhost:5000/api/auth"; // Adjust based on your backend
+const API_URL = "https://medlogbook-website.onrender.com/api/auth"; // Adjust based on your backend
 
 // Async action to fetch user report details from DB
 
@@ -11,7 +11,7 @@ const API_URL = "http://localhost:5000/api/auth"; // Adjust based on your backen
 export const fetchUserDetails = createAsyncThunk("reports/fetchUserDetails", async (_, thunkAPI) => {
   try {
     const userEmail = thunkAPI.getState().auth.user.email; // Ensure auth state has email
-    const response = await fetch(`http://localhost:5000/api/auth/userDetails/${userEmail}`);
+    const response = await fetch(`https://medlogbook-website.onrender.com/api/auth/userDetails/${userEmail}`);
     const data = await response.json();
 
     if (!response.ok) {

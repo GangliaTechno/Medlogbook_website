@@ -21,7 +21,7 @@ const AssignedTasksPage = () => {
       const allFetchedTasks = [];
 
       for (const spec of allSpecialties) {
-        const res = await axios.get(`http://localhost:5000/api/tasks?specialty=${spec}`);
+        const res = await axios.get(`https://medlogbook-website.onrender.com/api/tasks?specialty=${spec}`);
         allFetchedTasks.push(...res.data);
       }
 

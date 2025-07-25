@@ -16,7 +16,7 @@ import {
 import "../styles.css";
 import Notification from "../Components/Notification";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "https://medlogbook-website.onrender.com/api/auth";
 
 const ReportsPage = () => {
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ const ReportsPage = () => {
         const formattedEmail =
           typeof userEmail === "object" ? userEmail.email : userEmail;
         const entriesResponse = await axios.get(
-          `http://localhost:5000/api/logentry/${encodeURIComponent(
+          `https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(
             formattedEmail
           )}`
         );

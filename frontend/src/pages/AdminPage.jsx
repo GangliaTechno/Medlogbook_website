@@ -37,7 +37,7 @@ const AdminPage = () => {
   const handleBatchStatus = async (status) => {
     for (const email of selectedUsers) {
       try {
-        await axios.put("http://localhost:5000/api/auth/user/update-status", {
+        await axios.put("https://medlogbook-website.onrender.com/api/auth/user/update-status", {
           email,
           status,
         });
@@ -69,7 +69,7 @@ const AdminPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/auth/users/all");
+      const res = await axios.get("https://medlogbook-website.onrender.com/api/auth/users/all");
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users", err);
@@ -86,7 +86,7 @@ const AdminPage = () => {
 
   const fetchPendingUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/pending-users");
+      const res = await axios.get("https://medlogbook-website.onrender.com/api/pending-users");
       setPendingUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch pending users", err);
@@ -104,7 +104,7 @@ const AdminPage = () => {
 console.log("Sending to backend:", { email, status: newStatus });
 
     try {
-      await axios.put("http://localhost:5000/api/auth/user/update-status", {
+      await axios.put("https://medlogbook-website.onrender.com/api/auth/user/update-status", {
         email,
         status: newStatus,
       });

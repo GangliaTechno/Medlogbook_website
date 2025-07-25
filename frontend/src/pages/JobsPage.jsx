@@ -20,7 +20,7 @@ const JobsPage = () => {
           return;
         }
 
-        const response = await axios.get(`http://localhost:5000/api/auth/userDetails/${email}`);
+        const response = await axios.get(`https://medlogbook-website.onrender.com/api/auth/userDetails/${email}`);
         const { selectedTrainingYear, selectedSpecialty } = response.data;
 
         if (!selectedTrainingYear || !selectedSpecialty) {

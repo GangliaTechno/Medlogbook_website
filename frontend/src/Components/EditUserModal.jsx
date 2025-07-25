@@ -45,14 +45,14 @@ const handleSave = async () => {
     const originalEmail = user.email;
 
     // First, update all fields (excluding role)
-    await axios.put("http://localhost:5000/api/auth/user/update", {
+    await axios.put("https://medlogbook-website.onrender.com/api/auth/user/update", {
       originalEmail,
       ...formData,
     });
 
     // Then, update the role if it has changed
     if (formData.role !== user.role) {
-      await axios.put("http://localhost:5000/api/auth/user/update-role", {
+      await axios.put("https://medlogbook-website.onrender.com/api/auth/user/update-role", {
         email: originalEmail,
         role: formData.role,
       });
