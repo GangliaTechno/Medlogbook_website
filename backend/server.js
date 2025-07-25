@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://medlogbook.ganglia.in', 'https://medlogbook-website-frontend.onrender.com'],
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://medlogbook.ganglia.in', 'https://medlogbook-website-frontend.onrender.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
