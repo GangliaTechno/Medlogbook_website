@@ -33,7 +33,7 @@ const StudentEntries = () => {
   useEffect(() => {
     if (student.email) {
       fetch(
-        `http://localhost:5000/api/logentry/review-status/${encodeURIComponent(
+        `https://medlogbook-website.onrender.com/api/logentry/review-status/${encodeURIComponent(
           student.email
         )}`
       )
@@ -149,7 +149,7 @@ const StudentEntries = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/logentry/update", {
+      const response = await fetch("https://medlogbook-website.onrender.com/api/logentry/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -210,7 +210,7 @@ const StudentEntries = () => {
     // If a file is present, append it (only first file if multiple)
     for (const key in entry.data) {
       if (typeof entry.data[key] === "string" && entry.data[key].startsWith("/uploads/")) {
-        const fileUrl = `http://localhost:5000${entry.data[key]}`;
+        const fileUrl = `https://medlogbook-website.onrender.com${entry.data[key]}`;
         const response = await fetch(fileUrl);
         const blob = await response.blob();
         formData.append("file", blob, "attachedFile.txt");
@@ -218,7 +218,7 @@ const StudentEntries = () => {
       }
     }
 
-    const response = await fetch("http://localhost:5000/api/ai/summarize", {
+    const response = await fetch("https://medlogbook-website.onrender.com/api/ai/summarize", {
       method: "POST",
       body: formData,
     });
@@ -344,7 +344,7 @@ const StudentEntries = () => {
                     <strong>{capitalize(key.replace(/_/g, " "))}:</strong>{" "}
                     {typeof value === "string" && value.startsWith("/uploads/") ? (
                       <a
-                        href={`http://localhost:5000${value}`}
+                        href={`https://medlogbook-website.onrender.com${value}`}
                         download
                         className="text-teal-600 underline"
                       >
