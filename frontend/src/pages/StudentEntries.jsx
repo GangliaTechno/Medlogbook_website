@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DoctorSidebar from "../Components/DoctorSidebar";
 import Notification from "../Components/Notification";
+import parseCsvBreakdown from "../utils/parseCsvBreakdown";
+
 
 const StudentEntries = () => {
   const location = useLocation();
@@ -31,7 +33,7 @@ const StudentEntries = () => {
   useEffect(() => {
     if (student.email) {
       fetch(
-        `https://medlogbook-website.onrender.com/api/logentry/review-status/${encodeURIComponent(
+        `http://localhost:5000/api/logentry/review-status/${encodeURIComponent(
           student.email
         )}`
       )
@@ -83,30 +85,35 @@ const StudentEntries = () => {
     setScores({ ...scores, [entryId]: value });
   };
 
+
   const handleLabelChange = (entryId, index, newLabel) => {
     setScoreBreakdown((prev) => {
       const updated = [...(prev[entryId] || [])];
-      updated[index].label = newLabel;
+      updated[index] = { ...updated[index], label: newLabel };
       return { ...prev, [entryId]: updated };
     });
   };
 
-  const handleBreakdownChange = (entryId, index, value) => {
+  const handleValueChange = (entryId, index, value) => {
     setScoreBreakdown((prev) => {
       const updated = [...(prev[entryId] || [])];
-      updated[index].value = Number(value);
+      updated[index] = { ...updated[index], value: Number(value) };
       return { ...prev, [entryId]: updated };
     });
 
     setScores((prev) => {
       const updated = [...(scoreBreakdown[entryId] || [])];
-      updated[index].value = Number(value);
-      const total = updated.reduce(
-        (acc, item, idx) =>
-          idx === index ? acc + Number(value) : acc + (item.value || 0),
-        0
-      );
+      updated[index] = { ...updated[index], value: Number(value) };
+      const total = updated.reduce((acc, item) => acc + (item.value || 0), 0);
       return { ...prev, [entryId]: total };
+    });
+  };
+
+  const handleMaxChange = (entryId, index, value) => {
+    setScoreBreakdown((prev) => {
+      const updated = [...(prev[entryId] || [])];
+      updated[index] = { ...updated[index], max: Number(value) };
+      return { ...prev, [entryId]: updated };
     });
   };
 
@@ -142,7 +149,7 @@ const StudentEntries = () => {
     }
 
     try {
-      const response = await fetch("https://medlogbook-website.onrender.com/api/logentry/update", {
+      const response = await fetch("http://localhost:5000/api/logentry/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -203,7 +210,7 @@ const StudentEntries = () => {
     // If a file is present, append it (only first file if multiple)
     for (const key in entry.data) {
       if (typeof entry.data[key] === "string" && entry.data[key].startsWith("/uploads/")) {
-        const fileUrl = `https://medlogbook-website.onrender.com${entry.data[key]}`;
+        const fileUrl = `http://localhost:5000${entry.data[key]}`;
         const response = await fetch(fileUrl);
         const blob = await response.blob();
         formData.append("file", blob, "attachedFile.txt");
@@ -211,7 +218,7 @@ const StudentEntries = () => {
       }
     }
 
-    const response = await fetch("https://medlogbook-website.onrender.com/api/ai/summarize", {
+    const response = await fetch("http://localhost:5000/api/ai/summarize", {
       method: "POST",
       body: formData,
     });
@@ -337,7 +344,7 @@ const StudentEntries = () => {
                     <strong>{capitalize(key.replace(/_/g, " "))}:</strong>{" "}
                     {typeof value === "string" && value.startsWith("/uploads/") ? (
                       <a
-                        href={`https://medlogbook-website.onrender.com${value}`}
+                        href={`http://localhost:5000${value}`}
                         download
                         className="text-teal-600 underline"
                       >
@@ -454,9 +461,8 @@ const StudentEntries = () => {
                       placeholder="Score"
                       className="w-20 py-2 px-2 rounded-md bg-white text-black border text-center"
                       value={scores[entry._id] || ""}
-                      onChange={(e) =>
-                        handleScoreChange(entry._id, e.target.value)
-                      }
+                      readOnly
+                      style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
                     />
 
                     <button
@@ -492,45 +498,165 @@ const StudentEntries = () => {
                   </div>
 
                   {scoresBreakdownVisible[entry._id] && (
-                    <div className="mt-2 w-full max-w-xs rounded bg-white shadow-sm p-2">
+                    <div className="mt-2 w-full max-w-2xl rounded bg-white shadow-sm p-6">
+                      <div className="border-2 border-blue-300 rounded-lg p-3 mb-2 bg-blue-50 flex items-center gap-2">
+                        <input
+                          type="file"
+                          accept=".csv"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = (evt) => {
+                              const csvText = evt.target.result;
+                              // Parse CSV: label,value,max, skip header if present
+                              let lines = csvText.split(/\r?\n/).filter(Boolean);
+                              if (lines.length && lines[0].toLowerCase().replace(/\s/g,"") === "label,value,max") {
+                                lines = lines.slice(1);
+                              }
+                              const parsedBreakdown = lines.map((line) => {
+                                const [label, value, max] = line.split(",").map((s) => s.trim());
+                                return {
+                                  label: label || "",
+                                  value: value ? Number(value) : 0,
+                                  max: max ? Number(max) : 10,
+                                };
+                              });
+                              setScoreBreakdown((prev) => ({
+                                ...prev,
+                                [entry._id]: parsedBreakdown,
+                              }));
+                              setScores((prev) => ({
+                                ...prev,
+                                [entry._id]: parsedBreakdown.reduce((acc, item) => acc + (item.value || 0), 0),
+                              }));
+                            };
+                            reader.readAsText(file);
+                          }}
+                          className="mt-0"
+                        />
+                        <span className="text-xs text-blue-700 font-medium ml-2">Choose CSV file</span>
+                      </div>
+
                       <h3 className="text-sm font-bold text-black mb-2">Score Breakdown</h3>
                       <div className="flex flex-col gap-2">
-                        {scoreBreakdown[entry._id]?.map((item, idx) => (
-                          <div key={idx} className="flex gap-2 items-center">
-                            <input
-                              type="text"
-                              placeholder="Label"
-                              value={item.label}
-                              onChange={(e) => handleLabelChange(entry._id, idx, e.target.value)}
-                              className="bg-white border text-black text-sm font-semibold rounded px-3 py-2 w-28 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                            />
-                            <div className="flex gap-2 items-center bg-white rounded px-3 py-2 w-24 justify-center">
-                              <input
-                                type="number"
-                                min="0"
-                                max={item.max}
-                                value={item.value}
-                                onChange={(e) => handleBreakdownChange(entry._id, idx, e.target.value)}
-                                className="bg-white text-black text-sm font-semibold w-8 text-center focus:outline-none"
-                              />
-                              <span className="text-black text-sm font-semibold">/</span>
-                              <input
-                                type="number"
-                                min="1"
-                                value={item.max}
-                                onChange={(e) => handleLabelChange(entry._id, idx, e.target.value)}
-                                className="bg-transparent text-black text-sm font-semibold w-8 text-center focus:outline-none"
-                              />
-                            </div>
-                            <button
-                              onClick={() => removeBreakdown(entry._id, idx)}
-                              className="ml-1 text-red-400 hover:text-red-600 text-base font-bold"
-                              title="Remove"
-                            >
-                              ✖
-                            </button>
-                          </div>
-                        ))}
+                        {(() => {
+                          const breakdown = scoreBreakdown[entry._id] || [];
+                          // Remove heading row if present (label,value,max)
+                          const filteredBreakdown = breakdown.filter(
+                            item => item.label.toLowerCase().replace(/\s/g,"") !== "label"
+                          );
+                          // Find all main labels (no colon)
+                          const mainLabels = filteredBreakdown.filter(item => !item.label.includes(":"));
+                          // For each main label, find its sublabels
+                          return mainLabels.map((mainItem, mainIdx) => {
+                            const subLabels = breakdown
+                              .map((item, idx) => ({ ...item, idx }))
+                              .filter(item => item.label.startsWith(mainItem.label + ":"));
+                            // If there are sublabels, main max and value are sum of sublabel maxes/values; otherwise, use main label's own
+                            const mainMax = subLabels.length > 0
+                              ? subLabels.reduce((acc, sub) => acc + (sub.max || 0), 0)
+                              : mainItem.max;
+                            const mainValue = subLabels.length > 0
+                              ? subLabels.reduce((acc, sub) => acc + (sub.value || 0), 0)
+                              : mainItem.value || 0;
+                            const mainIdxInBreakdown = breakdown.findIndex(item => item === mainItem);
+                            return (
+                              <React.Fragment key={mainItem.label + mainIdx}>
+                                <div className="flex gap-2 items-center">
+                                  <input
+                                    type="text"
+                                    placeholder="Label"
+                                    value={mainItem.label}
+                                    onChange={e => handleLabelChange(entry._id, breakdown.indexOf(mainItem), e.target.value)}
+                                    className="bg-white border text-black text-sm font-semibold rounded px-3 py-2 w-56 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                                    readOnly={subLabels.length > 0}
+                                    style={subLabels.length > 0 ? { backgroundColor: '#f3f4f6', cursor: 'not-allowed' } : {}}
+                                  />
+                                  <div className="flex gap-2 items-center bg-white rounded px-3 py-2 w-32 justify-center">
+                                    {/* Main label value and max are sum of sublabels if present, else from CSV */}
+                                    {subLabels.length > 0 ? (
+                                      <>
+                                        <span className="bg-gray-100 text-black text-sm font-semibold w-10 text-center rounded border border-gray-200">{mainValue}</span>
+                                        <span className="text-black text-sm font-semibold">/</span>
+                                        <span className="bg-gray-100 text-black text-sm font-semibold w-10 text-center rounded border border-gray-200">{mainMax}</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <input
+                                          type="number"
+                                          min="0"
+                                          value={mainItem.value || 0}
+                                          onChange={e => handleValueChange(entry._id, breakdown.indexOf(mainItem), e.target.value)}
+                                          className="bg-white text-black text-sm font-semibold w-10 text-center focus:outline-none"
+                                        />
+                                        <span className="text-black text-sm font-semibold">/</span>
+                                        <input
+                                          type="number"
+                                          min="1"
+                                          value={mainItem.max}
+                                          onChange={e => handleMaxChange(entry._id, breakdown.indexOf(mainItem), e.target.value)}
+                                          className="bg-white text-black text-sm font-semibold w-10 text-center focus:outline-none"
+                                        />
+                                      </>
+                                    )}
+                                  </div>
+                                  <button
+                                    onClick={() => removeBreakdown(entry._id, breakdown.indexOf(mainItem))}
+                                    className="ml-1 text-red-400 hover:text-red-600 text-base font-bold"
+                                    title="Remove"
+                                  >
+                                    ✖
+                                  </button>
+                                </div>
+                                {/* Render sublabels indented */}
+                                {subLabels.map(subItem => (
+                                  <div
+                                    key={subItem.label + subItem.idx}
+                                    className="flex gap-2 items-center ml-8"
+                                  >
+                                    <input
+                                      type="text"
+                                      placeholder="Sub-label"
+                                      value={subItem.label.includes(":") ? subItem.label.split(":").slice(1).join(":") : subItem.label}
+                                      onChange={e => {
+                                        // When editing, update the full label (main:sublabel)
+                                        const mainLabel = mainItem.label;
+                                        const newSubLabel = e.target.value;
+                                        handleLabelChange(entry._id, subItem.idx, mainLabel + ":" + newSubLabel);
+                                      }}
+                                      className="bg-white border text-black text-sm font-semibold rounded px-3 py-2 w-56 focus:outline-none focus:ring-2 focus:ring-teal-400 pl-8"
+                                    />
+                                    <div className="flex gap-2 items-center bg-white rounded px-3 py-2 w-32 justify-center">
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        value={subItem.value || 0}
+                                        onChange={e => handleValueChange(entry._id, subItem.idx, e.target.value)}
+                                        className="bg-white text-black text-sm font-semibold w-10 text-center focus:outline-none"
+                                      />
+                                      <span className="text-black text-sm font-semibold">/</span>
+                                      <input
+                                        type="number"
+                                        min="1"
+                                        value={subItem.max}
+                                        onChange={e => handleMaxChange(entry._id, subItem.idx, e.target.value)}
+                                        className="bg-white text-black text-sm font-semibold w-10 text-center focus:outline-none"
+                                      />
+                                    </div>
+                                    <button
+                                      onClick={() => removeBreakdown(entry._id, subItem.idx)}
+                                      className="ml-1 text-red-400 hover:text-red-600 text-base font-bold"
+                                      title="Remove"
+                                    >
+                                      ✖
+                                    </button>
+                                  </div>
+                                ))}
+                              </React.Fragment>
+                            );
+                          });
+                        })()}
                       </div>
                       <button
                         onClick={() => addBreakdown(entry._id)}
