@@ -69,6 +69,8 @@ const AssignTaskPage = () => {
       console.error("Failed to fetch students:", err);
     }
   };
+// In your AssignTaskPage.js, update the taskData object in handleSubmit function:
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -86,6 +88,9 @@ const handleSubmit = async (e) => {
     specialty: doctor.specialty,
     assignmentType,
     department: assignmentType === "department" ? department : null,
+    // Use assignedTo for consistency with your database structure
+    assignedTo: assignmentType === "students" ? selectedStudents : [],
+    // Keep selectedStudents for backward compatibility if needed
     selectedStudents: assignmentType === "students" ? selectedStudents : [],
   };
 
@@ -99,7 +104,7 @@ const handleSubmit = async (e) => {
       setDueDate("");
       setPriority("");
       setDepartment("");
-      setAssignmentType("department"); // or default
+      setAssignmentType("department");
       setSelectedStudents([]);
       fetchTasks();
     }
@@ -111,7 +116,6 @@ const handleSubmit = async (e) => {
     console.error("Error:", error);
   }
 };
-
 
   const handlePopupClose = (e) => {
     if (e.target.id === "tasks-popup") setShowTasksPopup(false);
