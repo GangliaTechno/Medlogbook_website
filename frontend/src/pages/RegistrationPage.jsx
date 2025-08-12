@@ -145,45 +145,102 @@ const RegistrationPage = () => {
     complete: async function (results) {
       console.log("🟢 CSV Parsed:", results.data);
 
-      const users = results.data.map((row) => ({
-        fullName: row.fullName,
-        email: row.email,
-        password: generateRegistrationCode(10),
-        role: row.role.toLowerCase(),
-        specialty: row.specialty,
-        registrationCode: generateRegistrationCode(),
-        ...(row.role.toLowerCase() === "student"
-          ? {
-              country: row.country,
-              trainingYear: row.trainingYear,
-              hospital: row.hospital,
-            }
-          : {}),
-      }));
+      // Validate and filter out invalid rows
+      const validUsers = results.data
+        .filter(row => {
+          // Check if required fields exist and are not empty
+          // Handle different CSV formats - check for Email or E-mail
+          const email = row['Email'] || row['E-mail'];
+          const fullName = row['Full Name'];
+          const specialty = row['Specialty'];
+          
+          const hasRequiredFields = fullName && email && specialty;
+          if (!hasRequiredFields) {
+            console.warn("⚠️ Skipping row with missing required fields:", row);
+            return false;
+          }
+          return true;
+        })
+        .map((row) => {
+          // Determine role: if there's a Role column use it, 
+          // otherwise check for Student ID vs Employee ID, 
+          // or default based on file context
+          let role = 'student'; // default
+          
+          if (row['Role']) {
+            role = row['Role'].toLowerCase().trim();
+          } else if (row['Employee ID']) {
+            role = 'doctor'; // Employee ID suggests doctor
+          } else if (row['Student ID']) {
+            role = 'student'; // Student ID suggests student
+          }
+          
+          const email = row['Email'] || row['E-mail'];
+          
+          const userData = {
+            fullName: row['Full Name'].trim(),
+            email: email.trim(),
+            password: generateRegistrationCode(10),
+            role: role,
+            specialty: row['Specialty'].trim(),
+            registrationCode: generateRegistrationCode(),
+          };
+
+          // Only add student fields if role is student and fields exist
+          if (role === "student") {
+            if (row['Country']) userData.country = row['Country'].trim();
+            if (row['Training Year']) userData.trainingYear = row['Training Year'].trim();
+            if (row['Hospital']) userData.hospital = row['Hospital'].trim();
+          }
+
+          return userData;
+        });
+
+      if (validUsers.length === 0) {
+        setNotification({
+          isOpen: true,
+          title: "Error",
+          message: "No valid users found in CSV. Please check the format.",
+        });
+        return;
+      }
 
       let successCount = 0;
       let failCount = 0;
+      const errors = [];
 
-      for (const user of users) {
+      for (const user of validUsers) {
         try {
           await dispatch(signupUser(user)).unwrap();
           console.log(`✅ Registered ${user.email}`);
           successCount++;
         } catch (err) {
           console.error(`❌ Failed to register ${user.email}:`, err);
+          errors.push(`${user.email}: ${err.message || 'Unknown error'}`);
           failCount++;
         }
       }
 
+      const message = `✔️ ${successCount} succeeded, ❌ ${failCount} failed.${
+        errors.length > 0 ? `\nErrors: ${errors.slice(0, 3).join(', ')}${errors.length > 3 ? '...' : ''}` : ''
+      }`;
+
       setNotification({
         isOpen: true,
-        title: "Bulk Registration",
-        message: `✔️ ${successCount} succeeded, ❌ ${failCount} failed.`,
+        title: "Bulk Registration Complete",
+        message: message,
       });
     },
+    error: function(error) {
+      console.error("❌ CSV Parse Error:", error);
+      setNotification({
+        isOpen: true,
+        title: "Error",
+        message: "Failed to parse CSV file. Please check the format.",
+      });
+    }
   });
 };
-
 
   return (
     <div
