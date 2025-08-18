@@ -304,7 +304,7 @@ const DynamicCategoryForm = () => {
         });
 
         try {
-            const response = await axios.post("http://localhost:5173https://medlogbook-website.onrender.com/api/logentry/add", formDataToSend, {
+            const response = await axios.post("https://medlogbook-website.onrender.com/api/logentry/add", formDataToSend, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
