@@ -258,76 +258,71 @@ const DynamicCategoryForm = () => {
     console.log("🛠 Selected Category:", JSON.stringify(selectedCategory, null, 2));
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+event.preventDefault();
 
-        if (!userEmail) {
-            console.error("❌ Email is missing! Ensure the user is logged in.");
-            setNotification({ isOpen: true, message: "You must be logged in to submit an entry.", type: "error" });
-            return;
-        }
+if (!userEmail) {
+setNotification({ isOpen: true, message: "You must be logged in to submit an entry.", type: "error" });
+return;
+}
+if (!selectedCategory || !selectedCategory._id || !selectedCategory.name) {
+setNotification({ isOpen: true, message: "Category not found or missing data.", type: "error" });
+return;
+}
 
-        if (!selectedCategory || !selectedCategory._id) {
-            console.error("❌ Category ID is missing!");
-            setNotification({ isOpen: true, message: "Category not found.", type: "error" });
-            return;
-        }
+const formDataToSend = new FormData();
+formDataToSend.append("email", userEmail);
 
-        console.log("🔹 Submitting log entry with Category ID:", selectedCategory._id);
+// Ensure categoryId is string, not array
+const categoryIdValue = Array.isArray(selectedCategory._id)
+? selectedCategory._id[0]
+: selectedCategory._id;
+formDataToSend.append("categoryId", categoryIdValue);
 
-        const formDataToSend = new FormData();
-        formDataToSend.append("email", userEmail);
-        formDataToSend.append("categoryId", selectedCategory._id);
+// Add required categoryName
+formDataToSend.append("categoryName", selectedCategory.name);
 
-        // Append text fields
-        Object.entries(formData).forEach(([key, value]) => {
-            if (!fileInputs[key]) {
-                formDataToSend.append(key, value || "");
-            }
-        });
+// Add required data as JSON string (all form fields)
+formDataToSend.append("data", JSON.stringify(formData));
 
-        // Append custom field values
-        customFields.forEach((field) => {
-            if (field.name && formData[field.name] !== undefined) {
-                if (field.type === "file" && fileInputs[field.name]) {
-                    formDataToSend.append(field.name, fileInputs[field.name]);
-                } else if (field.type !== "file") {
-                    formDataToSend.append(field.name, formData[field.name] || "");
-                }
-            }
-        });
+// Append custom field values
+customFields.forEach((field) => {
+if (field.name && formData[field.name] !== undefined) {
+if (field.type === "file" && fileInputs[field.name]) {
+formDataToSend.append(field.name, fileInputs[field.name]);
+} else if (field.type !== "file") {
+formDataToSend.append(field.name, formData[field.name] || "");
+}
+}
+});
 
-        // Append file fields separately
-        Object.entries(fileInputs).forEach(([key, value]) => {
-            if (value) {
-                formDataToSend.append(key, value);
-            }
-        });
+// Append file fields separately
+Object.entries(fileInputs).forEach(([key, value]) => {
+if (value) {
+formDataToSend.append(key, value);
+}
+});
 
-        try {
-            const response = await axios.post("https://medlogbook-website.onrender.com/api/logentry/add", formDataToSend, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+try {
+const response = await axios.post(
+"https://medlogbook-website.onrender.com/api/logentry/add",
+formDataToSend, { headers: { "Content-Type": "multipart/form-data" } }
+);
 
-            if (response.status === 201) {
-                console.log("✅ Entry saved successfully:", response.data);
-                setNotification({ isOpen: true, message: "Log entry submitted successfully!", type: "success" });
-
-                // Reset form after successful submission
-                setFormData({});
-                setFileInputs({});
-                setCustomFields([]);
-                setSpeechText("");
-                setShowGeneratedForm(false);
-            } else {
-                console.error("❌ Unexpected response:", response);
-                setNotification({ isOpen: true, message: "Something went wrong. Try again.", type: "error" });
-            }
-        } catch (error) {
-            console.error("❌ Error saving entry:", error.response?.data || error.message);
-            const errorMessage = error.response?.data?.error || "Failed to save entry. Please try again.";
-            setNotification({ isOpen: true, message: errorMessage, type: "error" });
-        }
-    };
+if (response.status === 201) {
+setNotification({ isOpen: true, message: "Log entry submitted successfully!", type: "success" });
+setFormData({});
+setFileInputs({});
+setCustomFields([]);
+setSpeechText("");
+setShowGeneratedForm(false);
+} else {
+setNotification({ isOpen: true, message: "Unexpected response from server.", type: "error" });
+}
+} catch (error) {
+const errorMessage = error.response?.data?.error || "Failed to save entry. Please try again.";
+setNotification({ isOpen: true, message: errorMessage, type: "error" });
+}
+};
 
     if (!categories.length) return <p style={{ color: "black" }}>Loading categories from database...</p>;
     if (!selectedCategory) return <p>❌ Category not found!</p>;
