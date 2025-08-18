@@ -15,43 +15,42 @@ const upload = multer({ storage: storage });
 const router = express.Router();
 const logbookController = require('../controllers/logentryController');
 
-// POST /add - Add new log entry with validation, JSON parsing, and file handling
+//router.post('/add', logbookController.addEntry);
+const memoryStorage = multer.memoryStorage();
+const cloudUpload = multer({ storage: memoryStorage });
 router.post("/add", upload.any(), async (req, res) => {
   try {
-    const { email, categoryId, categoryName, data } = req.body;
+    const { email, categoryId } = req.body;
 
-    // Validate required fields
-    if (!email || !categoryId || !categoryName || !data) {
-      return res.status(400).json({
-        error: "Missing required field(s): email, categoryId, categoryName, or data"
+    const fields = {};
+    const files = [];
+
+    // Capture regular form fields (excluding file metadata)
+    Object.entries(req.body).forEach(([key, value]) => {
+      if (!['email', 'categoryId'].includes(key) && !key.includes('_title') && !key.includes('_description') && !key.includes('_name') && !key.includes('_type')) {
+        fields[key] = value;
+      }
+    });
+
+    // Capture file + metadata
+    req.files?.forEach((file) => {
+      const fieldName = file.fieldname;
+
+      files.push({
+        fieldName,
+        buffer: file.buffer,
+        originalName: file.originalname,
+        title: req.body[`${fieldName}_title`] || "",
+        name: req.body[`${fieldName}_name`] || "",
+        type: req.body[`${fieldName}_type`] || "",
+        description: req.body[`${fieldName}_description`] || ""
       });
-    }
+    });
 
-    // Parse data JSON safely
-    let parsedData;
-    try {
-      parsedData = JSON.parse(data);
-    } catch (e) {
-      return res.status(400).json({ error: "Failed to parse 'data' as JSON." });
-    }
-
-    // Collect uploaded files with metadata
-    const files = req.files?.map(file => ({
-      fieldName: file.fieldname,
-      buffer: file.buffer,
-      originalName: file.originalname,
-      title: req.body[`${file.fieldname}_title`] || "",
-      name: req.body[`${file.fieldname}_name`] || "",
-      type: req.body[`${file.fieldname}_type`] || "",
-      description: req.body[`${file.fieldname}_description`] || ""
-    })) || [];
-
-    // Create new log entry document
     const log = new LogEntry({
       email,
       categoryId,
-      categoryName,
-      data: parsedData,
+      fields,
       files
     });
 
@@ -63,10 +62,12 @@ router.post("/add", upload.any(), async (req, res) => {
   }
 });
 
-// Other existing routes
-router.get('/:email', logbookController.getEntries);
-router.put('/update', logbookController.updateEntry);
-router.get('/review-status/:email', logbookController.getEntriesByReviewStatus);
-router.get("/average-score/:email", logbookController.getAverageScore);
 
+
+
+router.get('/:email', logbookController.getEntries); // 🔹 Use email instead of userId
+router.put('/update', logbookController.updateEntry); // ✅ Add update route
+router.get('/review-status/:email', logbookController.getEntriesByReviewStatus); 
+// ✅ New route for reviewed/not reviewed
+router.get("/average-score/:email", logbookController.getAverageScore);
 module.exports = router;
