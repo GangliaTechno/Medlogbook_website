@@ -47,13 +47,17 @@ app.use(helmet({
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use(limiter);
+
+// Apply rate limiting ONLY to public routes
+app.use('/api/auth/login', limiter);
+app.use('/api/auth/register', limiter);
+
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -71,20 +75,27 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (like mobile apps, Postman, curl)
     if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+
+    // Allow only whitelisted origins
+    if (allowedOrigins.includes(origin)) {
+      // IMPORTANT: return origin, not true
+      return callback(null, origin);
     }
+
+    // ❌ Do NOT throw error — just disallow silently
+    return callback(null, false);
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   optionsSuccessStatus: 200 // Some legacy browsers choke on 204
 }));
+
+// Explicitly handle preflight requests
+app.options('*', cors());
+
 
 // File upload configuration with better error handling
 const storage = multer.diskStorage({
