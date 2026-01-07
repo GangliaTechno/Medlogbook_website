@@ -11,12 +11,19 @@ const DynamicCategoryForm = () => {
     const categories = useSelector((state) => state.category.categories || []);
     const userEmail = useSelector((state) => state.auth.user?.email);
     const [customFields, setCustomFields] = useState([]);
+    const [interimText, setInterimText] = useState("");
+    const fieldRefs = useRef([]);
+    const currentFieldIndex = useRef(0);
+    
+
+
+
 
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [formData, setFormData] = useState({});
     const [fileInputs, setFileInputs] = useState({});
     const [notification, setNotification] = useState({ isOpen: false, message: "", type: "info" });
-    
+
     // Speech-to-text states
     const [isListening, setIsListening] = useState(false);
     const [speechText, setSpeechText] = useState("");
@@ -27,28 +34,32 @@ const DynamicCategoryForm = () => {
 
     // Dropdown options map
     const dropdownOptions = {
-      Admissions: {
-        Location: ["A & E Major", "A & E Minor", "A & E Paediatric", "A & E Resus", "AAU", "Acute Medical Unit", "Admitted from clinic", "Ambulance Bay", "Ambulatory Majors Area", "CDU", "Coronary Care Unit", "Emergency Assessment Unit", "High Dependency Unit", "Intensive Care Unit", "Medical Ward", "Rapid Assessment Triage", "Respiratory Care Unit", "Ward Referral"],
-        "Referral Source": ["Ambulance Re Alert", "Emergency Department", "ENT", "GP Referral", "High Dependency Unit", "In Patient Unit", "Intensive Care Unit", "Medical Specialty", "Obstetrics and Gynaecology", "Other Hospital", "Surgery"],
-        Role: ["Clerked", "Reviewed"],
-        Gender: ["Male", "Female", "Other"],
-        Specialty: ["Alcohol and Drug Intoxication", "Allergy", "Andrology", "Audiological Medicine", "Cardiology", "Cardiothoracic Surgery", "Clinical Genetics", "Clinical Neurophysiology", "Clinical Nutrition", "Clinical Oncology", "Clinical Pharmacology and Therapeutics", "Clinical Rotation 1 (HOGCR1)", "Dentistry", "Dermatology", "Diagnostic Radiology", "Emergency Medicine", "Endocrinology & Diabetes Mellitus", "Family Medicine", "Forensic Medicine and Medicolegal", "Gastroenterology", "General Internal Medicine", "General Practice"],
-        Outcome: ["Admitted", "Coronary Care Unit", "Discharged", "Died", "High Dependency Unit", "Intensive Care", "Other Specialty Unit", "Referred On", "Theatre", "Ward Care"],
-      },
-      CPD: {
-        "Type of CPD Activity": ["Abstract Presented", "Conference Attended", "Conference Organized", "Examiner", "Lecture Attended", "Lecture Given", "Presentation Given", "Publication", "Seminar Given", "Training Event Attended", "Examination", "Course Attended", "Departmental Teaching", "E-learning Completed", "Simulation Teaching Attended", "Study Leave", "Training Day", "Audit Completed", "Audit Presentation", "Clinical Governance Day", "Other Literature", "Podcast", "Reflective Practice", "Taster Day Attended", "Postgraduate Teaching Delivered", "Postgraduate Teaching Organized", "Postgraduate Teaching Planned", "Simulation Teaching Delivered", "Simulation Teaching Organized", "Teaching Feedback Received", "Teaching Feedback Organized", "Undergraduate Teaching Delivered", "Undergraduate Teaching Organized", "Undergraduate Teaching Planned"]
-      },
-      POCUS: {
-        "Site/Type": ["Abdominal Aortic Aneurysm", "Arterial Ultrasound", "Deep Venous Thrombosis Ultrasound", "Early Pregnancy Ultrasound", "Focused Assessment with Sonography for Pneumonia", "Focused Assessment with Sonography in Trauma", "Focused Cardiac Ultrasound", "Hepatobiliary Ultrasound", "Joint Injections", "Lung Ultrasound", "Muscle and Tendon Ultrasound", "Nerve Blocks", "Ocular Ultrasound", "Other Abdominal", "Pericardiocentesis", "Peripheral", "Pleural Ultrasound", "Pulmonary", "Renal Ultrasound", "Resuscitation", "Skin and Subcutaneous Tissue Ultrasound", "Soft Tissue Ultrasound", "Testicular Ultrasound", "Transabdominal Pelvic Ultrasound", "Ultrasound Guided Procedures"],
-        Supervision: ["Observed", "Performed (Independent)", "Performed (Supervised)"],
-        Gender: ["Male", "Female", "Other"]
-      },
-      Procedures: {
-        Procedure: ["Joint Aspiration", "Joint Injection", "Talc Pleurodesis", "Spirometry", "Selinger Pleural Drain", "Pleural Ultrasound", "Pleural Decompression", "Pleural Aspiration", "Pigtail Pleural Drain", "Peak Flow", "Argyll Pleural Drain", "Lumbar Puncture", "Pap Smear", "Phlebotomy", "Suprapubic Catheter Change", "Three-Way Catheter Insertion", "Urinary Catheterisation", "Venous Cannulation", "ABG Sampling", "ABG Sampling with Ultrasound Guidance", "Arterial Line Insertion", "Blood Cultures from Peripheral Site", "Brainstem Death Testing", "Central Venous Access"],
-        Supervision: ["Assisted", "Assisting", "First Operator", "Independent", "Observed", "Second Operator", "Supervised", "Supervising"],
-        Gender: ["Female", "Male", "Other"]
-      }
+        Admissions: {
+            Location: ["A & E Major", "A & E Minor", "A & E Paediatric", "A & E Resus", "AAU", "Acute Medical Unit", "Admitted from clinic", "Ambulance Bay", "Ambulatory Majors Area", "CDU", "Coronary Care Unit", "Emergency Assessment Unit", "High Dependency Unit", "Intensive Care Unit", "Medical Ward", "Rapid Assessment Triage", "Respiratory Care Unit", "Ward Referral"],
+            "Referral Source": ["Ambulance Re Alert", "Emergency Department", "ENT", "GP Referral", "High Dependency Unit", "In Patient Unit", "Intensive Care Unit", "Medical Specialty", "Obstetrics and Gynaecology", "Other Hospital", "Surgery"],
+            Role: ["Clerked", "Reviewed"],
+            Gender: ["Male", "Female", "Other"],
+            Specialty: ["Alcohol and Drug Intoxication", "Allergy", "Andrology", "Audiological Medicine", "Cardiology", "Cardiothoracic Surgery", "Clinical Genetics", "Clinical Neurophysiology", "Clinical Nutrition", "Clinical Oncology", "Clinical Pharmacology and Therapeutics", "Clinical Rotation 1 (HOGCR1)", "Dentistry", "Dermatology", "Diagnostic Radiology", "Emergency Medicine", "Endocrinology & Diabetes Mellitus", "Family Medicine", "Forensic Medicine and Medicolegal", "Gastroenterology", "General Internal Medicine", "General Practice"],
+            Outcome: ["Admitted", "Coronary Care Unit", "Discharged", "Died", "High Dependency Unit", "Intensive Care", "Other Specialty Unit", "Referred On", "Theatre", "Ward Care"],
+        },
+        CPD: {
+            "Type of CPD Activity": ["Abstract Presented", "Conference Attended", "Conference Organized", "Examiner", "Lecture Attended", "Lecture Given", "Presentation Given", "Publication", "Seminar Given", "Training Event Attended", "Examination", "Course Attended", "Departmental Teaching", "E-learning Completed", "Simulation Teaching Attended", "Study Leave", "Training Day", "Audit Completed", "Audit Presentation", "Clinical Governance Day", "Other Literature", "Podcast", "Reflective Practice", "Taster Day Attended", "Postgraduate Teaching Delivered", "Postgraduate Teaching Organized", "Postgraduate Teaching Planned", "Simulation Teaching Delivered", "Simulation Teaching Organized", "Teaching Feedback Received", "Teaching Feedback Organized", "Undergraduate Teaching Delivered", "Undergraduate Teaching Organized", "Undergraduate Teaching Planned"]
+        },
+        POCUS: {
+            "Site/Type": ["Abdominal Aortic Aneurysm", "Arterial Ultrasound", "Deep Venous Thrombosis Ultrasound", "Early Pregnancy Ultrasound", "Focused Assessment with Sonography for Pneumonia", "Focused Assessment with Sonography in Trauma", "Focused Cardiac Ultrasound", "Hepatobiliary Ultrasound", "Joint Injections", "Lung Ultrasound", "Muscle and Tendon Ultrasound", "Nerve Blocks", "Ocular Ultrasound", "Other Abdominal", "Pericardiocentesis", "Peripheral", "Pleural Ultrasound", "Pulmonary", "Renal Ultrasound", "Resuscitation", "Skin and Subcutaneous Tissue Ultrasound", "Soft Tissue Ultrasound", "Testicular Ultrasound", "Transabdominal Pelvic Ultrasound", "Ultrasound Guided Procedures"],
+            Supervision: ["Observed", "Performed (Independent)", "Performed (Supervised)"],
+            Gender: ["Male", "Female", "Other"]
+        },
+        Procedures: {
+            Procedure: ["Joint Aspiration", "Joint Injection", "Talc Pleurodesis", "Spirometry", "Selinger Pleural Drain", "Pleural Ultrasound", "Pleural Decompression", "Pleural Aspiration", "Pigtail Pleural Drain", "Peak Flow", "Argyll Pleural Drain", "Lumbar Puncture", "Pap Smear", "Phlebotomy", "Suprapubic Catheter Change", "Three-Way Catheter Insertion", "Urinary Catheterisation", "Venous Cannulation", "ABG Sampling", "ABG Sampling with Ultrasound Guidance", "Arterial Line Insertion", "Blood Cultures from Peripheral Site", "Brainstem Death Testing", "Central Venous Access"],
+            Supervision: ["Assisted", "Assisting", "First Operator", "Independent", "Observed", "Second Operator", "Supervised", "Supervising"],
+            Gender: ["Female", "Male", "Other"]
+        }
     };
+
+
+   
+
 
     // Initialize speech recognition
     useEffect(() => {
@@ -56,7 +67,7 @@ const DynamicCategoryForm = () => {
             setSpeechSupported(true);
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognitionRef.current = new SpeechRecognition();
-            
+
             recognitionRef.current.continuous = true;
             recognitionRef.current.interimResults = true;
             recognitionRef.current.lang = 'en-US';
@@ -79,19 +90,23 @@ const DynamicCategoryForm = () => {
                     }
                 }
 
-                 if (finalTranscript) {
-        setSpeechText(prev => prev + finalTranscript);
-    }
+                if (finalTranscript) {
+                    const isCommand = handleVoiceCommand(finalTranscript);
 
-    setInterimText(interimTranscript);
+                    if (!isCommand) {
+                        setSpeechText(prev => prev + finalTranscript);
+                    }
+                }
+
+                // optional: show live interim text
+                // setInterimText(interimTranscript);
             };
-
             recognitionRef.current.onerror = (event) => {
                 console.error('Speech recognition error:', event.error);
-                setNotification({ 
-                    isOpen: true, 
-                    message: `Speech recognition error: ${event.error}`, 
-                    type: "error" 
+                setNotification({
+                    isOpen: true,
+                    message: `Speech recognition error: ${event.error}`,
+                    type: "error"
                 });
                 setIsListening(false);
             };
@@ -140,67 +155,186 @@ const DynamicCategoryForm = () => {
         }
     };
 
-   const generateFormFromSpeech = async () => {
-    if (!speechText.trim()) {
-        setNotification({ 
-            isOpen: true, 
-            message: "No speech text to process. Please dictate your entry first.", 
-            type: "error" 
-        });
-        return;
-    }
 
-    setIsProcessing(true);
-    try {
-        console.log('🎤 Calling generateform with:', { 
-            speechText: speechText.substring(0, 100) + '...', 
-            category: selectedCategory?.name || category 
-        });
-        
-        // ✅ Use the correct endpoint: /api/ai/generateform
-        const response = await axios.post("https://medlogbook-website.onrender.com/api/ai/generateform", {
-            speechText: speechText,
-            category: selectedCategory?.name || category
+    const normalizeGeneratedData = (generatedData, categoryFields) => {
+        const normalized = {};
+
+        categoryFields.forEach(field => {
+            let value = generatedData[field.name];
+
+            // Handle undefined / null
+            if (value === undefined || value === null) {
+                normalized[field.name] = "";
+                return;
+            }
+
+            // Normalize dropdown values
+            const options = dropdownOptions[selectedCategory.name]?.[field.name];
+            if (options) {
+                const matched = options.find(
+                    opt => opt.toLowerCase() === String(value).toLowerCase()
+                );
+                normalized[field.name] = matched || "";
+                return;
+            }
+
+            // Type handling
+            if (field.type === "number") {
+                normalized[field.name] = isNaN(value) ? "" : value;
+            } else {
+                normalized[field.name] = String(value);
+            }
         });
 
-        console.log('✅ Generate form response:', response.data);
+        return normalized;
+    };
 
-        if (response.data.success) {
-            // Merge the generated form data with existing form data
-            const generatedData = response.data.formData;
-            
-            // Add categoryId to the generated data
-            generatedData.categoryId = selectedCategory._id;
-            
-            setFormData(generatedData);
-            setShowGeneratedForm(true);
-            
-            const message = response.data.fallback 
-                ? "Form generated with AI assistance. Please review and complete missing fields."
-                : "Form generated successfully from your speech! Please review and edit if needed.";
-                
-            setNotification({ 
-                isOpen: true, 
-                message: message, 
-                type: "success" 
-            });
-        } else {
-            throw new Error('Failed to generate form data');
+
+    const focusNextField = () => {
+        if (currentFieldIndex.current < fieldRefs.current.length - 1) {
+            currentFieldIndex.current += 1;
+            fieldRefs.current[currentFieldIndex.current]?.focus();
         }
-    } catch (error) {
-        console.error("Error generating form:", error);
-        const errorMessage = error.response?.data?.error || 
-                           error.response?.data?.details || 
-                           "Failed to generate form from speech. Please try again.";
-        setNotification({ 
-            isOpen: true, 
-            message: errorMessage, 
-            type: "error" 
-        });
-    } finally {
-        setIsProcessing(false);
+    };
+
+    const focusPreviousField = () => {
+        if (currentFieldIndex.current > 0) {
+            currentFieldIndex.current -= 1;
+            fieldRefs.current[currentFieldIndex.current]?.focus();
+        }
+    };
+
+
+   const handleVoiceCommand = (text) => {
+    const command = text.toLowerCase();
+    const normalized = command.replace(/[.,!?]/g, "").trim();
+
+    console.log("🎙 Detected speech:", normalized);
+
+    const NEXT_FIELD_COMMANDS = [
+        "next",
+        "next field",
+        "go next",
+        "move next"
+    ];
+
+    const PREVIOUS_FIELD_COMMANDS = [
+        "previous",
+        "previous field",
+        "go back",
+        "back"
+    ];
+
+    const CANCEL_COMMANDS = [
+        "cancel",
+        "clear",
+        "clear form",
+        "reset"
+    ];
+
+    if (NEXT_FIELD_COMMANDS.includes(normalized)) {
+        focusNextField();
+        return true;
     }
+
+    if (PREVIOUS_FIELD_COMMANDS.includes(normalized)) {
+        focusPreviousField();
+        return true;
+    }
+
+    if (normalized === "submit") {
+        document.querySelector("form")?.requestSubmit();
+        return true;
+    }
+
+    if (CANCEL_COMMANDS.includes(normalized)) {
+        setFormData({});
+        currentFieldIndex.current = 0;
+        fieldRefs.current[0]?.focus();
+        return true;
+    }
+
+    return false; // treat as normal dictation
 };
+
+
+
+
+
+    const generateFormFromSpeech = async () => {
+        if (!speechText.trim()) {
+            setNotification({
+                isOpen: true,
+                message: "No speech text to process. Please dictate your entry first.",
+                type: "error"
+            });
+            return;
+        }
+
+        setIsProcessing(true);
+        try {
+            console.log('🎤 Calling generateform with:', {
+                speechText: speechText.substring(0, 100) + '...',
+                category: selectedCategory?.name || category
+            });
+
+            // ✅ Use the correct endpoint: /api/ai/generateform
+            const response = await axios.post("https://medlogbook-website.onrender.com/api/ai/generateform", {
+                speechText: speechText,
+                category: selectedCategory?.name || category
+            });
+
+            console.log('✅ Generate form response:', response.data);
+
+            if (response.data.success) {
+                const rawGeneratedData = response.data.formData;
+
+                // Normalize against frontend field definitions
+                const normalizedData = normalizeGeneratedData(
+                    rawGeneratedData,
+                    selectedCategory.fields
+                );
+
+                // Always enforce categoryId
+                normalizedData.categoryId = selectedCategory._id;
+
+                setFormData(normalizedData);
+
+                // setFormData(generatedData);
+                setShowGeneratedForm(true);
+
+                const message = response.data.fallback
+                    ? "Form generated with AI assistance. Please review and complete missing fields."
+                    : "Form generated successfully from your speech! Please review and edit if needed.";
+
+                setNotification({
+                    isOpen: true,
+                    message: message,
+                    type: "success"
+                });
+            } else {
+                throw new Error('Failed to generate form data');
+            }
+        } catch (error) {
+
+
+
+            console.error("Error generating form:", error);
+            const errorMessage =
+                error.response?.status === 503
+                    ? "AI service is temporarily unavailable. Please wait a moment and try again."
+                    : error.response?.data?.error ||
+                    "Failed to generate form from speech. Please try again.";
+
+            setNotification({
+                isOpen: true,
+                message: errorMessage,
+                type: "error"
+            });
+        } finally {
+            setIsProcessing(false);
+        }
+    };
     useEffect(() => {
         if (!category) {
             console.error("❌ categoryName is undefined in URL.");
@@ -258,71 +392,71 @@ const DynamicCategoryForm = () => {
     console.log("🛠 Selected Category:", JSON.stringify(selectedCategory, null, 2));
 
     const handleSubmit = async (event) => {
-event.preventDefault();
+        event.preventDefault();
 
-if (!userEmail) {
-setNotification({ isOpen: true, message: "You must be logged in to submit an entry.", type: "error" });
-return;
-}
-if (!selectedCategory || !selectedCategory._id || !selectedCategory.name) {
-setNotification({ isOpen: true, message: "Category not found or missing data.", type: "error" });
-return;
-}
+        if (!userEmail) {
+            setNotification({ isOpen: true, message: "You must be logged in to submit an entry.", type: "error" });
+            return;
+        }
+        if (!selectedCategory || !selectedCategory._id || !selectedCategory.name) {
+            setNotification({ isOpen: true, message: "Category not found or missing data.", type: "error" });
+            return;
+        }
 
-const formDataToSend = new FormData();
-formDataToSend.append("email", userEmail);
+        const formDataToSend = new FormData();
+        formDataToSend.append("email", userEmail);
 
-// Ensure categoryId is string, not array
-const categoryIdValue = Array.isArray(selectedCategory._id)
-? selectedCategory._id[0]
-: selectedCategory._id;
-formDataToSend.append("categoryId", categoryIdValue);
+        // Ensure categoryId is string, not array
+        const categoryIdValue = Array.isArray(selectedCategory._id)
+            ? selectedCategory._id[0]
+            : selectedCategory._id;
+        formDataToSend.append("categoryId", categoryIdValue);
 
-// Add required categoryName
-formDataToSend.append("categoryName", selectedCategory.name);
+        // Add required categoryName
+        formDataToSend.append("categoryName", selectedCategory.name);
 
-// Add required data as JSON string (all form fields)
-formDataToSend.append("data", JSON.stringify(formData));
+        // Add required data as JSON string (all form fields)
+        formDataToSend.append("data", JSON.stringify(formData));
 
-// Append custom field values
-customFields.forEach((field) => {
-if (field.name && formData[field.name] !== undefined) {
-if (field.type === "file" && fileInputs[field.name]) {
-formDataToSend.append(field.name, fileInputs[field.name]);
-} else if (field.type !== "file") {
-formDataToSend.append(field.name, formData[field.name] || "");
-}
-}
-});
+        // Append custom field values
+        customFields.forEach((field) => {
+            if (field.name && formData[field.name] !== undefined) {
+                if (field.type === "file" && fileInputs[field.name]) {
+                    formDataToSend.append(field.name, fileInputs[field.name]);
+                } else if (field.type !== "file") {
+                    formDataToSend.append(field.name, formData[field.name] || "");
+                }
+            }
+        });
 
-// Append file fields separately
-Object.entries(fileInputs).forEach(([key, value]) => {
-if (value) {
-formDataToSend.append(key, value);
-}
-});
+        // Append file fields separately
+        Object.entries(fileInputs).forEach(([key, value]) => {
+            if (value) {
+                formDataToSend.append(key, value);
+            }
+        });
 
-try {
-const response = await axios.post(
-"https://medlogbook-website.onrender.com/api/logentry/add",
-formDataToSend, { headers: { "Content-Type": "multipart/form-data" } }
-);
+        try {
+            const response = await axios.post(
+                "https://medlogbook-website.onrender.com/api/logentry/add",
+                formDataToSend, { headers: { "Content-Type": "multipart/form-data" } }
+            );
 
-if (response.status === 201) {
-setNotification({ isOpen: true, message: "Log entry submitted successfully!", type: "success" });
-setFormData({});
-setFileInputs({});
-setCustomFields([]);
-setSpeechText("");
-setShowGeneratedForm(false);
-} else {
-setNotification({ isOpen: true, message: "Unexpected response from server.", type: "error" });
-}
-} catch (error) {
-const errorMessage = error.response?.data?.error || "Failed to save entry. Please try again.";
-setNotification({ isOpen: true, message: errorMessage, type: "error" });
-}
-};
+            if (response.status === 201) {
+                setNotification({ isOpen: true, message: "Log entry submitted successfully!", type: "success" });
+                setFormData({});
+                setFileInputs({});
+                setCustomFields([]);
+                setSpeechText("");
+                setShowGeneratedForm(false);
+            } else {
+                setNotification({ isOpen: true, message: "Unexpected response from server.", type: "error" });
+            }
+        } catch (error) {
+            const errorMessage = error.response?.data?.error || "Failed to save entry. Please try again.";
+            setNotification({ isOpen: true, message: errorMessage, type: "error" });
+        }
+    };
 
     if (!categories.length) return <p style={{ color: "black" }}>Loading categories from database...</p>;
     if (!selectedCategory) return <p>❌ Category not found!</p>;
@@ -344,7 +478,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                     style={{ position: "relative" }}
                 >
                     <h3 className="text-2xl font-extrabold mb-6 text-blue-900 flex items-center gap-2">
-                        <span className="text-3xl"><svg xmlns="http://www.w3.org/2000/svg" height="44px" viewBox="0 -960 960 960" width="44px" fill="#0b3ea3ff"><path d="M480-400q-50 0-85-35t-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35Zm0-240Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm40-360q17 0 28.5-11.5T520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480Z"/></svg></span>
+                        <span className="text-3xl"><svg xmlns="http://www.w3.org/2000/svg" height="44px" viewBox="0 -960 960 960" width="44px" fill="#0b3ea3ff"><path d="M480-400q-50 0-85-35t-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35Zm0-240Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm40-360q17 0 28.5-11.5T520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480Z" /></svg></span>
                         Voice Dictation
                     </h3>
 
@@ -462,7 +596,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                         >
                             {isListening ? '⏸️ Stop Dictating' : '▶️ Start Dictation'}
                         </button>
-                        
+
                         <button
                             type="button"
                             onClick={generateFormFromSpeech}
@@ -484,7 +618,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                                 <>✨ Fill Form</>
                             )}
                         </button>
-                        
+
                         <button
                             type="button"
                             onClick={() => {
@@ -500,7 +634,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                             onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.03)")}
                             onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M269-86q-53 0-89.5-36.5T143-212v-497q-26 0-44.5-18.5T80-772q0-26 18.5-44.5T143-835h194q0-26 18.5-44.5T400-898h158q26 0 44.5 18.5T621-835h196q26 0 44.5 18.5T880-772q0 26-18.5 44.5T817-709v497q0 53-36.5 89.5T691-86H269Zm422-623H269v497h422v-497ZM394-281q21 0 36-15t15-36v-258q0-21-15-36t-36-15q-21 0-36.5 15T342-590v258q0 21 15.5 36t36.5 15Zm173 0q21 0 36-15t15-36v-258q0-21-15-36t-36-15q-21 0-36.5 15T515-590v258q0 21 15.5 36t36.5 15ZM269-709v497-497Z"/></svg> Clear All
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M269-86q-53 0-89.5-36.5T143-212v-497q-26 0-44.5-18.5T80-772q0-26 18.5-44.5T143-835h194q0-26 18.5-44.5T400-898h158q26 0 44.5 18.5T621-835h196q26 0 44.5 18.5T880-772q0 26-18.5 44.5T817-709v497q0 53-36.5 89.5T691-86H269Zm422-623H269v497h422v-497ZM394-281q21 0 36-15t15-36v-258q0-21-15-36t-36-15q-21 0-36.5 15T342-590v258q0 21 15.5 36t36.5 15Zm173 0q21 0 36-15t15-36v-258q0-21-15-36t-36-15q-21 0-36.5 15T515-590v258q0 21 15.5 36t36.5 15ZM269-709v497-497Z" /></svg> Clear All
                         </button>
                     </div>
 
@@ -638,13 +772,14 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                                 {field.name}
                                 {field.required && <span className="text-red-500 ml-1">*</span>}
                             </label>
-                            
+
                             {field.type === "file" ? (
                                 <>
                                     <input
                                         type="file"
                                         name={field.name}
                                         onChange={(e) => handleFileChange(e, field.name)}
+                                        ref={(el) => (fieldRefs.current[index] = el)}
                                         className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
                                         style={{
                                             boxShadow: "#cff0ff 0px 10px 10px -5px",
@@ -655,6 +790,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                                         placeholder="Title (required)"
                                         name={`${field.name}_title`}
                                         onChange={handleChange}
+                                        ref={(el) => (fieldRefs.current[index] = el)}
                                         value={formData[`${field.name}_title`] || ""}
                                         required
                                         className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
@@ -667,6 +803,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                                         placeholder="Description (required)"
                                         name={`${field.name}_description`}
                                         onChange={handleChange}
+                                        ref={(el) => (fieldRefs.current[index] = el)}
                                         value={formData[`${field.name}_description`] || ""}
                                         required
                                         className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
@@ -680,6 +817,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                                     name={field.name}
                                     value={formData[field.name] || ""}
                                     onChange={handleChange}
+                                    ref={(el) => (fieldRefs.current[index] = el)}
                                     className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
                                     style={{
                                         boxShadow: "#cff0ff 0px 10px 10px -5px",
@@ -697,6 +835,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                                     name={field.name}
                                     value={formData[field.name] || ""}
                                     onChange={handleChange}
+                                    ref={(el) => (fieldRefs.current[index] = el)}
                                     placeholder={`Enter ${field.name}`}
                                     rows={5}
                                     className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
@@ -713,6 +852,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                                     name={field.name}
                                     value={formData[field.name] || ""}
                                     onChange={handleChange}
+                                    ref={(el) => (fieldRefs.current[index] = el)}
                                     placeholder={`Enter ${field.name}`}
                                     className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
                                     style={{
@@ -783,7 +923,7 @@ setNotification({ isOpen: true, message: errorMessage, type: "error" });
                         )}
                     </div>
                 ))}
-                
+
                 <button
                     type="button"
                     onClick={addCustomField}
