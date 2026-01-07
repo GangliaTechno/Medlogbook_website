@@ -24,6 +24,16 @@ const retryGeminiCall = async (model, prompt, retries = 3, delay = 2000) => {
   }
 };
 
+
+const withTimeout = (promise, ms) =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("GEMINI_TIMEOUT")), ms)
+    )
+  ]);
+
+
 // 🔍 Summarize a full entry (with optional file)
 router.post('/summarize', upload.single('file'), async (req, res) => {
   try {
@@ -89,7 +99,7 @@ router.post('/generateform', async (req, res) => {
   console.log('🎤 /generateform route hit in medlog');
   console.log('Request body:', req.body);
   console.log('API Key available:', !!process.env.GEMINI_API_KEY);
-  
+
   try {
     const { speechText, category } = req.body;
 
@@ -109,7 +119,7 @@ router.post('/generateform', async (req, res) => {
     // Use the same example formats as your existing forms
     const exampleFormats = {
       Admissions: {
-         "Patient Name": "",
+        "Patient Name": "",
         "Admission Date": "",
         "Date": "",
         "Hospital": "",
@@ -194,16 +204,19 @@ JSON Response:`;
 
     console.log('🤖 Calling Gemini API...');
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const response = await retryGeminiCall(model, inputPrompt);
+    const response = await withTimeout(
+      retryGeminiCall(model, inputPrompt),
+      15000 // 15 seconds
+    );
 
     console.log('📤 Raw Gemini response:', response.substring(0, 200) + '...');
 
     // Clean up the response to ensure it's valid JSON
     let cleanedResponse = response.trim();
-    
+
     // Remove any markdown code blocks
     cleanedResponse = cleanedResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-    
+
     // Try to parse the JSON to validate it
     try {
       const parsedJSON = JSON.parse(cleanedResponse);
@@ -211,12 +224,12 @@ JSON Response:`;
       res.json({ formData: parsedJSON, success: true });
     } catch (parseError) {
       console.warn('⚠️ JSON parsing failed, attempting to fix:', parseError.message);
-      
+
       // Attempt to fix common JSON issues
       cleanedResponse = cleanedResponse.replace(/'/g, '"'); // Replace single quotes with double quotes
       cleanedResponse = cleanedResponse.replace(/,\s*}/g, '}'); // Remove trailing commas
       cleanedResponse = cleanedResponse.replace(/,\s*]/g, ']'); // Remove trailing commas in arrays
-      
+
       try {
         const parsedJSON = JSON.parse(cleanedResponse);
         console.log('✅ Successfully generated form data (after fixing)');
@@ -224,12 +237,12 @@ JSON Response:`;
       } catch (secondParseError) {
         console.error('❌ Failed to parse Gemini response as JSON:', secondParseError.message);
         console.error('Cleaned response:', cleanedResponse);
-        
+
         // Return a fallback response
         const fallbackData = { ...exampleFormat };
         fallbackData["Learning Points"] = `Original speech: "${speechText}"`;
-        
-        res.json({ 
+
+        res.json({
           formData: fallbackData,
           success: true,
           fallback: true,
@@ -240,7 +253,7 @@ JSON Response:`;
 
   } catch (error) {
     console.error('❌ Form generation error:', error?.message || error);
-    
+
     let errorMessage = 'Form generation failed';
     if (error.message.includes('API_KEY_INVALID')) {
       errorMessage = 'Invalid API key';
@@ -249,11 +262,11 @@ JSON Response:`;
     } else if (error.message.includes('RATE_LIMIT')) {
       errorMessage = 'Rate limit exceeded, please try again later';
     }
-    
-    res.status(503).json({ 
+
+    res.status(503).json({
       error: errorMessage,
       details: error.message,
-      fallback: true 
+      fallback: true
     });
   }
 });
