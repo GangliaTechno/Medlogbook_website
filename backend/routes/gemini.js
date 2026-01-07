@@ -88,6 +88,55 @@ ${fileText || 'No attached notes.'}
   }
 });
 
+
+// 🎧 Audio Transcription
+router.post('/transcribe', upload.single('audio'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Audio file required' });
+    }
+
+    const allowed = ['audio/mpeg', 'audio/wav', 'audio/mp3'];
+    if (!allowed.includes(req.file.mimetype)) {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({ error: 'Invalid audio format' });
+    }
+
+    const audioBuffer = fs.readFileSync(req.file.path);
+    fs.unlinkSync(req.file.path);
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const response = await withTimeout(
+      model.generateContent({
+        contents: [{
+          role: "user",
+          parts: [
+            {
+              inlineData: {
+                mimeType: req.file.mimetype,
+                data: audioBuffer.toString("base64")
+              }
+            },
+            { text: "Transcribe this medical audio accurately." }
+          ]
+        }]
+      }),
+      20000
+    );
+
+    res.json({
+      success: true,
+      transcript: response.response.text()
+    });
+
+  } catch (err) {
+    console.error("Audio transcription error:", err.message);
+    res.status(503).json({ error: "Transcription failed" });
+  }
+});
+
+
 // 🎤 NEW: Generate form JSON from speech text
 // Add this route to your existing routes/gemini.js file, right after the summarize route
 
