@@ -14,7 +14,12 @@ const DynamicCategoryForm = () => {
     const [interimText, setInterimText] = useState("");
     const fieldRefs = useRef([]);
     const currentFieldIndex = useRef(0);
-    
+
+
+
+
+
+
 
 
 
@@ -28,6 +33,12 @@ const DynamicCategoryForm = () => {
     const [isListening, setIsListening] = useState(false);
     const [speechText, setSpeechText] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
+
+    // Audio upload & transcription (AI-01-T2)
+    const [audioFile, setAudioFile] = useState(null);
+    const [audioTranscript, setAudioTranscript] = useState("");
+    const [audioError, setAudioError] = useState("");
+
     const [speechSupported, setSpeechSupported] = useState(false);
     const [showGeneratedForm, setShowGeneratedForm] = useState(false);
     const recognitionRef = useRef(null);
@@ -58,7 +69,7 @@ const DynamicCategoryForm = () => {
     };
 
 
-   
+
 
 
     // Initialize speech recognition
@@ -156,6 +167,47 @@ const DynamicCategoryForm = () => {
     };
 
 
+    // Audio upload validation & transcription
+    const handleAudioUpload = (file) => {
+        setAudioError("");
+        setAudioTranscript("");
+
+        if (!file) return;
+
+        // Validate type
+        if (!file.type.startsWith("audio/")) {
+            setAudioError("Please upload a valid audio file (mp3, wav, etc).");
+            return;
+        }
+
+        // Validate size (10MB)
+        const MAX_SIZE = 10 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+            setAudioError("Audio file must be under 10MB.");
+            return;
+        }
+
+        setAudioFile(file);
+
+    };
+
+    // const transcribeAudio = async (file) => {
+    //     // Placeholder transcription (AI-01-T2 requirement satisfied)
+    //     setAudioTranscript("Transcribing audio...");
+
+    //     setTimeout(() => {
+    //         const mockTranscript =
+    //             "This is a placeholder transcription from the uploaded audio file.";
+
+    //         setAudioTranscript(mockTranscript);
+
+    //         // Merge into existing speech pipeline
+    //         setSpeechText(prev => prev + " " + mockTranscript);
+    //     }, 1500);
+    // };
+
+
+
     const normalizeGeneratedData = (generatedData, categoryFields) => {
         const normalized = {};
 
@@ -205,57 +257,95 @@ const DynamicCategoryForm = () => {
     };
 
 
-   const handleVoiceCommand = (text) => {
-    const command = text.toLowerCase();
-    const normalized = command.replace(/[.,!?]/g, "").trim();
+    const transcribeUploadedAudio = async () => {
+        if (!audioFile) {
+            setNotification({
+                isOpen: true,
+                message: "Please upload an audio file first",
+                type: "error"
+            });
+            return;
+        }
 
-    console.log("🎙 Detected speech:", normalized);
+        const formData = new FormData();
+        formData.append("audio", audioFile);
 
-    const NEXT_FIELD_COMMANDS = [
-        "next",
-        "next field",
-        "go next",
-        "move next"
-    ];
+        try {
+            const res = await axios.post(
+                "https://medlogbook-website.onrender.com/api/v1/ai/transcribe",
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
 
-    const PREVIOUS_FIELD_COMMANDS = [
-        "previous",
-        "previous field",
-        "go back",
-        "back"
-    ];
+            if (res.data.success) {
+                setAudioTranscript(res.data.transcript);
 
-    const CANCEL_COMMANDS = [
-        "cancel",
-        "clear",
-        "clear form",
-        "reset"
-    ];
+                // 👇 IMPORTANT: merge with existing speechText
+                setSpeechText(prev => prev + " " + res.data.transcript);
+            }
 
-    if (NEXT_FIELD_COMMANDS.includes(normalized)) {
-        focusNextField();
-        return true;
-    }
+        } catch (err) {
+            setNotification({
+                isOpen: true,
+                message: "Audio transcription failed",
+                type: "error"
+            });
+        }
+    };
 
-    if (PREVIOUS_FIELD_COMMANDS.includes(normalized)) {
-        focusPreviousField();
-        return true;
-    }
 
-    if (normalized === "submit") {
-        document.querySelector("form")?.requestSubmit();
-        return true;
-    }
 
-    if (CANCEL_COMMANDS.includes(normalized)) {
-        setFormData({});
-        currentFieldIndex.current = 0;
-        fieldRefs.current[0]?.focus();
-        return true;
-    }
+    const handleVoiceCommand = (text) => {
+        const command = text.toLowerCase();
+        const normalized = command.replace(/[.,!?]/g, "").trim();
 
-    return false; // treat as normal dictation
-};
+        console.log("🎙 Detected speech:", normalized);
+
+        const NEXT_FIELD_COMMANDS = [
+            "next",
+            "next field",
+            "go next",
+            "move next"
+        ];
+
+        const PREVIOUS_FIELD_COMMANDS = [
+            "previous",
+            "previous field",
+            "go back",
+            "back"
+        ];
+
+        const CANCEL_COMMANDS = [
+            "cancel",
+            "clear",
+            "clear form",
+            "reset"
+        ];
+
+        if (NEXT_FIELD_COMMANDS.includes(normalized)) {
+            focusNextField();
+            return true;
+        }
+
+        if (PREVIOUS_FIELD_COMMANDS.includes(normalized)) {
+            focusPreviousField();
+            return true;
+        }
+
+        if (normalized === "submit") {
+            document.querySelector("form")?.requestSubmit();
+            return true;
+        }
+
+        if (CANCEL_COMMANDS.includes(normalized)) {
+            setFormData({});
+            currentFieldIndex.current = 0;
+            fieldRefs.current[0]?.focus();
+            return true;
+        }
+
+        return false; // treat as normal dictation
+    };
 
 
 
@@ -751,6 +841,101 @@ const DynamicCategoryForm = () => {
                     )}
                 </div>
             )}
+
+            {/* Audio Upload Section */}
+
+            <div
+                className="mt-6 p-6 rounded-2xl border border-blue-200 shadow-lg"
+                style={{
+                    background: "linear-gradient(135deg, #f0f7ff, #e6f0ff)",
+                }}
+            >
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">🎧</span>
+                    <h4 className="text-xl font-bold text-blue-900">
+                        Upload Audio File
+                    </h4>
+                </div>
+
+                
+              
+
+                {/* File input wrapper */}
+                <label
+                    className="flex items-center justify-between gap-4 p-4 bg-white rounded-xl border-2 border-dashed border-blue-300 cursor-pointer hover:border-blue-500 transition"
+                    style={{
+                        boxShadow: "#cff0ff 0px 10px 10px -5px",
+                    }}
+                >
+                    <span className="text-gray-700 font-medium">
+                        {audioFile ? audioFile.name : "Choose audio file (mp3, wav)"}
+                    </span>
+
+                    <span
+                        className="px-5 py-2 rounded-xl text-white font-semibold"
+                        style={{
+                            background: "linear-gradient(45deg, #7fbefc, #7ab8f5)",
+                        }}
+                    >
+                        Browse
+                    </span>
+
+                    <input
+                        type="file"
+                        accept=".mp3,.wav"
+                        onChange={(e) => setAudioFile(e.target.files[0])}
+                        className="hidden"
+                    />
+                    {/* Transcribe Button */}
+                    <div className="mt-4 flex items-center gap-4">
+                        <button
+                            type="button"
+                            onClick={transcribeUploadedAudio}
+                            disabled={!audioFile || isProcessing}
+                            className="px-6 py-3 rounded-xl text-white font-semibold shadow-md transition-transform duration-200"
+                            style={{
+                                background: "linear-gradient(45deg, rgb(16, 137, 211), rgb(18, 177, 209))",
+                                boxShadow: "rgba(133, 189, 215, 0.6) 0px 8px 15px -8px",
+                            }}
+                            onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.03)")}
+                            onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+                        >
+                            🎧 Transcribe Audio
+                        </button>
+
+                        {isProcessing && (
+                            <span className="text-blue-700 font-medium">
+                                Transcribing audio…
+                            </span>
+                        )}
+                    </div>
+
+
+
+                </label>
+
+                {/* Error */}
+                {audioError && (
+                    <p className="mt-3 text-red-600 font-medium">
+                        ⚠️ {audioError}
+                    </p>
+                )}
+
+                {/* Transcript */}
+                {audioTranscript && (
+                    <div className="mt-4 p-4 bg-white rounded-xl border border-blue-100 shadow-inner">
+                        <p className="text-blue-700 font-bold mb-1">
+                            📝 Audio Transcript
+                        </p>
+                        <p className="text-gray-900 leading-relaxed">
+                            {audioTranscript}
+                        </p>
+                    </div>
+                )}
+            </div>
+
+
 
             {!speechSupported && (
                 <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
