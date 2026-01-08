@@ -1,133 +1,154 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
+import { useSelector } from "react-redux";
+
+/* Sidebars */
 import Sidebar from "./Components/Sidebar";
-import DoctorSidebar from "./Components/DoctorSidebar"; // ✅ Import Doctor's Sidebar
+import DoctorSidebar from "./Components/DoctorSidebar";
+import AdminSidebar from "./Components/AdminSidebar";
+
+/* Auth Pages */
 import LoginPage from "./pages/AdminLoginForm";
 import RegistrationPage from "./pages/RegistrationPage";
-import LogbookPage from "./pages/LogbookPage";
-import ReportsPage from "./pages/ReportsPage"; 
-import AccountPage from "./pages/AccountPage";
-import JobsPage from "./pages/JobsPage"; 
-import ViewEntriesPage from "./pages/ViewEntriesPage";
-import DoctorLogbook from "./pages/DoctorLogbook";
-import ManageLogbook from "./pages/ManageLogbook";
-import AddCategory from "./pages/AddCategory";
-import CategoryForm from "./pages/CategoryForm";
-import GeneratedForm from "./pages/GeneratedForm";
-import Support from "./pages/Support"; 
-import GoalProgression from "./pages/GoalProgression";
-import StudentEntries from "./pages/StudentEntries"; 
-import DynamicForm from "./Components/DynamicCategoryForm"; 
-import DoctorHome from "./pages/DoctorHome";
-import { useSelector } from "react-redux"; 
 import VerifyOtp from "./pages/VerifyOtp";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminPage from "./pages/AdminPage";
+
+/* Pages */
+import AccountPage from "./pages/AccountPage";
+import Support from "./pages/Support";
+
+/* Student */
+import LogbookPage from "./pages/LogbookPage";
+import ReportsPage from "./pages/ReportsPage";
+import GoalProgression from "./pages/GoalProgression";
+import StudentEntries from "./pages/StudentEntries";
+
+/* Doctor */
+import DoctorHome from "./pages/DoctorHome";
+import DoctorLogbook from "./pages/DoctorLogbook";
+import DoctorStudentAnalysisPage from "./pages/DoctorStudentAnalysisPage";
 import AssignedTasksPage from "./pages/AssignedTasksPage";
 
-import DoctorStudentAnalysisPage from './pages/DoctorStudentAnalysisPage';
-import AnalysisPage from "./pages/AnalysisPage";
+/* Admin */
 import AdminHome from "./pages/AdminHome";
+import AdminPage from "./pages/AdminPage";
 import PendingApproval from "./pages/PendingApproval";
 import AssignTaskPage from "./pages/AssignTaskPage";
-
 import AdminSupportPage from "./pages/AdminSupportPage";
 
-import "./index.css"; 
+/* Forms */
+import DynamicForm from "./Components/DynamicCategoryForm";
 
-const AppLayout = () => {
-  const location = useLocation();
+import "./index.css";
 
-  // ✅ Hide sidebar only for login and registration pages
-  const isAuthRoute = (path) =>
-    ["/", "/register", "/verify-otp", "/forgot-password"].includes(path) ||
-    path.startsWith("/reset-password/");
-  
-  const hideSidebar = isAuthRoute(location.pathname);
-  
-
-  // ✅ Get user role from Redux store
-  const { user } = useSelector((state) => state.auth);
-  const role = user?.role;
-
+/* ================= ADMIN LAYOUT ================= */
+const AdminLayout = () => {
   return (
-    <div className="flex md:flex-row flex-col h-screen">
-      {!hideSidebar && (
-  <div className="w-[250px] h-10 md:h-screen">
-    {role === "doctor" ? (
-      <DoctorSidebar />
-    ) : role === "admin" ? (
-      <AdminDashboard />
-    ) : role === "student" ? (
-      <Sidebar />
-    ) : null}
-  </div>
-)}
+    <div className="flex min-h-screen w-screen">
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block w-[250px] flex-shrink-0">
+        <AdminSidebar />
+      </div>
 
-         <div
-  className="flex-1 p-5 overflow-y-auto bg-gradient-to-br from-white via-[#e8f5fe] to-[#dbefff] rounded-[30px] m-2.5"
-  style={{ scrollbarWidth: "thin" }}
->
+      {/* Mobile Sidebar */}
+      <div className="md:hidden">
+        <AdminSidebar />
+      </div>
 
-          <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/register" element={<RegistrationPage />} />
-            <Route path="/logbookpage" element={<LogbookPage />} />
-            <Route path="/reports" element={<ReportsPage />} /> 
-            <Route path="/account" element={<AccountPage />} />
-            <Route path="/manage-logbook" element={<ManageLogbook />} />
-            <Route path="/add-category" element={<AddCategory />} />
-            <Route path="/category-form/:category" element={<CategoryForm />} />
-            <Route path="/generated-form/:category" element={<GeneratedForm />} /> 
-            <Route path="/support" element={<Support />} />
-            <Route path="/goal-progression" element={<GoalProgression />} />
-            <Route path="/jobs" element={<JobsPage />} /> 
-            <Route path="/assign-task" element={<AssignTaskPage />} />
-            <Route path="/view-entries" element={<ViewEntriesPage />} />
-            <Route path="/doctor-logbook" element={<DoctorLogbook />} />
-            <Route path="/student-entries" element={<StudentEntries />} />
-            <Route path="/generated-form/:category" element={<DynamicForm />} />
-            <Route path="/doctor-home" element={<DoctorHome />} />
-            <Route path="/doctor-student-analysis" element={<DoctorStudentAnalysisPage />} />
-            <Route path="/analysis" element={<AnalysisPage />} />
-            
-<Route path="/assigned-tasks" element={<AssignedTasksPage />} />
-
-            <Route path="/admin" element={<AdminDashboard />}>
-            
-            <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<AdminHome />} />
-            <Route path="users" element={<AdminPage />} />
-
-            
-
-            <Route path="support" element={<AdminSupportPage />} />
-            <Route path="/admin/account" element={<AccountPage />} />
-            <Route path="/admin/register" element={<RegistrationPage />} />
-
-
-            </Route>
-            <Route path="/pending-approval" element={<PendingApproval />} />
-        
-
-            <Route path="/verify-otp" element={<VerifyOtp />} /> 
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:userId/:token" element={<ResetPassword />} />
-          </Routes>
-
-        </div>
-      
+      {/* Main Content (SCROLLS) */}
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-white via-[#e8f5fe] to-[#dbefff]">
+        <Outlet />
+      </div>
     </div>
   );
 };
 
-const App = () => {
+/* ================= MAIN APP LAYOUT ================= */
+const AppLayout = () => {
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+
+  // fallback to localStorage
+  const role = user?.role || localStorage.getItem("role");
+
+  const authRoutes = ["/", "/register", "/verify-otp", "/forgot-password"];
+  const hideSidebar =
+    authRoutes.includes(location.pathname) ||
+    location.pathname.startsWith("/reset-password");
+
   return (
-    <Router>
-      <AppLayout />
-    </Router>
+    // ✅ FIXED: removed overflow-hidden
+    <div className="flex min-h-screen w-screen">
+      {/* Student / Doctor Sidebar */}
+      {!hideSidebar && role !== "admin" && (
+        <div className="hidden md:block w-[250px] flex-shrink-0">
+          {role === "student" && <Sidebar />}
+          {role === "doctor" && <DoctorSidebar />}
+        </div>
+      )}
+
+      {/* Main Content (SCROLLS) */}
+      <div className="flex-1 overflow-y-auto">
+        <Routes>
+          {/* Auth */}
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/verify-otp" element={<VerifyOtp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route
+            path="/reset-password/:userId/:token"
+            element={<ResetPassword />}
+          />
+
+          {/* Student */}
+          <Route path="/logbookpage" element={<LogbookPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/goal-progression" element={<GoalProgression />} />
+          <Route path="/student-entries" element={<StudentEntries />} />
+
+          {/* Doctor */}
+          <Route path="/doctor-home" element={<DoctorHome />} />
+          <Route path="/doctor-logbook" element={<DoctorLogbook />} />
+          <Route
+            path="/doctor-student-analysis"
+            element={<DoctorStudentAnalysisPage />}
+          />
+          <Route path="/assigned-tasks" element={<AssignedTasksPage />} />
+
+          {/* Admin */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminHome />} />
+            <Route path="register" element={<RegistrationPage />} />
+            <Route path="users" element={<AdminPage />} />
+            <Route path="pending-approval" element={<PendingApproval />} />
+            <Route path="assign-task" element={<AssignTaskPage />} />
+            <Route path="support" element={<AdminSupportPage />} />
+            <Route path="account" element={<AccountPage />} />
+          </Route>
+
+          {/* Common */}
+          <Route path="/support" element={<Support />} />
+          <Route path="/account" element={<AccountPage />} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </div>
   );
 };
+
+const App = () => (
+  <Router>
+    <AppLayout />
+  </Router>
+);
 
 export default App;

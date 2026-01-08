@@ -100,9 +100,17 @@ const DoctorSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/");
-  };
+  // 🔐 clear authentication completely
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+
+  // (optional safety)
+  localStorage.removeItem("user");
+
+  // 🚪 go back to login page
+  navigate("/", { replace: true });
+};
+
 
    const getLinkStyle = (path) => {
   const isActive = location.pathname === path;
