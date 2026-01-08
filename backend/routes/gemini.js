@@ -9,6 +9,8 @@ require('dotenv').config();
 // Gemini client setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const upload = multer({ dest: 'uploads/' });
+const USE_MOCK_AI = true; // switch to false when Gemini works
+
 
 
 // 🔒 Redact patient-identifying fields before sending to AI
@@ -135,79 +137,51 @@ ${fileText || 'No attached notes.'}
 });
 
 
-// 🎧 Audio Transcription
-// router.post('/transcribe', upload.single('audio'), async (req, res) => {
-//   try {
-//     if (!req.file) {
-//       return res.status(400).json({ error: 'Audio file required' });
-//     }
+//audio transcripe
+router.post('/transcribe', upload.single('audio'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Audio file required' });
+    }
 
-//     const allowed = ['audio/mpeg', 'audio/wav', 'audio/mp3'];
-//     if (!allowed.includes(req.file.mimetype)) {
-//       fs.unlinkSync(req.file.path);
-//       return res.status(400).json({ error: 'Invalid audio format' });
-//     }
+    const allowed = ['audio/mpeg', 'audio/wav', 'audio/mp3'];
+    if (!allowed.includes(req.file.mimetype)) {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({ error: 'Invalid audio format' });
+    }
 
-//     const audioBuffer = fs.readFileSync(req.file.path);
-//     fs.unlinkSync(req.file.path);
+    const audioBuffer = fs.readFileSync(req.file.path);
+    fs.unlinkSync(req.file.path);
 
-//     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-//     const response = await withTimeout(
-//       model.generateContent({
-//         contents: [{
-//           role: "user",
-//           parts: [
-//             {
-//               inlineData: {
-//                 mimeType: req.file.mimetype,
-//                 data: audioBuffer.toString("base64")
-//               }
-//             },
-//             { text: "Transcribe this medical audio accurately." }
-//           ]
-//         }]
-//       }),
-//       20000
-//     );
+    const response = await withTimeout(
+      model.generateContent({
+        contents: [{
+          role: "user",
+          parts: [
+            {
+              inlineData: {
+                mimeType: req.file.mimetype,
+                data: audioBuffer.toString("base64")
+              }
+            },
+            { text: "Transcribe this medical audio accurately." }
+          ]
+        }]
+      }),
+      20000
+    );
 
-//     res.json({
-//       success: true,
-//       transcript: response.response.text()
-//     });
+    res.json({
+      success: true,
+      transcript: response.response.text()
+    });
 
-//   } catch (err) {
-//     console.error("Audio transcription error:", err.message);
-//     res.status(503).json({ error: "Transcription failed" });
-//   }
-// });
-
-router.post('/generateform', async (req, res) => {
-  console.log("🧪 Using MOCK AI response for form filling");
-
-  const mockResponse = {
-    "Patient Name": "Nithin",
-    "Admission Date": "2025-07-17",
-    "Date": "2025-07-25",
-    "Hospital": "KMC",
-    "Location": "A & E Major",
-    "Referral Source": "GP Referral",
-    "Your Reference": "NKSDJNSD",
-    "Gender": "Male",
-    "Age": 21,
-    "Role": "Clerked",
-    "Specialty Area": "General Medicine",
-    "Problem": "Shortness of breath",
-    "Outcome": "Referred On",
-    "Notes": "Patient stable, advised further evaluation"
-  };
-
-  return res.json({
-    success: true,
-    formData: mockResponse,
-    fallback: true,
-    message: "Mock AI response used for testing"
-  });
+  } catch (err) {
+    console.error("Audio transcription error:", err.message);
+    res.status(503).json({ error: "Transcription failed" });
+  }
 });
 
 
@@ -219,6 +193,8 @@ router.post('/generateform', async (req, res) => {
 // Add this route to your existing routes/gemini.js file, after the summarize route
 
 // 🎤 Generate form JSON from speech text
+const USE_MOCK_AI = true; // 🔁 set to false when Gemini API is stable
+
 router.post('/generateform', async (req, res) => {
   console.log('🎤 /generateform route hit in medlog');
   console.log('Request body:', req.body);
@@ -232,15 +208,12 @@ router.post('/generateform', async (req, res) => {
       return res.status(400).json({ error: 'speechText and category are required' });
     }
 
-    if (!process.env.GEMINI_API_KEY) {
-      console.error('❌ No API key configured');
-      return res.status(500).json({ error: 'API key not configured' });
-    }
-
     console.log(`📝 Processing speech for category: ${category}`);
     console.log(`🗣️ Speech text length: ${speechText.length} characters`);
 
-    // Use the same example formats as your existing forms
+    // -----------------------------
+    // Example formats (UNCHANGED)
+    // -----------------------------
     const exampleFormats = {
       Admissions: {
         "Patient Name": "",
@@ -303,6 +276,45 @@ router.post('/generateform', async (req, res) => {
 
     const exampleFormat = exampleFormats[category] || exampleFormats.Admissions;
 
+    // =================================================
+    // 🧪 MOCK MODE (FOR TESTING / API DOWN)
+    // =================================================
+    if (USE_MOCK_AI) {
+      console.log('🧪 Using MOCK AI response');
+
+      const mockResponse = {
+        "Patient Name": "Nithin",
+        "Admission Date": "2025-07-17",
+        "Date": "2025-07-25",
+        "Hospital": "KMC",
+        "Location": "A & E Major",
+        "Referral Source": "GP Referral",
+        "Your Reference": "NKSDJNSD",
+        "Gender": "Male",
+        "Age": 21,
+        "Role": "Clerked",
+        "Specialty Area": "General Medicine",
+        "Problem": "Shortness of breath",
+        "Outcome": "Referred On",
+        "Notes": "Patient stable, advised further evaluation"
+      };
+
+      return res.json({
+        success: true,
+        formData: mockResponse,
+        fallback: true,
+        message: 'Mock AI response used for testing'
+      });
+    }
+
+    // =================================================
+    // 🤖 REAL GEMINI MODE (UNCHANGED)
+    // =================================================
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('❌ No API key configured');
+      return res.status(500).json({ error: 'API key not configured' });
+    }
+
     const inputPrompt = `
 You are a medical assistant helping to structure clinical log entries. Based on the following speech transcript, extract and organize the information into a structured JSON format.
 
@@ -324,50 +336,42 @@ Instructions:
 7. Only include information that was actually mentioned in the speech
 8. Return ONLY the JSON object, no additional text or explanations
 
-JSON Response:`;
+JSON Response:
+`;
 
     console.log('🤖 Calling Gemini API...');
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
     const response = await withTimeout(
       retryGeminiCall(model, inputPrompt),
-      15000 // 15 seconds
+      15000
     );
 
     console.log('📤 Raw Gemini response:', response.substring(0, 200) + '...');
 
-    // Clean up the response to ensure it's valid JSON
-    let cleanedResponse = response.trim();
+    let cleanedResponse = response
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
 
-    // Remove any markdown code blocks
-    cleanedResponse = cleanedResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-
-    // Try to parse the JSON to validate it
     try {
       const parsedJSON = JSON.parse(cleanedResponse);
       console.log('✅ Successfully generated form data');
-      res.json({ formData: parsedJSON, success: true });
+      return res.json({ formData: parsedJSON, success: true });
     } catch (parseError) {
-      console.warn('⚠️ JSON parsing failed, attempting to fix:', parseError.message);
+      console.warn('⚠️ JSON parsing failed, attempting fix');
 
-      // Attempt to fix common JSON issues
-      cleanedResponse = cleanedResponse.replace(/'/g, '"'); // Replace single quotes with double quotes
-      cleanedResponse = cleanedResponse.replace(/,\s*}/g, '}'); // Remove trailing commas
-      cleanedResponse = cleanedResponse.replace(/,\s*]/g, ']'); // Remove trailing commas in arrays
+      cleanedResponse = cleanedResponse
+        .replace(/'/g, '"')
+        .replace(/,\s*}/g, '}')
+        .replace(/,\s*]/g, ']');
 
       try {
         const parsedJSON = JSON.parse(cleanedResponse);
-        console.log('✅ Successfully generated form data (after fixing)');
-        res.json({ formData: parsedJSON, success: true });
-      } catch (secondParseError) {
-        console.error('❌ Failed to parse Gemini response as JSON:', secondParseError.message);
-        console.error('Cleaned response:', cleanedResponse);
-
-        // Return a fallback response
-        const fallbackData = { ...exampleFormat };
-        fallbackData["Learning Points"] = `Original speech: "${speechText}"`;
-
-        res.json({
-          formData: fallbackData,
+        return res.json({ formData: parsedJSON, success: true });
+      } catch {
+        return res.json({
+          formData: exampleFormat,
           success: true,
           fallback: true,
           message: 'AI parsing failed, please fill manually'
@@ -376,23 +380,15 @@ JSON Response:`;
     }
 
   } catch (error) {
-    console.error('❌ Form generation error:', error?.message || error);
+    console.error('❌ Form generation error:', error.message);
 
-    let errorMessage = 'Form generation failed';
-    if (error.message.includes('API_KEY_INVALID')) {
-      errorMessage = 'Invalid API key';
-    } else if (error.message.includes('QUOTA_EXCEEDED')) {
-      errorMessage = 'API quota exceeded';
-    } else if (error.message.includes('RATE_LIMIT')) {
-      errorMessage = 'Rate limit exceeded, please try again later';
-    }
-
-    res.status(503).json({
-      error: errorMessage,
+    return res.status(503).json({
+      error: 'Form generation failed',
       details: error.message,
       fallback: true
     });
   }
 });
+
 
 module.exports = router;
