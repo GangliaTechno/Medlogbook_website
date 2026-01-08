@@ -10,6 +10,43 @@ require('dotenv').config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const upload = multer({ dest: 'uploads/' });
 
+
+// 🔒 Redact patient-identifying fields before sending to AI
+const redactSensitiveFields = (data) => {
+  const SENSITIVE_KEYS = [
+    'patientname',
+    'name',
+    'patientlocation',
+    'location',
+    'patientid',
+    'uhid',
+    'mrn',
+    'reference',
+    'yourreference'
+  ];
+
+  const sanitized = {};
+
+  for (const key in data) {
+    const normalizedKey = key.toLowerCase().replace(/\s+/g, '');
+
+    // ❌ Skip patient-identifying fields
+    if (SENSITIVE_KEYS.includes(normalizedKey)) {
+      continue;
+    }
+
+    // 🔁 Handle nested objects safely
+    if (typeof data[key] === 'object' && data[key] !== null) {
+      sanitized[key] = redactSensitiveFields(data[key]);
+    } else {
+      sanitized[key] = data[key];
+    }
+  }
+
+  return sanitized;
+};
+
+
 // Retry wrapper for Gemini requests
 const retryGeminiCall = async (model, prompt, retries = 3, delay = 2000) => {
   for (let i = 0; i < retries; i++) {
@@ -33,7 +70,6 @@ const withTimeout = (promise, ms) =>
     )
   ]);
 
-
 // 🔍 Summarize a full entry (with optional file)
 router.post('/summarize', upload.single('file'), async (req, res) => {
   try {
@@ -43,98 +79,137 @@ router.post('/summarize', upload.single('file'), async (req, res) => {
       return res.status(400).json({ error: 'entryData is required' });
     }
 
+    // Parse incoming form data
     const parsedData = JSON.parse(entryData);
-    delete parsedData.patientName;
-    delete parsedData.patientLocation;
-    delete parsedData.Name;
-    delete parsedData.Location;
 
-    // Flatten deeply nested objects (optional for clean prompt)
-    for (const key in parsedData) {
-      if (typeof parsedData[key] === 'object') {
-        parsedData[key] = JSON.stringify(parsedData[key]);
+    // 🔐 Redact patient-identifying information
+    const sanitizedData = redactSensitiveFields(parsedData);
+
+    // Flatten nested objects (clean prompt for AI)
+    for (const key in sanitizedData) {
+      if (typeof sanitizedData[key] === 'object') {
+        sanitizedData[key] = JSON.stringify(sanitizedData[key]);
       }
     }
 
+    // Handle optional attached file
     let fileText = '';
     if (req.file) {
       try {
         fileText = fs.readFileSync(req.file.path, 'utf-8');
-        fs.unlinkSync(req.file.path); // Clean up temp file
+        fs.unlinkSync(req.file.path); // cleanup temp file
       } catch (fileError) {
-        console.warn("Failed to read or delete uploaded file:", fileError.message);
+        console.warn('File read/delete failed:', fileError.message);
       }
     }
 
+    // 🔍 Debug log (prove redaction works)
+    console.log('🔒 Data sent to AI (sanitized):', sanitizedData);
+
+    // AI Prompt
     const inputPrompt = `
-You are a clinical assistant. Generate a brief, professional, and formal summary of the student's medical entry. Do NOT include patient name or location. Base the summary only on the following data and attached text.
+You are a clinical assistant. Generate a brief, professional, and formal summary of the student's medical entry.
+Do NOT include patient name, location, or any identifying information.
 
 Structured Entry Data:
-${JSON.stringify(parsedData, null, 2)}
+${JSON.stringify(sanitizedData, null, 2)}
 
 Attached Notes (if any):
 ${fileText || 'No attached notes.'}
 `;
 
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const summary = await retryGeminiCall(model, inputPrompt); // 🔁 retries 3x on failure
+
+    const summary = await retryGeminiCall(model, inputPrompt);
 
     res.json({ summary });
+
   } catch (error) {
     console.error('Gemini summarization error:', error?.message || error);
-    // Optional fallback
-    const fallback = "Summary unavailable due to model overload. Please try again later.";
-    res.status(503).json({ summary: fallback, fallback: true });
+
+    res.status(503).json({
+      summary: 'Summary unavailable due to AI service issue. Please try again later.',
+      fallback: true
+    });
   }
 });
 
 
 // 🎧 Audio Transcription
-router.post('/transcribe', upload.single('audio'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'Audio file required' });
-    }
+// router.post('/transcribe', upload.single('audio'), async (req, res) => {
+//   try {
+//     if (!req.file) {
+//       return res.status(400).json({ error: 'Audio file required' });
+//     }
 
-    const allowed = ['audio/mpeg', 'audio/wav', 'audio/mp3'];
-    if (!allowed.includes(req.file.mimetype)) {
-      fs.unlinkSync(req.file.path);
-      return res.status(400).json({ error: 'Invalid audio format' });
-    }
+//     const allowed = ['audio/mpeg', 'audio/wav', 'audio/mp3'];
+//     if (!allowed.includes(req.file.mimetype)) {
+//       fs.unlinkSync(req.file.path);
+//       return res.status(400).json({ error: 'Invalid audio format' });
+//     }
 
-    const audioBuffer = fs.readFileSync(req.file.path);
-    fs.unlinkSync(req.file.path);
+//     const audioBuffer = fs.readFileSync(req.file.path);
+//     fs.unlinkSync(req.file.path);
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+//     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const response = await withTimeout(
-      model.generateContent({
-        contents: [{
-          role: "user",
-          parts: [
-            {
-              inlineData: {
-                mimeType: req.file.mimetype,
-                data: audioBuffer.toString("base64")
-              }
-            },
-            { text: "Transcribe this medical audio accurately." }
-          ]
-        }]
-      }),
-      20000
-    );
+//     const response = await withTimeout(
+//       model.generateContent({
+//         contents: [{
+//           role: "user",
+//           parts: [
+//             {
+//               inlineData: {
+//                 mimeType: req.file.mimetype,
+//                 data: audioBuffer.toString("base64")
+//               }
+//             },
+//             { text: "Transcribe this medical audio accurately." }
+//           ]
+//         }]
+//       }),
+//       20000
+//     );
 
-    res.json({
-      success: true,
-      transcript: response.response.text()
-    });
+//     res.json({
+//       success: true,
+//       transcript: response.response.text()
+//     });
 
-  } catch (err) {
-    console.error("Audio transcription error:", err.message);
-    res.status(503).json({ error: "Transcription failed" });
-  }
+//   } catch (err) {
+//     console.error("Audio transcription error:", err.message);
+//     res.status(503).json({ error: "Transcription failed" });
+//   }
+// });
+
+router.post('/generateform', async (req, res) => {
+  console.log("🧪 Using MOCK AI response for form filling");
+
+  const mockResponse = {
+    "Patient Name": "Nithin",
+    "Admission Date": "2025-07-17",
+    "Date": "2025-07-25",
+    "Hospital": "KMC",
+    "Location": "A & E Major",
+    "Referral Source": "GP Referral",
+    "Your Reference": "NKSDJNSD",
+    "Gender": "Male",
+    "Age": 21,
+    "Role": "Clerked",
+    "Specialty Area": "General Medicine",
+    "Problem": "Shortness of breath",
+    "Outcome": "Referred On",
+    "Notes": "Patient stable, advised further evaluation"
+  };
+
+  return res.json({
+    success: true,
+    formData: mockResponse,
+    fallback: true,
+    message: "Mock AI response used for testing"
+  });
 });
+
 
 
 // 🎤 NEW: Generate form JSON from speech text
