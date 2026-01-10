@@ -6,11 +6,17 @@ import parseCsvBreakdown from "../utils/parseCsvBreakdown";
 
 
 const StudentEntries = () => {
+
+  const USE_MOCK_AI_SUMMARY = true;
+
   const location = useLocation();
   const navigate = useNavigate();
   const student = location.state?.student || {};
   const [summaries, setSummaries] = useState({});
   const [isSummarizing, setIsSummarizing] = useState({});
+
+  const [editingSummary, setEditingSummary] = useState({});
+
 
   const [reviewedEntries, setReviewedEntries] = useState([]);
   const [notReviewedEntries, setNotReviewedEntries] = useState([]);
@@ -195,57 +201,99 @@ const StudentEntries = () => {
   };
 
   const handleGenerateSummary = async (entry) => {
-  const entryId = entry._id;
-  setIsSummarizing((prev) => ({ ...prev, [entryId]: true }));
+    const entryId = entry._id;
+    setIsSummarizing((prev) => ({ ...prev, [entryId]: true }));
 
-  try {
-    const formData = new FormData();
-    const dataWithoutPII = { ...entry.data };
-    delete dataWithoutPII.Name;
-    delete dataWithoutPII.PatientName;
-    delete dataWithoutPII.Location;
+    /* ===========================
+       🧪 DEMO / MOCK AI RESPONSE
+       =========================== */
+    if (USE_MOCK_AI_SUMMARY) {
+      setTimeout(() => {
+        const demoSummary = `
+This entry describes a clinical admission involving a ${entry.data?.Age || "young"} year old ${entry.data?.Gender || "patient"
+          } who was clerked in the ${entry.data?.Location || "department"}.
 
-    formData.append("entryData", JSON.stringify(dataWithoutPII));
+The patient presented with ${entry.data?.Problem || "a documented medical concern"} and was assessed appropriately.
+Initial evaluation and documentation were completed as per clinical standards.
 
-    // If a file is present, append it (only first file if multiple)
-    for (const key in entry.data) {
-      if (typeof entry.data[key] === "string" && entry.data[key].startsWith("/uploads/")) {
-        const fileUrl = `https://medlogbook-website.onrender.com${entry.data[key]}`;
-        const response = await fetch(fileUrl);
-        const blob = await response.blob();
-        formData.append("file", blob, "attachedFile.txt");
-        break; // only attach one file
-      }
+The recorded outcome for this encounter was "${entry.data?.Outcome || "reviewed"}".
+Overall, the entry demonstrates appropriate clinical reasoning, documentation quality, and patient management.
+      `.trim();
+
+        setSummaries((prev) => ({
+          ...prev,
+          [entryId]: demoSummary,
+        }));
+
+        setNotification({
+          isOpen: true,
+          message: "Demo AI summary generated successfully.",
+          type: "success",
+        });
+
+        setIsSummarizing((prev) => ({ ...prev, [entryId]: false }));
+      }, 1200); // simulate AI processing delay
+
+      return; // ⛔ skip real API
     }
 
-    const response = await fetch("https://medlogbook-website.onrender.com/api/ai/summarize", {
-      method: "POST",
-      body: formData,
-    });
+    /* ===========================
+       🔥 REAL GEMINI FLOW (UNCHANGED)
+       =========================== */
+    try {
+      const formData = new FormData();
+      const dataWithoutPII = { ...entry.data };
+      delete dataWithoutPII.Name;
+      delete dataWithoutPII.PatientName;
+      delete dataWithoutPII.Location;
 
-    const data = await response.json();
+      formData.append("entryData", JSON.stringify(dataWithoutPII));
 
-    if (response.ok) {
-      setSummaries((prev) => ({ ...prev, [entryId]: data.summary }));
+      // If a file is present, append it (only first file if multiple)
+      for (const key in entry.data) {
+        if (
+          typeof entry.data[key] === "string" &&
+          entry.data[key].startsWith("/uploads/")
+        ) {
+          const fileUrl = `https://medlogbook-website.onrender.com${entry.data[key]}`;
+          const response = await fetch(fileUrl);
+          const blob = await response.blob();
+          formData.append("file", blob, "attachedFile.txt");
+          break; // only attach one file
+        }
+      }
+
+      const response = await fetch(
+        "https://medlogbook-website.onrender.com/api/ai/summarize",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSummaries((prev) => ({ ...prev, [entryId]: data.summary }));
+        setNotification({
+          isOpen: true,
+          message: "Summary generated successfully.",
+          type: "success",
+        });
+      } else {
+        throw new Error(data.error || "Unknown error");
+      }
+    } catch (error) {
+      console.error("Summary generation failed:", error);
       setNotification({
         isOpen: true,
-        message: "Summary generated successfully.",
-        type: "success",
+        message: "Failed to generate summary.",
+        type: "error",
       });
-    } else {
-      throw new Error(data.error || "Unknown error");
+    } finally {
+      setIsSummarizing((prev) => ({ ...prev, [entryId]: false }));
     }
-  } catch (error) {
-    console.error("Summary generation failed:", error);
-    setNotification({
-      isOpen: true,
-      message: "Failed to generate summary.",
-      type: "error",
-    });
-  } finally {
-    setIsSummarizing((prev) => ({ ...prev, [entryId]: false }));
-  }
-};
+  };
 
 
   return (
@@ -260,33 +308,31 @@ const StudentEntries = () => {
           Back
         </button>
 
-        
+
         <h2 className="text-2xl font-bold text-blue-600 mb-6"
-      style={{
-    textAlign: "center",
-    fontWeight: 900,
-    fontSize: "30px",
-    color: "rgb(16, 137, 211)"
-  }}>Entries for {student.fullName}</h2>
+          style={{
+            textAlign: "center",
+            fontWeight: 900,
+            fontSize: "30px",
+            color: "rgb(16, 137, 211)"
+          }}>Entries for {student.fullName}</h2>
 
         {/* Filters */}
         <div className="flex justify-center mb-6">
           <button
-            className={`px-6 py-2 rounded-full mx-2 ${
-              selectedTab === "not-reviewed"
-                ? "bg-blue-400 text-white"
-                : "bg-blue-300 text-white"
-            }`}
+            className={`px-6 py-2 rounded-full mx-2 ${selectedTab === "not-reviewed"
+              ? "bg-blue-400 text-white"
+              : "bg-blue-300 text-white"
+              }`}
             onClick={() => setSelectedTab("not-reviewed")}
           >
             Not Reviewed
           </button>
           <button
-            className={`px-6 py-2 rounded-full mx-2 ${
-              selectedTab === "reviewed"
-                ? "bg-blue-400 text-white"
-                : "bg-blue-300 text-white"
-            }`}
+            className={`px-6 py-2 rounded-full mx-2 ${selectedTab === "reviewed"
+              ? "bg-blue-400 text-white"
+              : "bg-blue-300 text-white"
+              }`}
             onClick={() => setSelectedTab("reviewed")}
           >
             Reviewed
@@ -328,11 +374,11 @@ const StudentEntries = () => {
             <div
               key={entry._id}
               className="relative bg-[#717c9350] p-6 rounded-lg mb-8 shadow-md"
-               style={{
-    borderRadius: "50px",
-    background: "#e0e0e0ff",
-    boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
-  }}
+              style={{
+                borderRadius: "50px",
+                background: "#e0e0e0ff",
+                boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
+              }}
             >
               <h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
                 <span>🩺</span> {capitalize(entry.categoryName)}
@@ -393,44 +439,77 @@ const StudentEntries = () => {
                       disabled={isSummarizing[entry._id]}
                       className="text-xs mt-1 w-max bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md disabled:opacity-50"
                       style={{
-    display: "block",
-    width: "100%",
-    fontWeight: "bold",
-    background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-    color: "white",
-    paddingBlock: "15px",
-    margin: "20px auto",
-    borderRadius: "20px",
-    boxShadow: "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px",
-    border: "none",
-    transition: "all 0.2s ease-in-out",
-    cursor: "pointer"
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.transform = "scale(1.03)";
-    e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.transform = "scale(1)";
-    e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px";
-  }}
-  onMouseDown={(e) => {
-    e.currentTarget.style.transform = "scale(0.95)";
-    e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px";
-  }}
-  onMouseUp={(e) => {
-    e.currentTarget.style.transform = "scale(1.03)";
-    e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
-  }}
+                        display: "block",
+                        width: "100%",
+                        fontWeight: "bold",
+                        background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
+                        color: "white",
+                        paddingBlock: "15px",
+                        margin: "20px auto",
+                        borderRadius: "20px",
+                        boxShadow: "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px",
+                        border: "none",
+                        transition: "all 0.2s ease-in-out",
+                        cursor: "pointer"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "scale(1.03)";
+                        e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "scale(1)";
+                        e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px";
+                      }}
+                      onMouseDown={(e) => {
+                        e.currentTarget.style.transform = "scale(0.95)";
+                        e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px";
+                      }}
+                      onMouseUp={(e) => {
+                        e.currentTarget.style.transform = "scale(1.03)";
+                        e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
+                      }}
                     >
                       {isSummarizing[entry._id] ? "Generating..." : "Generate Summary from Entry"}
                     </button>
                     {summaries[entry._id] && (
-                      <div className="mt-2 bg-white p-3 rounded-full text-sm text-blue border-l-4 border-teal-500"
-                      >
-                        <strong>Generated Summary:</strong> {summaries[entry._id]}
+                      <div className="mt-4 bg-white p-5 rounded-xl border-l-4 border-teal-500 shadow-sm">
+                        <div className="flex justify-between items-center mb-2">
+                          <strong className="text-blue-700 text-sm">
+                            🤖 AI Generated Medical Summary
+                          </strong>
+
+                          <button
+                            onClick={() =>
+                              setEditingSummary((prev) => ({
+                                ...prev,
+                                [entry._id]: !prev[entry._id],
+                              }))
+                            }
+                            className="text-xs text-blue-600 hover:underline"
+                          >
+                            {editingSummary[entry._id] ? "Save" : "Edit"}
+                          </button>
+                        </div>
+
+                        {editingSummary[entry._id] ? (
+                          <textarea
+                            className="w-full min-h-[120px] p-3 rounded-md border bg-gray-50 text-black"
+                            value={summaries[entry._id]}
+                            onChange={(e) =>
+                              setSummaries((prev) => ({
+                                ...prev,
+                                [entry._id]: e.target.value,
+                              }))
+                            }
+                          />
+                        ) : (
+                          <p className="text-gray-800 whitespace-pre-line leading-relaxed text-sm">
+                            {summaries[entry._id]}
+                          </p>
+                        )}
                       </div>
                     )}
+
                   </div>
 
                   <div className="flex items-center gap-4 flex-wrap">
@@ -473,24 +552,24 @@ const StudentEntries = () => {
                         }))
                       }
                       className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-md"
-                        style={{
-    background: "linear-gradient(45deg, #8abff4ff, #7ab8f5)", // light blue tones
-    boxShadow: "0 6px 12px rgba(122, 184, 245, 0.3)",
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                      style={{
+                        background: "linear-gradient(45deg, #8abff4ff, #7ab8f5)", // light blue tones
+                        boxShadow: "0 6px 12px rgba(122, 184, 245, 0.3)",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                     >
                       Score Valuation ⬇
                     </button>
 
                     <button
                       className="bg-teal-600 hover:bg-teal-700 text-white py-2 px-4 rounded-md"
-                       style={{
-    background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-    boxShadow: "rgba(133, 189, 215, 0.88) 0px 10px 15px -10px",
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                      style={{
+                        background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
+                        boxShadow: "rgba(133, 189, 215, 0.88) 0px 10px 15px -10px",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                       onClick={() => handleReviewSubmit(entry._id)}
                     >
                       Submit Review
@@ -511,7 +590,7 @@ const StudentEntries = () => {
                               const csvText = evt.target.result;
                               // Parse CSV: label,value,max, skip header if present
                               let lines = csvText.split(/\r?\n/).filter(Boolean);
-                              if (lines.length && lines[0].toLowerCase().replace(/\s/g,"") === "label,value,max") {
+                              if (lines.length && lines[0].toLowerCase().replace(/\s/g, "") === "label,value,max") {
                                 lines = lines.slice(1);
                               }
                               const parsedBreakdown = lines.map((line) => {
@@ -544,7 +623,7 @@ const StudentEntries = () => {
                           const breakdown = scoreBreakdown[entry._id] || [];
                           // Remove heading row if present (label,value,max)
                           const filteredBreakdown = breakdown.filter(
-                            item => item.label.toLowerCase().replace(/\s/g,"") !== "label"
+                            item => item.label.toLowerCase().replace(/\s/g, "") !== "label"
                           );
                           // Find all main labels (no colon)
                           const mainLabels = filteredBreakdown.filter(item => !item.label.includes(":"));
