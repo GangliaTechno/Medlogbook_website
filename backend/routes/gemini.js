@@ -9,7 +9,7 @@ require('dotenv').config();
 // Gemini client setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const upload = multer({ dest: 'uploads/' });
-const USE_MOCK_AI = true; // switch to false when Gemini works
+const USE_MOCK_AI = true; 
 
 
 
@@ -193,7 +193,6 @@ router.post('/transcribe', upload.single('audio'), async (req, res) => {
 // Add this route to your existing routes/gemini.js file, after the summarize route
 
 // 🎤 Generate form JSON from speech text
-const USE_MOCK_AI = true; // 🔁 set to false when Gemini API is stable
 
 router.post('/generateform', async (req, res) => {
   console.log('🎤 /generateform route hit in medlog');
