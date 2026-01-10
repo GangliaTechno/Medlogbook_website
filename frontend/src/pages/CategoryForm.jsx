@@ -92,20 +92,20 @@ import DynamicCategoryForm from "../Components/DynamicCategoryForm";
 const CategoryForm = () => {
   const { category } = useParams();
 
+  if (!category) {
+    return <p className="text-center mt-10">No category selected</p>;
+  }
+
   return (
-    <div style={styles.container}>
-      <h2>Category Form</h2>
-      <p>Category Name: <strong>{category}</strong></p>
-      
-      {/* ✅ Use DynamicCategoryForm */}
+    <div className="bg-white min-h-screen p-8">
+      <h2 className="text-2xl font-bold mb-4">Category Form</h2>
+      <p className="mb-6">
+        Category Name: <strong>{category}</strong>
+      </p>
+
       <DynamicCategoryForm categoryName={category} />
     </div>
   );
 };
 
-const styles = {
-  container: { padding: "20px", maxWidth: "700px", margin: "0 auto", textAlign: "center" }
-};
-
 export default CategoryForm;
-

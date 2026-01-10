@@ -4,14 +4,7 @@ import {
   Route,
   Navigate,
   Outlet,
-  useLocation,
 } from "react-router-dom";
-import { useSelector } from "react-redux";
-
-/* Sidebars */
-import Sidebar from "./Components/Sidebar";
-import DoctorSidebar from "./Components/DoctorSidebar";
-import AdminSidebar from "./Components/AdminSidebar";
 
 /* Auth Pages */
 import LoginPage from "./pages/AdminLoginForm";
@@ -20,7 +13,7 @@ import VerifyOtp from "./pages/VerifyOtp";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
-/* Pages */
+/* Common Pages */
 import AccountPage from "./pages/AccountPage";
 import Support from "./pages/Support";
 
@@ -29,125 +22,108 @@ import LogbookPage from "./pages/LogbookPage";
 import ReportsPage from "./pages/ReportsPage";
 import GoalProgression from "./pages/GoalProgression";
 import StudentEntries from "./pages/StudentEntries";
+import GeneratedForm from "./pages/GeneratedForm";
+import AssignedTasksPage from "./pages/AssignedTasksPage";
+import AnalysisPage from "./pages/AnalysisPage";
+import JobsPage from "./pages/JobsPage";
+import ViewEntriesPage from "./pages/ViewEntriesPage";
+import StudentWrapper from "./layouts/StudentWrapper";
 
 /* Doctor */
 import DoctorHome from "./pages/DoctorHome";
-import DoctorLogbook from "./pages/DoctorLogbook";
+import CategoryForm from "./pages/CategoryForm";
+import AddCategory from "./pages/AddCategory";
 import DoctorStudentAnalysisPage from "./pages/DoctorStudentAnalysisPage";
-import AssignedTasksPage from "./pages/AssignedTasksPage";
+import AssignTaskPage from "./pages/AssignTaskPage";
+import CategoryList from "./pages/CategoryList";
+import DoctorAccount from "./pages/DoctorAccount";
+import ManageLogbook from "./pages/ManageLogbook";
+import DoctorLayout from "./layouts/DoctorLayout";
 
 /* Admin */
 import AdminHome from "./pages/AdminHome";
 import AdminPage from "./pages/AdminPage";
 import PendingApproval from "./pages/PendingApproval";
-import AssignTaskPage from "./pages/AssignTaskPage";
 import AdminSupportPage from "./pages/AdminSupportPage";
-
-/* Forms */
-import DynamicForm from "./Components/DynamicCategoryForm";
-
-import "./index.css";
+import AdminSidebar from "./Components/AdminSidebar";
 
 /* ================= ADMIN LAYOUT ================= */
-const AdminLayout = () => {
-  return (
-    <div className="flex min-h-screen w-screen">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block w-[250px] flex-shrink-0">
-        <AdminSidebar />
-      </div>
-
-      {/* Mobile Sidebar */}
-      <div className="md:hidden">
-        <AdminSidebar />
-      </div>
-
-      {/* Main Content (SCROLLS) */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-white via-[#e8f5fe] to-[#dbefff]">
-        <Outlet />
-      </div>
+const AdminLayout = () => (
+  <div className="flex min-h-screen w-screen">
+    <div className="hidden md:block w-[250px] flex-shrink-0">
+      <AdminSidebar />
     </div>
-  );
-};
 
-/* ================= MAIN APP LAYOUT ================= */
-const AppLayout = () => {
-  const location = useLocation();
-  const { user } = useSelector((state) => state.auth);
-
-  // fallback to localStorage
-  const role = user?.role || localStorage.getItem("role");
-
-  const authRoutes = ["/", "/register", "/verify-otp", "/forgot-password"];
-  const hideSidebar =
-    authRoutes.includes(location.pathname) ||
-    location.pathname.startsWith("/reset-password");
-
-  return (
-    // ✅ FIXED: removed overflow-hidden
-    <div className="flex min-h-screen w-screen">
-      {/* Student / Doctor Sidebar */}
-      {!hideSidebar && role !== "admin" && (
-        <div className="hidden md:block w-[250px] flex-shrink-0">
-          {role === "student" && <Sidebar />}
-          {role === "doctor" && <DoctorSidebar />}
-        </div>
-      )}
-
-      {/* Main Content (SCROLLS) */}
-      <div className="flex-1 overflow-y-auto">
-        <Routes>
-          {/* Auth */}
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/register" element={<RegistrationPage />} />
-          <Route path="/verify-otp" element={<VerifyOtp />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route
-            path="/reset-password/:userId/:token"
-            element={<ResetPassword />}
-          />
-
-          {/* Student */}
-          <Route path="/logbookpage" element={<LogbookPage />} />
-          <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/goal-progression" element={<GoalProgression />} />
-          <Route path="/student-entries" element={<StudentEntries />} />
-
-          {/* Doctor */}
-          <Route path="/doctor-home" element={<DoctorHome />} />
-          <Route path="/doctor-logbook" element={<DoctorLogbook />} />
-          <Route
-            path="/doctor-student-analysis"
-            element={<DoctorStudentAnalysisPage />}
-          />
-          <Route path="/assigned-tasks" element={<AssignedTasksPage />} />
-
-          {/* Admin */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminHome />} />
-            <Route path="register" element={<RegistrationPage />} />
-            <Route path="users" element={<AdminPage />} />
-            <Route path="pending-approval" element={<PendingApproval />} />
-            <Route path="assign-task" element={<AssignTaskPage />} />
-            <Route path="support" element={<AdminSupportPage />} />
-            <Route path="account" element={<AccountPage />} />
-          </Route>
-
-          {/* Common */}
-          <Route path="/support" element={<Support />} />
-          <Route path="/account" element={<AccountPage />} />
-
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
+    <div className="md:hidden">
+      <AdminSidebar />
     </div>
-  );
-};
 
+    <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-white via-[#e8f5fe] to-[#dbefff]">
+      <Outlet />
+    </div>
+  </div>
+);
+
+/* ================= APP ================= */
 const App = () => (
   <Router>
-    <AppLayout />
+    <Routes>
+      {/* Auth */}
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/register" element={<RegistrationPage />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route
+        path="/reset-password/:userId/:token"
+        element={<ResetPassword />}
+      />
+
+      {/* Student */}
+      <Route element={<StudentWrapper />}>
+        <Route path="/logbookpage" element={<LogbookPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/goal-progression" element={<GoalProgression />} />
+        <Route path="/student-entries" element={<StudentEntries />} />
+        <Route path="/assign-task" element={<AssignTaskPage />} />
+        <Route path="/assigned-tasks" element={<AssignedTasksPage />} />
+        <Route path="/analysis" element={<AnalysisPage />} />
+        <Route path="/jobs" element={<JobsPage />} />
+        <Route path="/view-entries" element={<ViewEntriesPage />} />
+        <Route path="/logbook/:category" element={<GeneratedForm />} />
+        <Route path="/account" element={<AccountPage />} />
+  <Route path="/support" element={<Support />} />
+      </Route>
+
+      {/* Doctor (UNCHANGED) */}
+      <Route path="/doctor/*" element={<DoctorLayout />}>
+        <Route index element={<DoctorHome />} />
+        <Route path="view-students" element={<ManageLogbook />} />
+        <Route path="categories/add" element={<AddCategory />} />
+        <Route path="categories/:category" element={<CategoryForm />} />
+        <Route path="categories" element={<CategoryList />} />
+        <Route path="assign-task" element={<AssignTaskPage />} />
+        <Route path="student-analysis" element={<DoctorStudentAnalysisPage />} />
+        <Route path="account" element={<DoctorAccount />} />
+      </Route>
+
+      {/* Admin */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminHome />} />
+        <Route path="register" element={<RegistrationPage />} /> 
+        <Route path="users" element={<AdminPage />} />
+        <Route path="pending-approval" element={<PendingApproval />} />
+        <Route path="assign-task" element={<AssignTaskPage />} />
+        <Route path="support" element={<AdminSupportPage />} />
+        <Route path="account" element={<AccountPage />} />
+      </Route>
+
+      {/* Common */}
+      <Route path="/support" element={<Support />} />
+      <Route path="/account" element={<AccountPage />} />
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   </Router>
 );
 

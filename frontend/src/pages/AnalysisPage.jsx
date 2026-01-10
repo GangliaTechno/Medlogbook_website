@@ -19,7 +19,7 @@ const AnalysisPage = () => {
 
   useEffect(() => {
     if (!user || !user.email) {
-      navigate("/login");
+      navigate("/");
       return;
     }
 

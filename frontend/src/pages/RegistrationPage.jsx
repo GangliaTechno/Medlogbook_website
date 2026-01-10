@@ -1,37 +1,54 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { signupUser } from "../reducers/authReducer";
 import Notification from "../Components/Notification";
 import "../styles.css";
+import medicalBg from "../assets/medicalBg.png";
+
+import * as Papa from "papaparse";
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaGlobe,
+  FaHospital,
+  FaUserMd,
+  FaGraduationCap,
+  FaFileUpload,
+  FaUserGraduate,
+} from "react-icons/fa";
 
 /* Helper */
-function generateRegistrationCode(length = 8) {
+function generateRegistrationCode(length = 10) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let code = "";
   for (let i = 0; i < length; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
+    code += chars[Math.floor(Math.random() * chars.length)];
   }
   return code;
 }
 
 const RegistrationPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { isLoading } = useSelector((state) => state.auth);
 
-  const [role, setRole] = useState("student");
-  const [selectedDoctorSpecialty, setSelectedDoctorSpecialty] = useState("");
+  /* ================= STATE ================= */
 
-  const doctorSpecialties = [
-    "Allergy",
-    "Cardiology",
-    "Dermatology",
-    "Emergency medicine",
-    "Oncology",
-    "Pediatrics",
-    "Neurology",
-  ];
+  const [role, setRole] = useState("student");
+
+  // common
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password] = useState(generateRegistrationCode());
+
+  // student-only
+  const [studentCountry, setStudentCountry] = useState("");
+  const [studentTrainingYear, setStudentTrainingYear] = useState("");
+  const [studentHospital, setStudentHospital] = useState("");
+  const [studentSpecialty, setStudentSpecialty] = useState("");
+
+  // doctor-only
+  const [doctorSpecialty, setDoctorSpecialty] = useState("");
 
   const [notification, setNotification] = useState({
     isOpen: false,
@@ -39,185 +56,282 @@ const RegistrationPage = () => {
     message: "",
   });
 
+  /* ================= DATA ================= */
+
   const countries = ["India", "United States", "United Kingdom", "Australia"];
-  const trainingYearsIndia = ["Residency", "Internship", "PG Year 1"];
-  const trainingYearsOther = ["Medical Year 1", "Medical Year 2"];
-  const hospitalsIndia = ["KMC Manipal", "AIIMS Delhi", "Fortis Hospital"];
-  const hospitalsOther = ["Mayo Clinic", "Cleveland Clinic"];
-  const specialtiesIndia = ["Allergy", "Cardiology", "Dermatology"];
-  const specialtiesOther = ["Oncology", "Pediatrics", "Neurology"];
+  const trainingYears = ["Internship", "PG Year 1", "PG Year 2"];
+  const hospitals = ["KMC Manipal", "AIIMS Delhi", "Fortis Hospital"];
 
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password] = useState(() => generateRegistrationCode(10));
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [trainingYears, setTrainingYears] = useState([]);
-  const [selectedTrainingYear, setSelectedTrainingYear] = useState("");
-  const [hospitals, setHospitals] = useState([]);
-  const [selectedHospital, setSelectedHospital] = useState("");
-  const [specialties, setSpecialties] = useState([]);
-  const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  const studentSpecialties = [
+    "Cardiology",
+    "Dermatology",
+    "Emergency Medicine",
+  ];
 
-  const handleRoleToggle = (val) => setRole(val);
+  const doctorSpecialties = [
+    "Cardiology",
+    "Dermatology",
+    "Emergency Medicine",
+    "Neurology",
+    "Oncology",
+  ];
 
-  const handleCountryChange = (e) => {
-    const country = e.target.value;
-    setSelectedCountry(country);
+  /* ================= ROLE SWITCH ================= */
 
-    if (country === "India") {
-      setTrainingYears(trainingYearsIndia);
-      setHospitals(hospitalsIndia);
-      setSpecialties(specialtiesIndia);
-    } else {
-      setTrainingYears(trainingYearsOther);
-      setHospitals(hospitalsOther);
-      setSpecialties(specialtiesOther);
-    }
+  const switchRole = (newRole) => {
+    setRole(newRole);
+    setStudentCountry("");
+    setStudentTrainingYear("");
+    setStudentHospital("");
+    setStudentSpecialty("");
+    setDoctorSpecialty("");
   };
 
+  /* ================= SUBMIT ================= */
+
   const handleSubmit = async () => {
-    const userData = {
+    if (!fullName || !email) {
+      return setNotification({
+        isOpen: true,
+        title: "Error",
+        message: "Please fill all required fields",
+      });
+    }
+
+    if (
+      role === "student" &&
+      (!studentCountry ||
+        !studentTrainingYear ||
+        !studentHospital ||
+        !studentSpecialty)
+    ) {
+      return setNotification({
+        isOpen: true,
+        title: "Error",
+        message: "Please fill all student fields",
+      });
+    }
+
+    if (role === "doctor" && !doctorSpecialty) {
+      return setNotification({
+        isOpen: true,
+        title: "Error",
+        message: "Please select doctor specialty",
+      });
+    }
+
+    const payload = {
       fullName,
       email,
       password,
       role,
-      specialty: role === "student" ? selectedSpecialty : selectedDoctorSpecialty,
-      registrationCode: generateRegistrationCode(),
+      specialty: role === "student" ? studentSpecialty : doctorSpecialty,
+      status: "pending",
     };
 
     if (role === "student") {
-      userData.country = selectedCountry;
-      userData.trainingYear = selectedTrainingYear;
-      userData.hospital = selectedHospital;
+      payload.country = studentCountry;
+      payload.trainingYear = studentTrainingYear;
+      payload.hospital = studentHospital;
     }
 
     try {
-      await dispatch(signupUser(userData)).unwrap();
+      await dispatch(signupUser(payload)).unwrap();
       setNotification({
         isOpen: true,
         title: "Success",
-        message: "Registration successful!",
+        message: "Registration completed successfully!",
       });
-      setTimeout(() => navigate("/"), 1000);
-    } catch {
+    } catch (err) {
       setNotification({
         isOpen: true,
         title: "Error",
-        message: "Registration failed",
+        message: err?.message || "Registration failed",
       });
     }
   };
 
+  /* ================= CSV AUTO UPLOAD ================= */
+
+  const handleCSVUpload = (file) => {
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        try {
+          for (const row of results.data) {
+            await dispatch(
+              signupUser({
+                fullName: row.fullName,
+                email: row.email,
+                password: generateRegistrationCode(),
+                role: row.role,
+                specialty: row.specialty,
+                country: row.country,
+                trainingYear: row.trainingYear,
+                hospital: row.hospital,
+                status: "pending",
+              })
+            ).unwrap();
+          }
+
+          setNotification({
+            isOpen: true,
+            title: "Success",
+            message: "CSV users registered successfully!",
+          });
+        } catch {
+          setNotification({
+            isOpen: true,
+            title: "Error",
+            message: "CSV registration failed",
+          });
+        }
+      },
+    });
+  };
+
+  /* ================= UI ================= */
+
   return (
-    /* 🌄 FULL BACKGROUND */
     <div
-      className="min-h-screen w-full overflow-y-auto flex justify-center items-start px-4 py-10"
+      className="relative w-full overflow-y-auto px-6 py-10"
       style={{
-        backgroundImage:
-          "url('/assets/medical-bg.jpg')", // 🔴 put image in public/assets
+        minHeight: "100vh",
+        backgroundImage: `url(${medicalBg})`,
+        backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        filter: "contrast(1.05) saturate(1.05)",
       }}
     >
-      {/* 🌫 Overlay */}
-      <div className="absolute inset-0 bg-blue-100/70 backdrop-blur-sm"></div>
+      {/* SHARP OVERLAY */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(rgba(255,255,255,0.35), rgba(255,255,255,0.35))",
+        }}
+      ></div>
 
-      {/* 🧊 Glass Card */}
-      <div className="relative w-full max-w-xl bg-white/80 backdrop-blur-xl rounded-[32px] shadow-2xl p-8">
-        <h2 className="text-center text-3xl font-extrabold text-blue-700 mb-2">
-          Welcome to MedicalLogBook!
+      {/* CONTENT */}
+      <div className="relative z-10 max-w-4xl mx-auto bg-[#e9f7fb] rounded-[32px] p-10 shadow-xl">
+        <h2 className="text-center text-3xl font-extrabold text-blue-600 mb-6">
+          Register User
         </h2>
-        <p className="text-center text-gray-600 mb-6">
-          To configure your account, please provide your medical training details.
-        </p>
 
-        {/* Toggle */}
-        <div className="flex justify-center mb-6 bg-gray-100 rounded-full p-1">
+        {/* ROLE BUTTONS */}
+        <div className="flex gap-6 justify-center mb-8">
           <button
-            onClick={() => handleRoleToggle("student")}
-            className={`px-6 py-2 rounded-full font-semibold ${
+            onClick={() => switchRole("student")}
+            className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold ${
               role === "student"
-                ? "bg-white shadow text-blue-600"
-                : "text-gray-500"
+                ? "bg-blue-500 text-white"
+                : "bg-white text-blue-600"
             }`}
           >
-            🎓 Student
+            <FaUserGraduate /> Student
           </button>
+
           <button
-            onClick={() => handleRoleToggle("doctor")}
-            className={`px-6 py-2 rounded-full font-semibold ${
+            onClick={() => switchRole("doctor")}
+            className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold ${
               role === "doctor"
-                ? "bg-white shadow text-blue-600"
-                : "text-gray-500"
+                ? "bg-blue-500 text-white"
+                : "bg-white text-blue-600"
             }`}
           >
-            🩺 Doctor
+            <FaUserMd /> Doctor
           </button>
         </div>
 
-        {/* FORM */}
-        <input
-          placeholder="Full Name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          className="w-full mb-4 p-4 rounded-full shadow"
-        />
+        {/* COMMON */}
+        <Input icon={<FaUser />} placeholder="Full Name *" value={fullName} onChange={setFullName} />
+        <Input icon={<FaEnvelope />} placeholder="Email *" value={email} onChange={setEmail} />
+        <Input icon={<FaLock />} value={password} readOnly />
 
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 p-4 rounded-full shadow"
-        />
-
-        <input
-          value={password}
-          readOnly
-          className="w-full mb-4 p-4 rounded-full shadow bg-gray-100"
-        />
-
-        {role === "doctor" && (
-          <select
-            value={selectedDoctorSpecialty}
-            onChange={(e) => setSelectedDoctorSpecialty(e.target.value)}
-            className="w-full mb-4 p-4 rounded-full shadow"
-          >
-            <option value="">Select Specialty</option>
-            {doctorSpecialties.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
+        {/* STUDENT */}
+        {role === "student" && (
+          <div key="student-form">
+            <Select icon={<FaGlobe />} placeholder="Country *" value={studentCountry} onChange={setStudentCountry} options={countries} />
+            <Select icon={<FaGraduationCap />} placeholder="Training Year *" value={studentTrainingYear} onChange={setStudentTrainingYear} options={trainingYears} />
+            <Select icon={<FaHospital />} placeholder="Hospital *" value={studentHospital} onChange={setStudentHospital} options={hospitals} />
+            <Select icon={<FaUserMd />} placeholder="Specialty *" value={studentSpecialty} onChange={setStudentSpecialty} options={studentSpecialties} />
+          </div>
         )}
 
-        {/* BUTTONS */}
+        {/* DOCTOR */}
+        {role === "doctor" && (
+          <div key="doctor-form">
+            <Select icon={<FaUserMd />} placeholder="Specialty *" value={doctorSpecialty} onChange={setDoctorSpecialty} options={doctorSpecialties} />
+          </div>
+        )}
+
+        {/* CSV */}
+        <div className="flex items-center mb-6 bg-white rounded-full shadow px-5 py-4">
+          <FaFileUpload className="text-blue-400 mr-3" />
+          <input
+            type="file"
+            accept=".csv"
+            className="w-full"
+            onChange={(e) => handleCSVUpload(e.target.files[0])}
+          />
+        </div>
+
         <button
           onClick={handleSubmit}
           disabled={isLoading}
-          className="w-full mt-4 py-3 rounded-full text-white font-semibold text-lg"
-          style={{
-            background:
-              "linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%)",
-          }}
+          className="w-full py-4 rounded-full text-white font-semibold bg-gradient-to-r from-blue-500 to-cyan-500"
         >
-          {isLoading ? "Registering..." : "Set up Logbook!"}
-        </button>
-
-        <button
-          onClick={() => navigate("/")}
-          className="w-full mt-3 py-3 rounded-full bg-gray-200 font-semibold"
-        >
-          Go Back
+          {isLoading ? "Registering..." : "Register"}
         </button>
       </div>
 
       <Notification
         isOpen={notification.isOpen}
-        onRequestClose={() => setNotification({ isOpen: false })}
+        onRequestClose={() =>
+          setNotification({ isOpen: false, title: "", message: "" })
+        }
         title={notification.title}
         message={notification.message}
       />
     </div>
   );
 };
+
+/* ================= REUSABLE COMPONENTS ================= */
+
+const Input = ({ icon, placeholder, value, onChange, readOnly }) => (
+  <div className="flex items-center mb-5 bg-white rounded-full shadow px-5 py-4">
+    <span className="text-blue-400 mr-3">{icon}</span>
+    <input
+      className="w-full outline-none bg-transparent"
+      placeholder={placeholder}
+      value={value}
+      readOnly={readOnly}
+      onChange={(e) => onChange && onChange(e.target.value)}
+    />
+  </div>
+);
+
+const Select = ({ icon, placeholder, value, onChange, options }) => (
+  <div className="flex items-center mb-5 bg-white rounded-full shadow px-5 py-4">
+    <span className="text-blue-400 mr-3">{icon}</span>
+    <select
+      className="w-full outline-none bg-transparent"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    >
+      <option value="">{placeholder}</option>
+      {options.map((o) => (
+        <option key={o} value={o}>
+          {o}
+        </option>
+      ))}
+    </select>
+  </div>
+);
 
 export default RegistrationPage;
