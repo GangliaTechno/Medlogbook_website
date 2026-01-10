@@ -39,6 +39,9 @@ import CategoryList from "./pages/CategoryList";
 import DoctorAccount from "./pages/DoctorAccount";
 import ManageLogbook from "./pages/ManageLogbook";
 import DoctorLayout from "./layouts/DoctorLayout";
+import DoctorLogbook from "./pages/DoctorLogbook";
+/*import StudentEntries from "./pages/StudentEntries";*/
+
 
 /* Admin */
 import AdminHome from "./pages/AdminHome";
@@ -97,7 +100,8 @@ const App = () => (
       {/* Doctor (UNCHANGED) */}
       <Route path="/doctor/*" element={<DoctorLayout />}>
         <Route index element={<DoctorHome />} />
-        <Route path="view-students" element={<ManageLogbook />} />
+        <Route path="view-students" element={<DoctorLogbook />} />
+        <Route path="student-entries" element={<StudentEntries />} />
         <Route path="categories/add" element={<AddCategory />} />
         <Route path="categories/:category" element={<CategoryForm />} />
         <Route path="categories" element={<CategoryList />} />

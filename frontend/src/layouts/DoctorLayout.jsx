@@ -20,8 +20,8 @@ const DoctorLayout = () => {
         }}
       >
         {/* Content wrapper */}
-        <div className="max-w-7xl mx-auto">
-          <Outlet />
+        <div className="flex-1 p-4 md:p-6 overflow-y-auto">
+        <Outlet /> 
         </div>
       </main>
     </div>
