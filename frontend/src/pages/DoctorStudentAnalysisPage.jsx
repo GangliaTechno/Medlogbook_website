@@ -600,7 +600,8 @@ const handleViewEntries = (studentEmail) => {
   };
 
   return (
-    <div className="p-5">
+    <div className="p-6 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white">
+
       
       <h2 className="text-2xl font-bold text-blue-600 mb-6"
       style={{
@@ -661,7 +662,8 @@ const handleViewEntries = (studentEmail) => {
 {/* ✅ Student Analysis Popup */}
 {isPopupOpen && (
   <div
-    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    className="fixed inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center z-50"
+
     onClick={() => setIsPopupOpen(false)}
   >
     <div

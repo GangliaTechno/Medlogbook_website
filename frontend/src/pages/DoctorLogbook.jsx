@@ -32,7 +32,7 @@ const DoctorLogbook = () => {
   }, [doctor]); // ✅ Re-run if doctor changes
 
   const handleViewEntries = (student) => {
-    navigate("/student-entries", { state: { student } });
+    navigate("/doctor/student-entries", { state: { student } });
   };
 
   return (

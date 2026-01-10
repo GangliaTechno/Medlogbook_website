@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaEnvelope, FaCheckCircle } from "react-icons/fa";
 import Notification from "../Components/Notification";
+import medicalBg from "../assets/medicalBg.png";
 
 const AdminSupportPage = () => {
   const [queries, setQueries] = useState([]);
@@ -13,7 +14,6 @@ const AdminSupportPage = () => {
   });
 
   /* ================= FETCH QUERIES ================= */
-
   useEffect(() => {
     fetch("https://medlogbook-website.onrender.com/api/support/all")
       .then((res) => res.json())
@@ -29,14 +29,12 @@ const AdminSupportPage = () => {
   }, []);
 
   /* ================= RESOLVE QUERY ================= */
-
   const handleResolve = async (id) => {
     try {
       const res = await fetch(
         `https://medlogbook-website.onrender.com/api/support/resolve/${id}`,
         { method: "PUT" }
       );
-
       if (!res.ok) throw new Error();
 
       setQueries((prev) =>
@@ -62,40 +60,43 @@ const AdminSupportPage = () => {
   };
 
   /* ================= FILTER ================= */
-
   const filteredQueries =
     filter === "all"
       ? queries
       : queries.filter((q) => q.status === filter);
 
-  /* ================= UI ================= */
-
   return (
-    <div className="w-full min-h-screen px-3 sm:px-6 py-6 overflow-x-hidden">
-      <div className="max-w-5xl mx-auto">
+    /* FULL PAGE MEDICAL BACKGROUND (MATCHES ACCOUNT PAGE) */
+    <div
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex justify-center px-4 py-8"
+      style={{ backgroundImage: `url(${medicalBg})` }}
+    >
+      {/* GLASS PANEL (MATCHED) */}
+      <div className="w-full max-w-5xl bg-white/85 backdrop-blur-sm rounded-[32px] shadow-2xl p-8">
         {/* Header */}
-        <h2 className="text-center text-3xl font-extrabold text-blue-600 mb-2">
+        <h2 className="text-center text-3xl font-bold text-blue-700 mb-2">
           Support Queries
         </h2>
-        <p className="text-center text-gray-500 mb-6">
+        <p className="text-center text-gray-600 mb-8">
           Manage and respond to user support requests
         </p>
 
         {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-6">
+        <div className="flex flex-wrap justify-center gap-4 mb-10">
           {["pending", "resolved", "all"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-full font-semibold transition ${
-                filter === f
-                  ? f === "pending"
-                    ? "bg-yellow-400 text-black"
-                    : f === "resolved"
-                    ? "bg-green-500 text-white"
-                    : "bg-blue-500 text-white"
-                  : "bg-gray-200"
-              }`}
+              className={`px-6 py-2 rounded-full font-semibold shadow transition
+                ${
+                  filter === f
+                    ? f === "pending"
+                      ? "bg-yellow-400 text-black"
+                      : f === "resolved"
+                      ? "bg-green-500 text-white"
+                      : "bg-blue-500 text-white"
+                    : "bg-blue-200 text-blue-900"
+                }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
@@ -103,30 +104,22 @@ const AdminSupportPage = () => {
         </div>
 
         {/* Query Cards */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {filteredQueries.length === 0 ? (
-            <p className="text-center text-gray-400">
+            <p className="text-center text-gray-500 py-24">
               No {filter} queries found
             </p>
           ) : (
             filteredQueries.map((query) => (
               <div
                 key={query._id}
-                className="bg-white rounded-3xl shadow-md p-5 sm:p-6"
+                className="bg-white rounded-[28px] border border-blue-200 shadow-lg p-6"
               >
-                <div className="grid gap-2 text-sm sm:text-base">
-                  <p>
-                    <strong>Name:</strong> {query.studentName}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {query.studentEmail}
-                  </p>
-                  <p>
-                    <strong>Type:</strong> {query.supportType}
-                  </p>
-                  <p>
-                    <strong>Detail:</strong> {query.detail}
-                  </p>
+                <div className="grid gap-2 text-gray-800 text-[16px]">
+                  <p><strong>Name:</strong> {query.studentName}</p>
+                  <p><strong>Email:</strong> {query.studentEmail}</p>
+                  <p><strong>Type:</strong> {query.supportType}</p>
+                  <p><strong>Detail:</strong> {query.detail}</p>
                   <p>
                     <strong>Status:</strong>{" "}
                     <span
@@ -146,22 +139,24 @@ const AdminSupportPage = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-wrap gap-3 mt-4">
-                  {/* Email */}
+                <div className="flex flex-wrap gap-4 mt-6">
                   <a
                     href={`mailto:${query.studentEmail}?subject=Support Response`}
-                    className="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-400 text-white font-semibold hover:scale-105 transition"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full
+                               bg-gradient-to-r from-blue-500 to-cyan-500
+                               text-white font-semibold shadow hover:scale-105 transition"
                   >
-                    <FaEnvelope /> Email
+                    <FaEnvelope /> Send Email
                   </a>
 
-                  {/* Resolve */}
                   {query.status !== "resolved" && (
                     <button
                       onClick={() => handleResolve(query._id)}
-                      className="flex items-center gap-2 px-5 py-2 rounded-xl bg-green-500 text-white font-semibold hover:scale-105 transition"
+                      className="flex items-center gap-2 px-6 py-2 rounded-full
+                                 bg-gradient-to-r from-green-500 to-emerald-500
+                                 text-white font-semibold shadow hover:scale-105 transition"
                     >
-                      <FaCheckCircle /> Resolve
+                      <FaCheckCircle /> Mark Resolved
                     </button>
                   )}
                 </div>

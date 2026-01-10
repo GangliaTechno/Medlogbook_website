@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Notification from "../Components/Notification";
 import EditUserModal from "../Components/EditUserModal";
+import medicalBg from "../assets/medicalBg.png";
+
+import {
+  FaUsers,
+  FaUserGraduate,
+  FaUserMd,
+  FaCheckCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -22,8 +31,6 @@ const AdminPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  /* ================= FETCH USERS ================= */
-
   useEffect(() => {
     fetchUsers();
     fetchPendingUsers();
@@ -35,7 +42,7 @@ const AdminPage = () => {
         "https://medlogbook-website.onrender.com/api/auth/users/all"
       );
       setUsers(res.data);
-    } catch (err) {
+    } catch {
       setNotification({
         isOpen: true,
         title: "Error",
@@ -58,8 +65,6 @@ const AdminPage = () => {
     }
   };
 
-  /* ================= MERGE USERS ================= */
-
   const userMap = new Map();
   users.forEach((u) => userMap.set(u.email, { ...u }));
   pendingUsers.forEach((u) => {
@@ -74,11 +79,8 @@ const AdminPage = () => {
     const search = searchTerm.toLowerCase();
     const roleMatch =
       roleFilter === "all" || user.role?.toLowerCase() === roleFilter;
-
     return roleMatch && user.fullName?.toLowerCase().includes(search);
   });
-
-  /* ================= SELECTION ================= */
 
   const handleSelectUser = (email) => {
     setSelectedUsers((prev) =>
@@ -91,8 +93,6 @@ const AdminPage = () => {
   const handleSelectAll = (checked) => {
     setSelectedUsers(checked ? filteredUsers.map((u) => u.email) : []);
   };
-
-  /* ================= BATCH ACTIONS ================= */
 
   const handleBatchStatus = async (status) => {
     try {
@@ -126,76 +126,95 @@ const AdminPage = () => {
     }
   };
 
-  /* ================= EDIT MODAL ================= */
-
   const openEditModal = (user) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
 
-  /* ================= UI ================= */
-
   return (
-    <div className="w-full min-h-screen px-2 sm:px-4 py-6 overflow-x-hidden">
-      <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-xl p-4 sm:p-6">
-        <h2 className="text-center text-3xl font-extrabold text-blue-600 mb-2">
-          Admin Panel
-        </h2>
-        <p className="text-center text-gray-500 mb-6">
-          Manage users, roles and access
-        </p>
+    <div className="relative min-h-screen w-full overflow-hidden">
+      {/* Background */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url(${medicalBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          filter: "contrast(1.4) saturate(1.4) brightness(1.1)",
+        }}
+      />
+      <div className="absolute inset-0 bg-white/20"></div>
 
-        {/* Batch buttons */}
-        <div className="flex flex-wrap justify-center gap-4 mb-6">
-          <button
-            disabled={!selectedUsers.length}
-            onClick={() => handleBatchStatus("enabled")}
-            className="px-4 py-2 bg-green-500 rounded-lg font-semibold disabled:opacity-50"
-          >
-            Enable
-          </button>
-          <button
-            disabled={!selectedUsers.length}
-            onClick={() => handleBatchStatus("disabled")}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold disabled:opacity-50"
-          >
-            Disable
-          </button>
-        </div>
+      {/* CONTENT */}
+      <div className="relative z-10 px-4 py-8">
+        {/* 🔵 LIGHT BLUE PANEL */}
+        <div className="max-w-6xl mx-auto bg-blue-50/95 rounded-3xl shadow-2xl p-6">
+          <h2 className="text-center text-3xl font-extrabold text-blue-700 mb-1">
+            Admin Panel
+          </h2>
+          <p className="text-center text-gray-600 mb-6">
+            Manage users, roles and access
+          </p>
 
-        {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-4">
-          {["all", "student", "doctor"].map((role) => (
+          {/* ACTION BUTTONS */}
+          <div className="flex justify-center gap-4 mb-6">
             <button
-              key={role}
-              onClick={() => setRoleFilter(role)}
-              className={`px-4 py-2 rounded-lg font-semibold ${
-                roleFilter === role
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
-              }`}
+              disabled={!selectedUsers.length}
+              onClick={() => handleBatchStatus("enabled")}
+              className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold
+              bg-gradient-to-r from-green-500 to-emerald-500
+              shadow hover:scale-105 transition disabled:opacity-50"
             >
-              {role.toUpperCase()}
+              <FaCheckCircle /> Enable
             </button>
-          ))}
-        </div>
 
-        {/* Search */}
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl shadow mb-6 outline-none"
-        />
+            <button
+              disabled={!selectedUsers.length}
+              onClick={() => handleBatchStatus("disabled")}
+              className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold
+              bg-gradient-to-r from-red-500 to-rose-500
+              shadow hover:scale-105 transition disabled:opacity-50"
+            >
+              <FaTimesCircle /> Disable
+            </button>
+          </div>
 
-        {/* Table */}
-        {loading ? (
-          <p className="text-center text-gray-500">Loading users...</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto text-sm sm:text-base">
-              <thead className="bg-gray-100">
+          {/* FILTERS */}
+          <div className="flex justify-center gap-4 mb-6">
+            <FilterButton
+              active={roleFilter === "all"}
+              icon={<FaUsers />}
+              label="All"
+              onClick={() => setRoleFilter("all")}
+            />
+            <FilterButton
+              active={roleFilter === "student"}
+              icon={<FaUserGraduate />}
+              label="Students"
+              onClick={() => setRoleFilter("student")}
+            />
+            <FilterButton
+              active={roleFilter === "doctor"}
+              icon={<FaUserMd />}
+              label="Doctors"
+              onClick={() => setRoleFilter("doctor")}
+            />
+          </div>
+
+          {/* SEARCH */}
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-5 py-3 rounded-full shadow mb-6 outline-none"
+          />
+
+          {/* TABLE */}
+          <div className="overflow-x-auto rounded-xl max-w-5xl mx-auto bg-blue-100">
+            <table className="w-full text-sm">
+              <thead className="bg-blue-200 text-blue-900">
                 <tr>
                   <th className="p-3 text-center">
                     <input
@@ -213,41 +232,33 @@ const AdminPage = () => {
                   <th className="p-3 text-left">Status</th>
                 </tr>
               </thead>
-              <tbody>
-                {filteredUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="text-center py-6 text-gray-400">
-                      No users found
+
+              <tbody className="bg-blue-50">
+                {filteredUsers.map((user) => (
+                  <tr
+                    key={user.email}
+                    onDoubleClick={() => openEditModal(user)}
+                    className="border-b border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                  >
+                    <td className="p-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.includes(user.email)}
+                        onChange={() => handleSelectUser(user.email)}
+                      />
                     </td>
+                    <td className="p-3">{user.fullName}</td>
+                    <td className="p-3">{user.email}</td>
+                    <td className="p-3 capitalize">{user.role}</td>
+                    <td className="p-3 capitalize">{user.status}</td>
                   </tr>
-                ) : (
-                  filteredUsers.map((user) => (
-                    <tr
-                      key={user.email}
-                      onDoubleClick={() => openEditModal(user)}
-                      className="border-b hover:bg-gray-50 cursor-pointer"
-                    >
-                      <td className="p-3 text-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedUsers.includes(user.email)}
-                          onChange={() => handleSelectUser(user.email)}
-                        />
-                      </td>
-                      <td className="p-3">{user.fullName}</td>
-                      <td className="p-3">{user.email}</td>
-                      <td className="p-3 capitalize">{user.role}</td>
-                      <td className="p-3 capitalize">{user.status}</td>
-                    </tr>
-                  ))
-                )}
+                ))}
               </tbody>
             </table>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Modals */}
       {isModalOpen && selectedUser && (
         <EditUserModal
           isOpen={isModalOpen}
@@ -268,5 +279,19 @@ const AdminPage = () => {
     </div>
   );
 };
+
+const FilterButton = ({ active, onClick, icon, label }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition
+    ${
+      active
+        ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow"
+        : "bg-gray-200 text-gray-700"
+    }`}
+  >
+    {icon} {label}
+  </button>
+);
 
 export default AdminPage;

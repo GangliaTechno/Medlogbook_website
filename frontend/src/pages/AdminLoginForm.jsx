@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../reducers/authReducer";
+import loginBg from "../assets/login_bg.png";
 
 const AdminLoginForm = () => {
   const [formData, setFormData] = useState({
@@ -26,14 +27,12 @@ const AdminLoginForm = () => {
   }, [navigate]);
 
   /* ================= HANDLERS ================= */
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const payload = await dispatch(loginUser(formData)).unwrap();
       const { token, role } = payload;
@@ -42,7 +41,7 @@ const AdminLoginForm = () => {
       localStorage.setItem("role", role);
 
       if (role === "admin") navigate("/admin", { replace: true });
-      else if (role === "doctor") navigate("/doctor-home", { replace: true });
+      else if (role === "doctor") navigate("/doctor", { replace: true });
       else if (role === "student") navigate("/logbookpage", { replace: true });
     } catch {
       alert("Invalid email or password");
@@ -50,16 +49,17 @@ const AdminLoginForm = () => {
   };
 
   /* ================= UI ================= */
-
   return (
     <div
-      className="min-h-screen w-full overflow-y-auto flex items-center justify-center px-4 py-6 bg-cover bg-center"
+      className="min-h-screen w-full flex items-center justify-center px-4 py-6
+                 bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1580281657527-47a0f0d3c2d5?auto=format&fit=crop&w=1600&q=80')",
+        backgroundImage: `url(${loginBg})`,
+        imageRendering: "auto",        // keep natural sharpness
       }}
     >
-      <div className="w-full max-w-md bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl px-6 sm:px-10 py-10">
+      {/* Login Card */}
+      <div className="w-full max-w-md bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl px-6 sm:px-10 py-10">
         <h2 className="text-center text-3xl font-extrabold text-blue-700 mb-8">
           Login
         </h2>
@@ -73,7 +73,8 @@ const AdminLoginForm = () => {
             onChange={handleChange}
             placeholder="Email ID"
             required
-            className="w-full px-5 py-4 rounded-full outline-none text-sm shadow-md focus:ring-2 focus:ring-blue-400"
+            className="w-full px-5 py-4 rounded-full outline-none text-sm shadow-md
+                       focus:ring-2 focus:ring-blue-400"
           />
 
           {/* Password */}
@@ -84,7 +85,8 @@ const AdminLoginForm = () => {
             onChange={handleChange}
             placeholder="Password"
             required
-            className="w-full px-5 py-4 rounded-full outline-none text-sm shadow-md focus:ring-2 focus:ring-blue-400"
+            className="w-full px-5 py-4 rounded-full outline-none text-sm shadow-md
+                       focus:ring-2 focus:ring-blue-400"
           />
 
           {/* Forgot password */}
@@ -106,7 +108,8 @@ const AdminLoginForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 rounded-full text-white font-semibold text-lg transition-transform hover:scale-[1.02] disabled:opacity-50"
+            className="w-full py-4 rounded-full text-white font-semibold text-lg
+                       transition-transform hover:scale-[1.02] disabled:opacity-50"
             style={{
               background:
                 "linear-gradient(90deg, #21c8f6 0%, #8f5cff 100%)",

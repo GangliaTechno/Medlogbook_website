@@ -19,7 +19,7 @@ const ViewEntriesPage = () => {
   useEffect(() => {
     if (!user || !user.email) {
       setNotification({ isOpen: true, message: "Please log in to view entries.", type: "error" });
-      navigate("/login");
+      navigate("/");
       return;
     }
 
