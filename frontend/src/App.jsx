@@ -43,6 +43,7 @@ import DoctorLogbook from "./pages/DoctorLogbook";
 /*import StudentEntries from "./pages/StudentEntries";*/
 
 
+
 /* Admin */
 import AdminHome from "./pages/AdminHome";
 import AdminPage from "./pages/AdminPage";
@@ -99,16 +100,22 @@ const App = () => (
 
       {/* Doctor (UNCHANGED) */}
       <Route path="/doctor/*" element={<DoctorLayout />}>
-        <Route index element={<DoctorHome />} />
-        <Route path="view-students" element={<DoctorLogbook />} />
-        <Route path="student-entries" element={<StudentEntries />} />
-        <Route path="categories/add" element={<AddCategory />} />
-        <Route path="categories/:category" element={<CategoryForm />} />
-        <Route path="categories" element={<CategoryList />} />
-        <Route path="assign-task" element={<AssignTaskPage />} />
-        <Route path="student-analysis" element={<DoctorStudentAnalysisPage />} />
-        <Route path="account" element={<DoctorAccount />} />
-      </Route>
+  <Route index element={<DoctorHome />} />
+
+  <Route path="view-students" element={<DoctorLogbook />} />
+  <Route path="student-entries" element={<StudentEntries />} />
+
+  {/* ✅ MOST SPECIFIC FIRST */}
+  <Route path="categories/add" element={<AddCategory />} />
+  <Route path="categories" element={<CategoryList />} />
+  <Route path="categories/:category" element={<CategoryForm />} />
+
+  <Route path="assign-task" element={<AssignTaskPage />} />
+  <Route path="assigned-tasks" element={<AssignedTasksPage />} />
+  <Route path="student-analysis" element={<DoctorStudentAnalysisPage />} />
+  <Route path="account" element={<DoctorAccount />} />
+</Route>
+
 
       {/* Admin */}
       <Route path="/admin" element={<AdminLayout />}>
