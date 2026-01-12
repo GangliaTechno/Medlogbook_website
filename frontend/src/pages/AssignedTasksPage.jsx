@@ -11,9 +11,7 @@ const AssignedTasksPage = () => {
   const allSpecialties = [...specialtiesIndia, ...specialtiesOther];
 
   useEffect(() => {
-    if (user) {
-      fetchAllTasks();
-    }
+    if (user) fetchAllTasks();
   }, [user]);
 
   const fetchAllTasks = async () => {
@@ -21,47 +19,28 @@ const AssignedTasksPage = () => {
       const allFetchedTasks = [];
 
       for (const spec of allSpecialties) {
-        const res = await axios.get(`https://medlogbook-website.onrender.com/api/tasks?specialty=${spec}`);
+        const res = await axios.get(
+          `https://medlogbook-website.onrender.com/api/tasks?specialty=${spec}`
+        );
         allFetchedTasks.push(...res.data);
       }
 
       const userTasks = allFetchedTasks
         .filter((task) => {
-          // Debug logging - you can remove this later
-          console.log("Task:", task.title, {
-            selectedStudents: task.selectedStudents,
-            assignedTo: task.assignedTo,
-            department: task.department,
-            userDept: user.department,
-            userEmail: user.email
-          });
-
-          // Check if assigned to specific students via selectedStudents field
-          const assignedToStudentViaSelected = task.selectedStudents?.includes(user.email);
-          
-          // Check if assigned to specific students via assignedTo field (your current data structure)
-          const assignedToStudentViaAssignedTo = task.assignedTo?.includes(user.email);
-          
-          // Check if assigned to department (when both selectedStudents and assignedTo are empty/null)
-          const assignedToDept = 
+          const assignedToSelected = task.selectedStudents?.includes(user.email);
+          const assignedToDirect = task.assignedTo?.includes(user.email);
+          const assignedToDept =
             (!task.selectedStudents || task.selectedStudents.length === 0) &&
             (!task.assignedTo || task.assignedTo.length === 0 || task.assignedTo.includes("all")) &&
             task.department === user.department;
 
-          const shouldInclude = assignedToStudentViaSelected || assignedToStudentViaAssignedTo || assignedToDept;
-          console.log("Should include task:", shouldInclude, {
-            assignedToStudentViaSelected,
-            assignedToStudentViaAssignedTo,
-            assignedToDept
-          });
-          
-          return shouldInclude;
+          return assignedToSelected || assignedToDirect || assignedToDept;
         })
-        .sort((a, b) => {
-          const dateA = new Date(a.dateAssigned || a.createdAt);
-          const dateB = new Date(b.dateAssigned || b.createdAt);
-          return dateB - dateA; // newest first
-        });
+        .sort(
+          (a, b) =>
+            new Date(b.dateAssigned || b.createdAt) -
+            new Date(a.dateAssigned || a.createdAt)
+        );
 
       setFilteredTasks(userTasks);
     } catch (error) {
@@ -69,68 +48,128 @@ const AssignedTasksPage = () => {
     }
   };
 
-  const formatDate = (date) => new Date(date).toLocaleDateString();
+  const formatDate = (date) =>
+    date ? new Date(date).toLocaleDateString() : "—";
 
   const timeSince = (dateString) => {
-    if (!dateString) return "Unknown time";
+    if (!dateString) return "Unknown";
+    const diff = Date.now() - new Date(dateString).getTime();
+    const mins = Math.floor(diff / 60000);
+    const hrs = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
 
-    const past = new Date(dateString);
-    if (isNaN(past.getTime())) return "Invalid date";
-
-    const now = new Date();
-    const diffMs = now - past;
-
-    const minutes = Math.floor(diffMs / 60000);
-    const hours = Math.floor(diffMs / 3600000);
-    const days = Math.floor(diffMs / 86400000);
-
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-    if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    if (mins < 1) return "Just now";
+    if (mins < 60) return `${mins} min ago`;
+    if (hrs < 24) return `${hrs} hr ago`;
     return `${days} day${days > 1 ? "s" : ""} ago`;
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-white rounded-2xl shadow-xl mt-10">
-      <h2 className="text-2xl font-bold text-blue-600 mb-6"
-        style={{
-          textAlign: "center",
-          fontWeight: 900,
-          fontSize: "30px",
-          color: "rgb(16, 137, 211)"
-        }}>My Assigned Tasks</h2>
-      
-      {filteredTasks.length > 0 ? (
-        filteredTasks.map((task, index) => (
-          <div key={index} className="mb-4 p-6 relative" style={{
-            borderRadius: "50px",
-            background: "#e0e0e0",
-            boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
-          }}>
-            <div className="absolute top-4 right-8 text-sm text-gray-500 font-medium">
-              Assigned: {timeSince(task.dateAssigned || task.createdAt)}
-            </div>
-            <p><strong>Title:</strong> {task.title}</p>
-            <p><strong>Description:</strong> {task.description}</p>
-            <p><strong>Priority:</strong> {task.priority}</p>
-            <p><strong>Target Date:</strong> {formatDate(task.targetDate)}</p>
-            <p><strong>Department:</strong> {task.department}</p>
-            <p><strong>Assigned By:</strong> {task.assignedBy}</p>
-            <p><strong>Specialty:</strong> {task.specialty}</p>
-            <p><strong>Assigned To:</strong>
-              {task.selectedStudents?.length > 0
-                ? task.selectedStudents.join(", ")
-                : task.assignedTo?.length > 0 && !task.assignedTo.includes("all")
-                ? task.assignedTo.join(", ")
-                : "All in department"}
-            </p>
+    <div
+      className="
+        min-h-screen
+        bg-slate-50
+        px-3
+        pt-20
+        pb-5
+        sm:pt-6
+        sm:px-6
+        lg:px-10
+        font-['Inter']
+      "
+    >
+      <div className="max-w-6xl mx-auto space-y-6">
+
+        {/* Header */}
+        <header className="space-y-1 px-1">
+          <h1 className="text-lg sm:text-2xl lg:text-3xl font-semibold text-blue-700 tracking-tight">
+            Assigned Tasks
+          </h1>
+          <p className="text-sm sm:text-base text-slate-600">
+            Tasks assigned to you based on your department or specialty.
+          </p>
+        </header>
+
+        {/* Tasks */}
+        {filteredTasks.length > 0 ? (
+          <div className="space-y-4">
+            {filteredTasks.map((task, index) => (
+              <div
+                key={index}
+                className="
+                  bg-blue-50/60
+                  border
+                  border-blue-700
+                  rounded-xl
+                  px-4
+                  py-4
+                  sm:px-5
+                  sm:py-4
+                  shadow-sm
+                  transition
+                  sm:hover:shadow-blue-200
+                  sm:hover:shadow-md
+                "
+              >
+                {/* Title + Time */}
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-sm sm:text-lg font-semibold text-blue-900 leading-snug">
+                    {task.title}
+                  </h3>
+                  <span className="text-xs text-blue-700 font-medium">
+                    Assigned {timeSince(task.dateAssigned || task.createdAt)}
+                  </span>
+                </div>
+
+                {/* Description */}
+                <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+                  {task.description}
+                </p>
+
+                {/* Divider */}
+                <div className="my-3 border-t border-blue-200" />
+
+                {/* Meta */}
+                <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-3">
+                  <Meta label="Priority" value={task.priority} />
+                  <Meta label="Target Date" value={formatDate(task.targetDate)} />
+                  <Meta label="Department" value={task.department} />
+                  <Meta label="Specialty" value={task.specialty} />
+                  <Meta label="Assigned By" value={task.assignedBy} />
+                  <Meta
+                    label="Assigned To"
+                    value={
+                      task.selectedStudents?.length > 0
+                        ? task.selectedStudents.join(", ")
+                        : task.assignedTo?.length > 0 &&
+                          !task.assignedTo.includes("all")
+                        ? task.assignedTo.join(", ")
+                        : "All in department"
+                    }
+                  />
+                </div>
+              </div>
+            ))}
           </div>
-        ))
-      ) : (
-        <p>No tasks assigned to you.</p>
-      )}
+        ) : (
+          <p className="text-slate-500">No tasks assigned to you.</p>
+        )}
+      </div>
     </div>
   );
 };
+
+/* ---------- Meta Item ---------- */
+
+const Meta = ({ label, value }) => (
+  <div className="flex justify-between sm:flex-col">
+    <span className="text-xs font-medium uppercase tracking-wide text-blue-700">
+      {label}
+    </span>
+    <span className="text-sm font-semibold text-slate-900 text-right sm:text-left">
+      {value || "—"}
+    </span>
+  </div>
+);
 
 export default AssignedTasksPage;

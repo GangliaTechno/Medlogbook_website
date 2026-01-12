@@ -22,7 +22,8 @@ const DoctorAccount = () => {
   };
 
   return (
-  <div className="flex-1 min-h-screen bg-slate-50 flex justify-center items-start p-10">
+  <div className="flex-1 min-h-screen bg-transparent flex justify-center items-start p-10">
+
     <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl">
         <h2 className="text-xl font-bold text-center text-teal-600 mb-6">
           Account Information
