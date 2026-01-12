@@ -33,10 +33,7 @@ const RegistrationPage = () => {
   const { isLoading } = useSelector((state) => state.auth);
 
   /* ================= STATE ================= */
-
   const [role, setRole] = useState("student");
-
-  // common
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password] = useState(generateRegistrationCode());
@@ -57,27 +54,13 @@ const RegistrationPage = () => {
   });
 
   /* ================= DATA ================= */
-
   const countries = ["India", "United States", "United Kingdom", "Australia"];
   const trainingYears = ["Internship", "PG Year 1", "PG Year 2"];
   const hospitals = ["KMC Manipal", "AIIMS Delhi", "Fortis Hospital"];
-
-  const studentSpecialties = [
-    "Cardiology",
-    "Dermatology",
-    "Emergency Medicine",
-  ];
-
-  const doctorSpecialties = [
-    "Cardiology",
-    "Dermatology",
-    "Emergency Medicine",
-    "Neurology",
-    "Oncology",
-  ];
+  const studentSpecialties = ["Cardiology", "Dermatology", "Emergency Medicine"];
+  const doctorSpecialties = ["Cardiology", "Dermatology", "Emergency Medicine", "Neurology", "Oncology"];
 
   /* ================= ROLE SWITCH ================= */
-
   const switchRole = (newRole) => {
     setRole(newRole);
     setStudentCountry("");
@@ -88,7 +71,6 @@ const RegistrationPage = () => {
   };
 
   /* ================= SUBMIT ================= */
-
   const handleSubmit = async () => {
     if (!fullName || !email) {
       return setNotification({
@@ -98,13 +80,7 @@ const RegistrationPage = () => {
       });
     }
 
-    if (
-      role === "student" &&
-      (!studentCountry ||
-        !studentTrainingYear ||
-        !studentHospital ||
-        !studentSpecialty)
-    ) {
+    if (role === "student" && (!studentCountry || !studentTrainingYear || !studentHospital || !studentSpecialty)) {
       return setNotification({
         isOpen: true,
         title: "Error",
@@ -152,7 +128,6 @@ const RegistrationPage = () => {
   };
 
   /* ================= CSV AUTO UPLOAD ================= */
-
   const handleCSVUpload = (file) => {
     if (!file) return;
 
@@ -164,19 +139,12 @@ const RegistrationPage = () => {
           for (const row of results.data) {
             await dispatch(
               signupUser({
-                fullName: row.fullName,
-                email: row.email,
+                ...row,
                 password: generateRegistrationCode(),
-                role: row.role,
-                specialty: row.specialty,
-                country: row.country,
-                trainingYear: row.trainingYear,
-                hospital: row.hospital,
                 status: "pending",
               })
             ).unwrap();
           }
-
           setNotification({
             isOpen: true,
             title: "Success",
@@ -193,107 +161,109 @@ const RegistrationPage = () => {
     });
   };
 
-  /* ================= UI ================= */
-
   return (
-    <div
-      className="relative w-full overflow-y-auto px-6 py-10"
-      style={{
-        minHeight: "100vh",
-        backgroundImage: `url(${medicalBg})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        filter: "contrast(1.05) saturate(1.05)",
-      }}
-    >
-      {/* SHARP OVERLAY */}
-      <div
-        className="absolute inset-0"
+    <div className="relative min-h-screen w-full flex flex-col items-center font-['Inter'] overflow-x-hidden">
+      {/* BACKGROUND LAYER */}
+      <div 
+        className="fixed inset-0 z-0"
         style={{
-          background:
-            "linear-gradient(rgba(255,255,255,0.35), rgba(255,255,255,0.35))",
+          backgroundImage: `url(${medicalBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "brightness(0.9)",
         }}
-      ></div>
+      />
+      <div className="fixed inset-0 bg-blue-900/10 z-0"></div>
 
-      {/* CONTENT */}
-      <div className="relative z-10 max-w-4xl mx-auto bg-[#e9f7fb] rounded-[32px] p-10 shadow-xl">
-        <h2 className="text-center text-3xl font-extrabold text-blue-600 mb-6">
-          Register User
-        </h2>
+      {/* CONTENT CONTAINER */}
+      <div className="relative z-10 w-full px-4 py-8 flex justify-center">
+        <div className="w-full max-w-2xl bg-white/90 backdrop-blur-lg rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl p-5 sm:p-10 border border-white/50">
+          
+          <div className="text-center mb-6">
+            <h2 className="text-2xl sm:text-4xl font-black text-blue-700 tracking-tight leading-tight">
+              Register User
+            </h2>
+            <p className="text-gray-500 mt-2 text-xs sm:text-base">
+              Enter details to create a new medical profile
+            </p>
+          </div>
 
-        {/* ROLE BUTTONS */}
-        <div className="flex gap-6 justify-center mb-8">
+          {/* ROLE SWITCHER */}
+          <div className="flex p-1 bg-gray-100/80 rounded-2xl mb-8 w-full max-w-[280px] sm:max-w-xs mx-auto">
+            <button
+              onClick={() => switchRole("student")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                role === "student" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              <FaUserGraduate /> Student
+            </button>
+            <button
+              onClick={() => switchRole("doctor")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                role === "doctor" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              <FaUserMd /> Doctor
+            </button>
+          </div>
+
+          {/* INPUT FIELDS */}
+          <div className="space-y-4">
+            <Input icon={<FaUser />} placeholder="Full Name *" value={fullName} onChange={setFullName} />
+            <Input icon={<FaEnvelope />} placeholder="Email *" value={email} onChange={setEmail} />
+            
+            <div className="relative">
+              <Input icon={<FaLock />} value={password} readOnly />
+              <span className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 text-[9px] font-bold text-blue-400 bg-blue-50 px-2 py-1 rounded">
+                AUTO CODE
+              </span>
+            </div>
+
+            {role === "student" && (
+              <div className="grid grid-cols-1 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                <Select icon={<FaGlobe />} placeholder="Country *" value={studentCountry} onChange={setStudentCountry} options={countries} />
+                <Select icon={<FaGraduationCap />} placeholder="Year *" value={studentTrainingYear} onChange={setStudentTrainingYear} options={trainingYears} />
+                <Select icon={<FaHospital />} placeholder="Hospital *" value={studentHospital} onChange={setStudentHospital} options={hospitals} />
+                <Select icon={<FaUserMd />} placeholder="Specialty *" value={studentSpecialty} onChange={setStudentSpecialty} options={studentSpecialties} />
+              </div>
+            )}
+
+            {role === "doctor" && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <Select icon={<FaUserMd />} placeholder="Medical Specialty *" value={doctorSpecialty} onChange={setDoctorSpecialty} options={doctorSpecialties} />
+              </div>
+            )}
+
+            {/* CSV SECTION */}
+            <div className="mt-6">
+               <label className="flex items-center justify-center gap-2 w-full border-2 border-dashed border-blue-200 bg-blue-50/50 p-4 rounded-2xl cursor-pointer hover:border-blue-400 transition-colors group">
+                 <FaFileUpload className="text-blue-500 text-sm group-hover:scale-110 transition-transform" />
+                 <span className="text-xs sm:text-sm font-semibold text-blue-700">Batch Upload via CSV</span>
+                 <input
+                  type="file"
+                  accept=".csv"
+                  className="hidden"
+                  onChange={(e) => handleCSVUpload(e.target.files[0])}
+                />
+               </label>
+            </div>
+          </div>
+
           <button
-            onClick={() => switchRole("student")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold ${
-              role === "student"
-                ? "bg-blue-500 text-white"
-                : "bg-white text-blue-600"
-            }`}
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="w-full mt-8 py-3.5 sm:py-4 rounded-2xl text-white font-black text-sm sm:text-lg shadow-xl transition-all active:scale-95 disabled:opacity-50
+            bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600"
           >
-            <FaUserGraduate /> Student
-          </button>
-
-          <button
-            onClick={() => switchRole("doctor")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold ${
-              role === "doctor"
-                ? "bg-blue-500 text-white"
-                : "bg-white text-blue-600"
-            }`}
-          >
-            <FaUserMd /> Doctor
+            {isLoading ? "PROCESSSING..." : "CREATE ACCOUNT"}
           </button>
         </div>
-
-        {/* COMMON */}
-        <Input icon={<FaUser />} placeholder="Full Name *" value={fullName} onChange={setFullName} />
-        <Input icon={<FaEnvelope />} placeholder="Email *" value={email} onChange={setEmail} />
-        <Input icon={<FaLock />} value={password} readOnly />
-
-        {/* STUDENT */}
-        {role === "student" && (
-          <div key="student-form">
-            <Select icon={<FaGlobe />} placeholder="Country *" value={studentCountry} onChange={setStudentCountry} options={countries} />
-            <Select icon={<FaGraduationCap />} placeholder="Training Year *" value={studentTrainingYear} onChange={setStudentTrainingYear} options={trainingYears} />
-            <Select icon={<FaHospital />} placeholder="Hospital *" value={studentHospital} onChange={setStudentHospital} options={hospitals} />
-            <Select icon={<FaUserMd />} placeholder="Specialty *" value={studentSpecialty} onChange={setStudentSpecialty} options={studentSpecialties} />
-          </div>
-        )}
-
-        {/* DOCTOR */}
-        {role === "doctor" && (
-          <div key="doctor-form">
-            <Select icon={<FaUserMd />} placeholder="Specialty *" value={doctorSpecialty} onChange={setDoctorSpecialty} options={doctorSpecialties} />
-          </div>
-        )}
-
-        {/* CSV */}
-        <div className="flex items-center mb-6 bg-white rounded-full shadow px-5 py-4">
-          <FaFileUpload className="text-blue-400 mr-3" />
-          <input
-            type="file"
-            accept=".csv"
-            className="w-full"
-            onChange={(e) => handleCSVUpload(e.target.files[0])}
-          />
-        </div>
-
-        <button
-          onClick={handleSubmit}
-          disabled={isLoading}
-          className="w-full py-4 rounded-full text-white font-semibold bg-gradient-to-r from-blue-500 to-cyan-500"
-        >
-          {isLoading ? "Registering..." : "Register"}
-        </button>
       </div>
 
       <Notification
         isOpen={notification.isOpen}
-        onRequestClose={() =>
-          setNotification({ isOpen: false, title: "", message: "" })
-        }
+        onRequestClose={() => setNotification({ isOpen: false, title: "", message: "" })}
         title={notification.title}
         message={notification.message}
       />
@@ -304,10 +274,10 @@ const RegistrationPage = () => {
 /* ================= REUSABLE COMPONENTS ================= */
 
 const Input = ({ icon, placeholder, value, onChange, readOnly }) => (
-  <div className="flex items-center mb-5 bg-white rounded-full shadow px-5 py-4">
-    <span className="text-blue-400 mr-3">{icon}</span>
+  <div className="flex items-center bg-gray-50/50 border border-gray-200 rounded-2xl px-4 sm:px-5 py-3 sm:py-4 focus-within:ring-2 focus-within:ring-blue-400 focus-within:bg-white transition-all">
+    <span className="text-blue-500 text-base sm:text-lg mr-3 sm:mr-4 flex-shrink-0">{icon}</span>
     <input
-      className="w-full outline-none bg-transparent"
+      className="w-full outline-none bg-transparent text-gray-800 font-medium placeholder:text-gray-400 text-xs sm:text-sm min-w-0"
       placeholder={placeholder}
       value={value}
       readOnly={readOnly}
@@ -317,16 +287,16 @@ const Input = ({ icon, placeholder, value, onChange, readOnly }) => (
 );
 
 const Select = ({ icon, placeholder, value, onChange, options }) => (
-  <div className="flex items-center mb-5 bg-white rounded-full shadow px-5 py-4">
-    <span className="text-blue-400 mr-3">{icon}</span>
+  <div className="flex items-center bg-gray-50/50 border border-gray-200 rounded-2xl px-4 sm:px-5 py-3 sm:py-4 focus-within:ring-2 focus-within:ring-blue-400 focus-within:bg-white transition-all">
+    <span className="text-blue-500 text-base sm:text-lg mr-3 sm:mr-4 flex-shrink-0">{icon}</span>
     <select
-      className="w-full outline-none bg-transparent"
+      className="w-full outline-none bg-transparent text-gray-800 font-medium text-xs sm:text-sm appearance-none cursor-pointer min-w-0"
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >
-      <option value="">{placeholder}</option>
+      <option value="" className="text-gray-400">{placeholder}</option>
       {options.map((o) => (
-        <option key={o} value={o}>
+        <option key={o} value={o} className="text-gray-800">
           {o}
         </option>
       ))}

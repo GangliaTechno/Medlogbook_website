@@ -64,7 +64,22 @@ const Support = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-start justify-center px-4 py-8 bg-gradient-to-b from-slate-50 to-slate-100 text-black">
+    <div
+      className="
+        min-h-screen
+        flex
+        items-start
+        justify-center
+        px-4
+        pt-20
+        pb-8
+        sm:pt-8
+        bg-gradient-to-b
+        from-slate-50
+        to-slate-100
+        text-black
+      "
+    >
       {/* CARD */}
       <div className="w-full max-w-md sm:max-w-xl bg-white border border-slate-200 rounded-2xl shadow-lg p-5 sm:p-8">
         {/* HEADER */}
