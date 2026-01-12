@@ -10,6 +10,7 @@ import {
   FaUserMd,
   FaCheckCircle,
   FaTimesCircle,
+  FaSearch,
 } from "react-icons/fa";
 
 const AdminPage = () => {
@@ -79,7 +80,7 @@ const AdminPage = () => {
     const search = searchTerm.toLowerCase();
     const roleMatch =
       roleFilter === "all" || user.role?.toLowerCase() === roleFilter;
-    return roleMatch && user.fullName?.toLowerCase().includes(search);
+    return roleMatch && (user.fullName?.toLowerCase().includes(search) || user.email?.toLowerCase().includes(search));
   });
 
   const handleSelectUser = (email) => {
@@ -132,146 +133,187 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <div className="relative min-h-screen w-full font-['Inter']">
       {/* Background */}
       <div
-        className="absolute inset-0"
+        className="fixed inset-0 z-0"
         style={{
           backgroundImage: `url(${medicalBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          filter: "contrast(1.4) saturate(1.4) brightness(1.1)",
+          filter: "contrast(1.2) brightness(1.1)",
         }}
       />
-      <div className="absolute inset-0 bg-white/20"></div>
+      <div className="fixed inset-0 bg-white/40 z-0"></div>
 
       {/* CONTENT */}
-      <div className="relative z-10 px-4 py-8">
-        {/* 🔵 LIGHT BLUE PANEL */}
-        <div className="max-w-6xl mx-auto bg-blue-50/95 rounded-3xl shadow-2xl p-6">
-          <h2 className="text-center text-3xl font-extrabold text-blue-700 mb-1">
-            Admin Panel
-          </h2>
-          <p className="text-center text-gray-600 mb-6">
-            Manage users, roles and access
-          </p>
+      <div className="relative z-10 px-3 py-6 sm:px-6 sm:py-10">
+        <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden">
 
-          {/* ACTION BUTTONS */}
-          <div className="flex justify-center gap-4 mb-6">
-            <button
-              disabled={!selectedUsers.length}
-              onClick={() => handleBatchStatus("enabled")}
-              className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold
-              bg-gradient-to-r from-green-500 to-emerald-500
-              shadow hover:scale-105 transition disabled:opacity-50"
-            >
-              <FaCheckCircle /> Enable
-            </button>
+          <div className="p-5 sm:p-8 bg-blue-50/50">
+            <h2 className="text-center text-2xl sm:text-3xl font-black text-blue-800 mb-1">
+              Admin Panel
+            </h2>
+            <p className="text-center text-sm sm:text-base text-gray-600 mb-8">
+              Manage system users and access levels
+            </p>
 
-            <button
-              disabled={!selectedUsers.length}
-              onClick={() => handleBatchStatus("disabled")}
-              className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold
-              bg-gradient-to-r from-red-500 to-rose-500
-              shadow hover:scale-105 transition disabled:opacity-50"
-            >
-              <FaTimesCircle /> Disable
-            </button>
+            {/* ACTION BUTTONS */}
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              <button
+                disabled={!selectedUsers.length}
+                onClick={() => handleBatchStatus("enabled")}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-bold bg-emerald-500 shadow-lg active:scale-95 transition disabled:opacity-30"
+              >
+                <FaCheckCircle /> Enable
+              </button>
+
+              <button
+                disabled={!selectedUsers.length}
+                onClick={() => handleBatchStatus("disabled")}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-bold bg-rose-500 shadow-lg active:scale-95 transition disabled:opacity-30"
+              >
+                <FaTimesCircle /> Disable
+              </button>
+            </div>
+
+            {/* FILTERS & SEARCH */}
+            <div className="space-y-4">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
+                <FilterButton active={roleFilter === "all"} icon={<FaUsers />} label="All" onClick={() => setRoleFilter("all")} />
+                <FilterButton active={roleFilter === "student"} icon={<FaUserGraduate />} label="Students" onClick={() => setRoleFilter("student")} />
+                <FilterButton active={roleFilter === "doctor"} icon={<FaUserMd />} label="Doctors" onClick={() => setRoleFilter("doctor")} />
+              </div>
+
+              <div className="relative max-w-2xl mx-auto">
+                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-5 py-3.5 rounded-2xl border border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none transition bg-white"
+                />
+              </div>
+            </div>
           </div>
 
-          {/* FILTERS */}
-          <div className="flex justify-center gap-4 mb-6">
-            <FilterButton
-              active={roleFilter === "all"}
-              icon={<FaUsers />}
-              label="All"
-              onClick={() => setRoleFilter("all")}
-            />
-            <FilterButton
-              active={roleFilter === "student"}
-              icon={<FaUserGraduate />}
-              label="Students"
-              onClick={() => setRoleFilter("student")}
-            />
-            <FilterButton
-              active={roleFilter === "doctor"}
-              icon={<FaUserMd />}
-              label="Doctors"
-              onClick={() => setRoleFilter("doctor")}
-            />
-          </div>
-
-          {/* SEARCH */}
-          <input
-            type="text"
-            placeholder="Search by name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-5 py-3 rounded-full shadow mb-6 outline-none"
-          />
-
-          {/* TABLE */}
-          <div className="overflow-x-auto rounded-xl max-w-5xl mx-auto bg-blue-100">
-            <table className="w-full text-sm">
-              <thead className="bg-blue-200 text-blue-900">
-                <tr>
-                  <th className="p-3 text-center">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedUsers.length === filteredUsers.length &&
-                        filteredUsers.length > 0
-                      }
-                      onChange={(e) => handleSelectAll(e.target.checked)}
-                    />
-                  </th>
-                  <th className="p-3 text-left">Name</th>
-                  <th className="p-3 text-left">Email</th>
-                  <th className="p-3 text-left">Role</th>
-                  <th className="p-3 text-left">Status</th>
-                </tr>
-              </thead>
-
-              <tbody className="bg-blue-50">
-                {filteredUsers.map((user) => (
-                  <tr
-                    key={user.email}
-                    onDoubleClick={() => openEditModal(user)}
-                    className="border-b border-blue-200 hover:bg-blue-100 transition cursor-pointer"
-                  >
-                    <td className="p-3 text-center">
+          {/* TABLE / CARD VIEW */}
+          <div className="p-3 sm:p-8">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-hidden rounded-2xl border border-blue-100 shadow-sm">
+              <table className="w-full text-sm">
+                <thead className="bg-blue-600 text-white">
+                  <tr>
+                    <th className="p-4 text-center">
                       <input
                         type="checkbox"
-                        checked={selectedUsers.includes(user.email)}
-                        onChange={() => handleSelectUser(user.email)}
+                        className="w-4 h-4 rounded"
+                        checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
                       />
-                    </td>
-                    <td className="p-3">{user.fullName}</td>
-                    <td className="p-3">{user.email}</td>
-                    <td className="p-3 capitalize">{user.role}</td>
-                    <td className="p-3 capitalize">{user.status}</td>
+                    </th>
+                    <th className="p-4 text-left font-bold">Full Name</th>
+                    <th className="p-4 text-left font-bold">Email Address</th>
+                    <th className="p-4 text-left font-bold">Role</th>
+                    <th className="p-4 text-left font-bold">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {filteredUsers.map((user) => (
+                    <tr
+                      key={user.email}
+                      onDoubleClick={() => openEditModal(user)}
+                      className="hover:bg-blue-50 transition cursor-pointer"
+                    >
+                      <td className="p-4 text-center">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded"
+                          checked={selectedUsers.includes(user.email)}
+                          onChange={() => handleSelectUser(user.email)}
+                        />
+                      </td>
+                      <td className="p-4 font-medium text-gray-900">{user.fullName}</td>
+                      <td className="p-4 text-gray-600">{user.email}</td>
+                      <td className="p-4"><span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 capitalize">{user.role}</span></td>
+                      <td className="p-4"><StatusBadge status={user.status} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+              {filteredUsers.map((user) => {
+                const isSelected = selectedUsers.includes(user.email);
+                return (
+                  <div
+                    key={user.email}
+                    className={`rounded-2xl border-2 transition-all duration-200 overflow-hidden shadow-sm
+          ${isSelected
+                        ? 'border-blue-600 bg-blue-100 ring-2 ring-blue-400/20'
+                        : 'border-blue-200 bg-blue-50/50'}`}
+                    onClick={() => handleSelectUser(user.email)}
+                  >
+                    {/* Card Header */}
+                    <div className={`px-4 py-3 flex items-center justify-between border-b 
+          ${isSelected ? 'border-blue-300 bg-blue-200/50' : 'border-blue-100 bg-blue-100/30'}`}>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          className="w-5 h-5 rounded border-blue-400 text-blue-600 focus:ring-blue-500"
+                          checked={isSelected}
+                          readOnly
+                        />
+                        <p className="font-black text-blue-900 text-sm">{user.fullName}</p>
+                      </div>
+                      <StatusBadge status={user.status} />
+                    </div>
+
+                    {/* Card Body */}
+                    <div className="p-4">
+                      <div className="flex flex-col gap-1 mb-4">
+                        <span className="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Email Address</span>
+                        <p className="text-gray-700 text-sm truncate font-medium">{user.email}</p>
+                      </div>
+
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-blue-400 tracking-wider block mb-1">Role</span>
+                          <span className="px-3 py-1 rounded-lg bg-white border border-blue-200 text-blue-700 text-xs font-black uppercase">
+                            {user.role}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openEditModal(user);
+                          }}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md active:scale-95 transition"
+                        >
+                          Edit Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
 
       {isModalOpen && selectedUser && (
-        <EditUserModal
-          isOpen={isModalOpen}
-          user={selectedUser}
-          onClose={() => setIsModalOpen(false)}
-        />
+        <EditUserModal isOpen={isModalOpen} user={selectedUser} onClose={() => setIsModalOpen(false)} />
       )}
 
       <Notification
         isOpen={notification.isOpen}
-        onRequestClose={() =>
-          setNotification({ ...notification, isOpen: false })
-        }
+        onRequestClose={() => setNotification({ ...notification, isOpen: false })}
         title={notification.title}
         message={notification.message}
         type={notification.type}
@@ -283,15 +325,21 @@ const AdminPage = () => {
 const FilterButton = ({ active, onClick, icon, label }) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition
-    ${
-      active
-        ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow"
-        : "bg-gray-200 text-gray-700"
-    }`}
+    className={`flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-bold transition text-xs sm:text-sm
+    ${active ? "bg-blue-600 text-white shadow-lg scale-105" : "bg-white text-gray-500 border border-gray-100 hover:bg-gray-50"}`}
   >
     {icon} {label}
   </button>
 );
+
+const StatusBadge = ({ status }) => {
+  const isEnabled = status === "enabled" || status === "active";
+  return (
+    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter sm:tracking-normal
+      ${isEnabled ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+      {status}
+    </span>
+  );
+};
 
 export default AdminPage;
