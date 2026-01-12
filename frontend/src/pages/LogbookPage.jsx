@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import LogbookCategory from "../Components/logbookCategory";
 import { FaClipboardList } from "react-icons/fa";
 import axios from "axios";
 
 const LogbookPage = () => {
-  const navigate = useNavigate();
   const userEmail = useSelector((state) => state.auth?.user?.email);
   const [categoryList, setCategoryList] = useState([]);
 
@@ -22,10 +20,9 @@ const LogbookPage = () => {
         );
 
         const categories = response.data.map((category) => ({
-          name: category.name, // Admissions, POCUS, CPD, Procedures
-          description: `Manage ${category.name}`,
+          name: category.name,
+          description: `Manage ${category.name} log entries`,
           icon: <FaClipboardList />,
-          // ✅ FIXED ROUTE
           route: `/logbook/${category.name}`,
         }));
 
@@ -39,36 +36,81 @@ const LogbookPage = () => {
   }, [userEmail]);
 
   return (
-    <div className="h-screen flex flex-col text-black p-8">
-      <div className="flex-grow overflow-y-auto max-w-7xl w-full mx-auto">
+    <div
+      className="
+        min-h-screen
+        w-full
+        px-4
+        py-6
+        sm:px-6
+        lg:px-10
+        font-['Inter']
+        bg-gray-100
+        overflow-x-hidden
+      "
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Heading */}
         <h2
-          className="text-2xl font-bold mb-6 text-center"
-          style={{
-            fontWeight: 900,
-            fontSize: "30px",
-            color: "rgb(16, 137, 211)",
-          }}
+          className="
+            text-2xl
+            sm:text-3xl
+            lg:text-4xl
+            font-bold
+            text-gray-900
+            mb-2
+            text-center
+            sm:text-left
+          "
         >
-          Welcome to your new logbook!
+          Logbook
         </h2>
 
-        <p className="text-gray-900 text-center mb-8 max-w-4xl mx-auto">
-          Log entries you've made in previous jobs are filed separately and can be
-          accessed via the jobs page. Logbooks from multiple jobs can still be
-          combined to produce reports.
+        {/* Description */}
+        <p
+          className="
+            text-sm
+            sm:text-base
+            text-gray-600
+            max-w-3xl
+            mb-8
+            text-center
+            sm:text-left
+            leading-relaxed
+            mx-auto
+            sm:mx-0
+          "
+        >
+          Access and manage your clinical logbook categories. Entries from
+          previous jobs are stored separately but can be combined for reporting.
         </p>
 
-        {/* ✅ Dynamic cards: Admission, POCUS, CPD, Procedures */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-          {categoryList.map((category, index) => (
-            <LogbookCategory
-              key={index}
-              icon={category.icon}
-              title={category.name}
-              description={category.description}
-              route={category.route}
-            />
-          ))}
+        {/* Cards Grid */}
+        <div
+          className="
+            grid
+            grid-cols-1
+            md:grid-cols-2
+            lg:grid-cols-3
+            gap-4
+            sm:gap-6
+          "
+        >
+          {categoryList.length > 0 ? (
+            categoryList.map((category, index) => (
+              <LogbookCategory
+                key={index}
+                icon={category.icon}
+                title={category.name}
+                description={category.description}
+                route={category.route}
+              />
+            ))
+          ) : (
+            <div className="col-span-full py-10 text-center text-gray-500">
+              Loading categories...
+            </div>
+          )}
         </div>
       </div>
     </div>

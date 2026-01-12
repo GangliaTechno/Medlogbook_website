@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
-import GoalProgression from "../pages/GoalProgression"; // or wherever it's located
-// Adjust the path as needed
-
+import GoalProgression from "../pages/GoalProgression";
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
-  LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  PieChart, Pie, Cell
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"];
+const COLORS = ["#2563eb", "#0ea5e9", "#22c55e", "#f59e0b"];
 
 const AnalysisPage = () => {
   const user = useSelector((state) => state.auth.user);
@@ -25,163 +32,197 @@ const AnalysisPage = () => {
 
     const userEmail = user.email.email || user.email;
 
-    fetch(`https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(userEmail)}`)
+    fetch(
+      `https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(
+        userEmail
+      )}`
+    )
       .then((res) => res.json())
-      .then((data) => {
-        console.log("📊 Fetched log entries:", data);
-        setEntries(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching log entries:", err);
-      });
+      .then(setEntries)
+      .catch(console.error);
   }, [user, navigate]);
 
-  // ✅ Entries per Category
-  const getCategoryCounts = () => {
-    const counts = {};
-    entries.forEach((entry) => {
-      counts[entry.category] = (counts[entry.category] || 0) + 1;
-    });
-    return Object.entries(counts).map(([category, count]) => ({
-      category,
-      entries: count,
-    }));
-  };
+  /* ---------------- DATA ---------------- */
 
-  // ✅ Average Score per Category
-  const getAverageScores = () => {
-    const scores = {};
-    entries.forEach((entry) => {
-      if (entry.score !== null && entry.score !== undefined) {
-        if (!scores[entry.category]) scores[entry.category] = { total: 0, count: 0 };
-        scores[entry.category].total += entry.score;
-        scores[entry.category].count += 1;
-      }
-    });
-    return Object.entries(scores).map(([category, { total, count }]) => ({
-      category,
-      averageScore: (total / count).toFixed(2),
-    }));
-  };
+  const totalEntries = entries.length;
 
-  // ✅ Entries Per Month
-  const getEntriesPerMonth = () => {
-    const monthCounts = {};
-    entries.forEach((entry) => {
-      const date = new Date(entry.data.date || entry.createdAt || new Date());
-      const monthYear = `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`;
-      monthCounts[monthYear] = (monthCounts[monthYear] || 0) + 1;
-    });
-    return Object.entries(monthCounts)
-      .sort(([a], [b]) => new Date(a) - new Date(b))
-      .map(([month, count]) => ({ month, entries: count }));
-  };
+  const categoryCounts = Object.entries(
+    entries.reduce((acc, e) => {
+      acc[e.category] = (acc[e.category] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([category, value]) => ({ category, value }));
 
-  // ✅ Category Percentages
-  const getCategoryPercentage = () => {
-    const counts = {};
-    entries.forEach((entry) => {
-      counts[entry.category] = (counts[entry.category] || 0) + 1;
-    });
-  
-    const totalEntries = entries.length;
-  
-    return Object.entries(counts).map(([category, count]) => ({
-      name: category,
-      value: parseFloat(((count / totalEntries) * 100).toFixed(2)),
-    }));
-  };
-  
+  const entriesByMonth = Object.entries(
+    entries.reduce((acc, e) => {
+      const d = new Date(e.createdAt || new Date());
+      const key = `${d.toLocaleString("default", {
+        month: "short",
+      })} ${d.getFullYear()}`;
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([month, value]) => ({ month, value }));
+
+  const categoryPercentage = categoryCounts.map((c) => ({
+    name: c.category,
+    value: totalEntries
+      ? Number(((c.value / totalEntries) * 100).toFixed(1))
+      : 0,
+  }));
+
+  /* ---------------- UI ---------------- */
 
   return (
-    <div className="p-5">
-      <div className="text-center mb-8">
-  
-  <h2 className="text-2xl font-bold text-blue-600 mb-6"
-      style={{
-    textAlign: "center",
-    fontWeight: 900,
-    fontSize: "30px",
-    color: "rgb(16, 137, 211)"
-  }}>Student Analysis</h2>
-  <p className="mt-2 text-gray-900 text-lg">Gain insights and track your progress over time</p>
-</div>
+    <div
+      className="
+        min-h-[100dvh]
+        bg-slate-50
+        px-4
+        py-6
+        pt-20
+        pl-16
+        sm:px-6
+        sm:pt-6
+        sm:pl-6
+        lg:px-10
+        font-['Inter']
+      "
+    >
+      <div className="max-w-7xl mx-auto space-y-10">
 
-      {entries.length > 0 ? (
-        <div className="grid grid-cols-2 gap-6 mt-10">
-          <div className="p-5 rounded-lg shadow-md">
-            <h2 className="text-center text-xl font-semibold mb-5 text-black">Entries Per Category</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={getCategoryCounts()}>
+        {/* HEADER */}
+        <header>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900">
+            Analysis
+          </h1>
+          <p className="mt-1 text-sm sm:text-base text-slate-600 max-w-3xl">
+            Overview of your clinical activity, trends, and performance.
+          </p>
+        </header>
+
+        {/* SUMMARY */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard label="Total Entries" value={totalEntries} />
+          <StatCard label="Active Categories" value={categoryCounts.length} />
+          <StatCard
+            label="Most Active Month"
+            value={entriesByMonth.at(-1)?.month || "-"}
+          />
+          <StatCard
+            label="Avg / Month"
+            value={
+              entriesByMonth.length
+                ? Math.round(totalEntries / entriesByMonth.length)
+                : 0
+            }
+          />
+        </section>
+
+        {/* ACTIVITY TREND */}
+        <section className="space-y-4">
+          <SectionTitle title="Activity Trend" />
+          <Card>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={entriesByMonth}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" tick={{ fill: 'black', fontSize: 16 }} />
-                <YAxis tick={{ fill: 'black', fontSize: 16 }} />
+                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip />
-                <Bar dataKey="entries" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="p-5 rounded-lg shadow-md">
-            <h2 className="text-center text-xl font-semibold mb-5 text-black">Average Score Per Category</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <RadarChart data={getAverageScores()}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="category" tick={{ fill: 'black', fontSize: 16 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: 'black', fontSize: 16 }} />
-                <Radar name="Score" dataKey="averageScore" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
-                <Tooltip />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="p-5 rounded-lg shadow-md">
-            <h2 className="text-center text-xl font-semibold mb-5 text-black">Entries Per Month</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={getEntriesPerMonth()}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" tick={{ fill: 'black', fontSize: 16 }} />
-                <YAxis tick={{ fill: 'black', fontSize: 16 }} />
-                <Tooltip />
-                <Line type="monotone" dataKey="entries" stroke="#ff7300" strokeWidth={2} activeDot={{ r: 6 }} />
+                <Line
+                  dataKey="value"
+                  stroke="#2563eb"
+                  strokeWidth={2}
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
+          </Card>
+        </section>
+
+        {/* DISTRIBUTION */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <SectionTitle title="Entries by Category" />
+            <Card>
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={categoryCounts}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="category" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#0ea5e9" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
           </div>
 
-          <div className="p-5 rounded-lg shadow-md">
-            <h2 className="text-center text-xl font-semibold mb-5 text-black">Category Contribution (%)</h2>
-            <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-  <Pie
-    data={getCategoryPercentage()}
-    dataKey="value"
-    nameKey="name"
-    outerRadius={120}
-    fill="#8884d8"
-    label={({ name, value }) => `${name}: ${value.toFixed(1)}%`} // Optional: better label
-  >
-    {getCategoryPercentage().map((entry, index) => (
-      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-    ))}
-  </Pie>
-  <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
-</PieChart>
-
-            </ResponsiveContainer>
+          <div className="space-y-4">
+            <SectionTitle title="Category Share" />
+            <Card>
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart>
+                  <Pie
+                    data={categoryPercentage}
+                    dataKey="value"
+                    outerRadius={90}
+                  >
+                    {categoryPercentage.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(v) => `${v}%`} />
+                </PieChart>
+              </ResponsiveContainer>
+            </Card>
           </div>
-        </div>
-      ) : (
-        <p className="mt-10 text-gray-500">Loading or no data available...</p>
-      )}
-       <hr className="my-10 border-gray-600" />
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold mb-4 text-black text-center">🎯 Goal Progression</h2>
-        <div className="bg-white p-6 rounded-lg shadow">
-  <GoalProgression />
-</div>
+        </section>
+
+        {/* GOALS */}
+        <section className="space-y-4 relative z-50">
+          <SectionTitle title="Goals & Progress" />
+          <Card allowOverflow>
+            <GoalProgression />
+          </Card>
+        </section>
+
       </div>
     </div>
   );
 };
+
+/* ---------------- UI PRIMITIVES ---------------- */
+
+const SectionTitle = ({ title }) => (
+  <h2 className="text-sm sm:text-base font-semibold text-slate-800">
+    {title}
+  </h2>
+);
+
+const Card = ({ children, allowOverflow = false }) => (
+  <div
+    className={`
+      bg-white
+      border
+      border-slate-200
+      rounded-lg
+      p-4
+      sm:p-6
+      shadow-sm
+      ${allowOverflow ? "overflow-visible relative z-50" : "overflow-hidden"}
+    `}
+  >
+    {children}
+  </div>
+);
+
+const StatCard = ({ label, value }) => (
+  <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+    <p className="text-xs text-slate-500">{label}</p>
+    <p className="mt-1 text-xl font-semibold text-slate-900">
+      {value}
+    </p>
+  </div>
+);
 
 export default AnalysisPage;
