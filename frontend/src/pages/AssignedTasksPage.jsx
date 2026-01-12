@@ -65,7 +65,19 @@ const AssignedTasksPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-3 py-5 sm:px-6 lg:px-10 font-['Inter']">
+    <div
+      className="
+        min-h-screen
+        bg-slate-50
+        px-3
+        pt-20
+        pb-5
+        sm:pt-6
+        sm:px-6
+        lg:px-10
+        font-['Inter']
+      "
+    >
       <div className="max-w-6xl mx-auto space-y-6">
 
         {/* Header */}
@@ -117,7 +129,7 @@ const AssignedTasksPage = () => {
                 {/* Divider */}
                 <div className="my-3 border-t border-blue-200" />
 
-                {/* Meta info – stacked on mobile */}
+                {/* Meta */}
                 <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-3">
                   <Meta label="Priority" value={task.priority} />
                   <Meta label="Target Date" value={formatDate(task.targetDate)} />

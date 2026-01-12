@@ -38,9 +38,10 @@ const LogbookPage = () => {
   return (
     <div
       className="
-        min-h-[100dvh]
+        min-h-screen
+        w-full
         px-4
-        py-5
+        py-6
         sm:px-6
         lg:px-10
         font-['Inter']
@@ -52,12 +53,14 @@ const LogbookPage = () => {
         {/* Heading */}
         <h2
           className="
-            text-xl
-            sm:text-2xl
-            lg:text-3xl
+            text-2xl
+            sm:text-3xl
+            lg:text-4xl
             font-bold
             text-gray-900
-            mb-3
+            mb-2
+            text-center
+            sm:text-left
           "
         >
           Logbook
@@ -68,36 +71,46 @@ const LogbookPage = () => {
           className="
             text-sm
             sm:text-base
-            text-gray-700
-            max-w-4xl
+            text-gray-600
+            max-w-3xl
             mb-8
+            text-center
+            sm:text-left
             leading-relaxed
+            mx-auto
+            sm:mx-0
           "
         >
           Access and manage your clinical logbook categories. Entries from
           previous jobs are stored separately but can be combined for reporting.
         </p>
 
-        {/* Cards */}
+        {/* Cards Grid */}
         <div
           className="
             grid
             grid-cols-1
-            sm:grid-cols-2
+            md:grid-cols-2
             lg:grid-cols-3
             gap-4
-            lg:gap-6
+            sm:gap-6
           "
         >
-          {categoryList.map((category, index) => (
-            <LogbookCategory
-              key={index}
-              icon={category.icon}
-              title={category.name}
-              description={category.description}
-              route={category.route}
-            />
-          ))}
+          {categoryList.length > 0 ? (
+            categoryList.map((category, index) => (
+              <LogbookCategory
+                key={index}
+                icon={category.icon}
+                title={category.name}
+                description={category.description}
+                route={category.route}
+              />
+            ))
+          ) : (
+            <div className="col-span-full py-10 text-center text-gray-500">
+              Loading categories...
+            </div>
+          )}
         </div>
       </div>
     </div>
