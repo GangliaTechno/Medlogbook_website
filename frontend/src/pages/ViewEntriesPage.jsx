@@ -18,117 +18,155 @@ const ViewEntriesPage = () => {
 
   useEffect(() => {
     if (!user || !user.email) {
-      setNotification({ isOpen: true, message: "Please log in to view entries.", type: "error" });
+      setNotification({
+        isOpen: true,
+        message: "Please log in to view entries.",
+        type: "error",
+      });
       navigate("/");
       return;
     }
 
     const userEmail = user.email.email || user.email;
 
-    fetch(`https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(userEmail)}`)
+    fetch(
+      `https://medlogbook-website.onrender.com/api/logentry/${encodeURIComponent(
+        userEmail
+      )}`
+    )
       .then((response) => response.json())
       .then((data) => {
-        console.log("Raw API Data:", data);
         setEntries(data);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching entries:", error);
+      .catch(() => {
         setError("Failed to fetch entries.");
         setLoading(false);
       });
   }, [user, navigate]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 text-black">
-      
-      <h2 className="text-2xl font-bold text-blue-600 mb-6"
-      style={{
-    textAlign: "center",
-    fontWeight: 900,
-    fontSize: "30px",
-    color: "rgb(16, 137, 211)"
-  }}>My Logbook Entries</h2>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 text-black">
+      {/* HEADER */}
+      <h2 className="text-xl sm:text-2xl font-semibold text-center text-blue-600 mb-6">
+        My Logbook Entries
+      </h2>
 
-      {/* Loader */}
+      {/* LOADER */}
       {loading && (
-        <div className="flex flex-col items-center justify-center space-y-2">
-          <div className="w-12 h-12 border-4 border-teal-300 border-dashed rounded-full animate-spin"></div>
-          <p className="italic text-black">Loading entries...</p>
+        <div className="flex flex-col items-center justify-center space-y-2 py-10">
+          <div className="w-10 h-10 border-4 border-blue-300 border-dashed rounded-full animate-spin"></div>
+          <p className="text-sm text-slate-600">Loading entries…</p>
         </div>
       )}
 
-      {error && <p className="text-red-400 font-semibold">{error}</p>}
+      {error && <p className="text-red-500 font-medium">{error}</p>}
 
       {!loading && !error && entries.length === 0 && (
-        <p className="text-black">No log entries found.</p>
+        <p className="text-slate-600 text-center">No log entries found.</p>
       )}
 
-      {!loading && entries.length > 0 &&
-        entries.map((entry) => (
-          <div key={entry._id} className="bg-[#717c9350] p-5 mb-4 rounded-lg shadow text-left">
-            <h3 className="text-xl font-bold text-black mb-2">{entry.category}</h3>
-           <div className="space-y-2">
-  {Object.entries(entry.data).map(([key, value]) => (
-    <p key={key} className="text-sm text-black">
-      <strong className="text-black">{key.replace(/_/g, " ")}:</strong>{" "}
-      {typeof value === "string" &&
-      (value.startsWith("/uploads/") || value.startsWith("http")) ? (
-        <a
-          href={
-            value.startsWith("/uploads/")
-              ? `https://medlogbook-website.onrender.com${value}`
-              : value
-          }
-          download
-          className="text-black underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          📄 Download File
-        </a>
-      ) : (
-        value || "N/A"
-      )}
-    </p>
-              ))}
+      {/* ENTRIES */}
+      <div className="space-y-4">
+        {!loading &&
+          entries.map((entry) => (
+            <div
+              key={entry._id}
+              className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm"
+            >
+              {/* CATEGORY */}
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3">
+                {entry.category}
+              </h3>
 
+              {/* DATA */}
+              <div className="space-y-2 text-sm">
+                {Object.entries(entry.data).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex flex-col sm:flex-row sm:gap-2"
+                  >
+                    <span className="font-medium text-slate-700 capitalize">
+                      {key.replace(/_/g, " ")}:
+                    </span>
 
-              {entry.comments && (
-                <p className="text-sm text-black">
-                  <strong className="text-black">Doctor's Comments:</strong> {entry.comments}
-                </p>
-              )}
+                    <span className="text-slate-800 break-all">
+                      {typeof value === "string" &&
+                      (value.startsWith("/uploads/") ||
+                        value.startsWith("http")) ? (
+                        <a
+                          href={
+                            value.startsWith("/uploads/")
+                              ? `https://medlogbook-website.onrender.com${value}`
+                              : value
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline"
+                        >
+                          Download file
+                        </a>
+                      ) : (
+                        value || "N/A"
+                      )}
+                    </span>
+                  </div>
+                ))}
 
-              {entry.score !== null && entry.score !== undefined && (
-                <p className="text-sm text-black">
-                  <strong className="text-black">Score:</strong> {entry.score} / 100
-                </p>
-              )}
+                {entry.comments && (
+                  <div className="pt-2">
+                    <span className="font-medium text-slate-700">
+                      Doctor’s Comments:
+                    </span>
+                    <p className="text-slate-800 mt-1">
+                      {entry.comments}
+                    </p>
+                  </div>
+                )}
+
+                {entry.score !== null && entry.score !== undefined && (
+                  <div>
+                    <span className="font-medium text-slate-700">
+                      Score:
+                    </span>{" "}
+                    <span className="text-slate-900 font-semibold">
+                      {entry.score} / 100
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+      </div>
 
-      {/* Button */}
+      {/* BUTTON */}
       {!loading && (
         <button
-  onClick={() => navigate("/jobs")}
-  className="mt-6 px-6 py-3 text-white font-semibold rounded-[20px] transition-transform duration-200 shadow-md"
-  style={{
-    background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-    boxShadow: "rgba(133, 189, 215, 0.88) 0px 10px 15px -10px",
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
->
-  Back to Assignment History
-</button>
-
+          onClick={() => navigate("/jobs")}
+          className="
+            mt-6
+            w-full sm:w-auto
+            px-6
+            py-3
+            text-white
+            font-semibold
+            rounded-xl
+            bg-gradient-to-r from-blue-600 to-cyan-500
+            shadow
+            hover:opacity-95
+            transition
+          "
+        >
+          Back to Assignment History
+        </button>
       )}
 
+      {/* NOTIFICATION */}
       <Notification
         isOpen={notification.isOpen}
-        onRequestClose={() => setNotification({ ...notification, isOpen: false })}
+        onRequestClose={() =>
+          setNotification({ ...notification, isOpen: false })
+        }
         title="Notification"
         message={notification.message}
         type={notification.type}

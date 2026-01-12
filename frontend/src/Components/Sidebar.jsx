@@ -36,12 +36,21 @@ const Sidebar = () => {
     <>
       {/* 🍔 HAMBURGER (MOBILE ONLY) */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50
-                   bg-gradient-to-r from-blue-600 to-cyan-500
-                   text-white p-3 rounded-xl shadow-lg"
         onClick={() => setIsOpen(true)}
+        className="
+          md:hidden
+          fixed top-4 left-4 z-50
+          w-12 h-12
+          rounded-full
+          bg-gradient-to-br from-blue-600 to-cyan-500
+          text-white
+          flex items-center justify-center
+          shadow-xl
+          active:scale-95
+          transition-transform
+        "
       >
-        <IoMenu size={24} />
+        <IoMenu size={26} />
       </button>
 
       {/* 🌑 OVERLAY (MOBILE ONLY) */}
@@ -65,7 +74,7 @@ const Sidebar = () => {
           borderBottomRightRadius: "30px",
         }}
       >
-        {/* ❌ CLOSE (MOBILE) */}
+        {/* ❌ CLOSE (MOBILE ONLY) */}
         <div className="md:hidden absolute top-4 right-4">
           <IoClose
             size={26}
@@ -75,37 +84,58 @@ const Sidebar = () => {
         </div>
 
         {/* 🧠 TITLE */}
-        <div className="px-6 py-6 text-2xl font-bold">
+        <div className="px-6 py-6 text-2xl font-bold tracking-wide">
           Student Logbook
         </div>
 
         {/* 📌 MENU */}
         <ul className="flex-1 overflow-y-auto pr-2">
-          <li className={getLinkStyle("/logbookpage")} onClick={() => handleNavigate("/logbookpage")}>
+          <li
+            className={getLinkStyle("/logbookpage")}
+            onClick={() => handleNavigate("/logbookpage")}
+          >
             Primary Logbook
           </li>
 
-          <li className={getLinkStyle("/jobs")} onClick={() => handleNavigate("/jobs")}>
+          <li
+            className={getLinkStyle("/jobs")}
+            onClick={() => handleNavigate("/jobs")}
+          >
             Assignment History
           </li>
 
-          <li className={getLinkStyle("/analysis")} onClick={() => handleNavigate("/analysis")}>
+          <li
+            className={getLinkStyle("/analysis")}
+            onClick={() => handleNavigate("/analysis")}
+          >
             Analysis
           </li>
 
-          <li className={getLinkStyle("/assigned-tasks")} onClick={() => handleNavigate("/assigned-tasks")}>
+          <li
+            className={getLinkStyle("/assigned-tasks")}
+            onClick={() => handleNavigate("/assigned-tasks")}
+          >
             Assigned Tasks
           </li>
 
-          <li className={getLinkStyle("/reports")} onClick={() => handleNavigate("/reports")}>
+          <li
+            className={getLinkStyle("/reports")}
+            onClick={() => handleNavigate("/reports")}
+          >
             Reports
           </li>
 
-          <li className={getLinkStyle("/account")} onClick={() => handleNavigate("/account")}>
+          <li
+            className={getLinkStyle("/account")}
+            onClick={() => handleNavigate("/account")}
+          >
             Account
           </li>
 
-          <li className={getLinkStyle("/support")} onClick={() => handleNavigate("/support")}>
+          <li
+            className={getLinkStyle("/support")}
+            onClick={() => handleNavigate("/support")}
+          >
             Support
           </li>
         </ul>

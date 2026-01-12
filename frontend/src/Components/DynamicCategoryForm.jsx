@@ -598,443 +598,351 @@ const DynamicCategoryForm = () => {
     if (!categories.length) return <p style={{ color: "black" }}>Loading categories from database...</p>;
     if (!selectedCategory) return <p>❌ Category not found!</p>;
 
-    return (
-        <form onSubmit={handleSubmit} className="text-black font-semibold relative max-w-6xl mx-auto p-6">
+  return (
+    <form onSubmit={handleSubmit} className="text-black font-semibold relative max-w-6xl mx-auto p-4 sm:p-6">
 
-        {/* 🔒 AI Processing Overlay */}
-        {isProcessing && (
-            <div
-                className="absolute inset-0 bg-white/70 z-50 flex items-center justify-center rounded-xl"
-                style={{ backdropFilter: "blur(2px)" }}
-            >
-                <div className="flex items-center gap-3 text-blue-700 font-bold text-lg">
-                    <div className="animate-spin rounded-full h-6 w-6 border-4 border-blue-500 border-t-transparent"></div>
-                    AI is processing your entry…
-                </div>
-            </div>
-        )}
-
-        <h2
-            className="text-2xl font-bold text-blue-600 mb-6"
-            style={{
-                textAlign: "center",
-                fontWeight: 900,
-                fontSize: "30px",
-                color: "rgb(16, 137, 211)",
-            }}
+      {/* 🔒 AI Processing Overlay */}
+      {isProcessing && (
+        <div
+          className="fixed inset-0 sm:absolute bg-white/70 z-50 flex items-center justify-center rounded-xl"
+          style={{ backdropFilter: "blur(2px)" }}
         >
-            {selectedCategory.name} Form
-        </h2>
+          <div className="flex flex-col sm:flex-row items-center gap-3 text-blue-700 font-bold text-center px-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
+            AI is processing your entry…
+          </div>
+        </div>
+      )}
 
-        {/* Speech-to-Text Section */}
-        {speechSupported && (
-            <div
-                className="mb-6 p-8 bg-gradient-to-br from-blue-100 via-indigo-300 to-blue-200 rounded-2xl border-2 border-blue-300 shadow-2xl"
-                style={{ position: "relative" }}
+      <h2
+        className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-600 mb-6 text-center"
+        style={{
+          fontWeight: 900,
+          color: "rgb(16, 137, 211)",
+        }}
+      >
+        {selectedCategory.name} Form
+      </h2>
+
+      {/* Speech-to-Text Section */}
+      {speechSupported && (
+        <div
+          className="mb-6 p-4 sm:p-8 bg-gradient-to-br from-blue-100 via-indigo-300 to-blue-200 rounded-2xl border-2 border-blue-300 shadow-xl"
+        >
+          <h3 className="text-lg sm:text-2xl font-extrabold mb-6 text-blue-900 flex items-center gap-2">
+            <span className="text-2xl sm:text-3xl">🎙</span>
+            Voice Dictation
+          </h3>
+
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6">
+            <button
+              type="button"
+              onClick={isListening ? stopListening : startListening}
+              disabled={isProcessing}
+              className="flex-1 px-6 py-3 rounded-2xl cursor-pointer text-white font-semibold shadow-md transition-transform active:scale-95"
+              style={{
+                background: isListening
+                  ? "linear-gradient(45deg, #ff6b6b, #ff8787)"
+                  : "linear-gradient(45deg, #7fbefc, #7ab8f5)",
+              }}
             >
-                <h3 className="text-2xl font-extrabold mb-6 text-blue-900 flex items-center gap-2">
-                    <span className="text-3xl">🎙</span>
-                    Voice Dictation
-                </h3>
+              {isListening ? "⏸️ Stop" : "▶️ Start Dictation"}
+            </button>
 
-                <div className="flex flex-wrap gap-4 mb-6">
-                    {/* 🎤 Start / Stop Dictation */}
-                    <button
-                        type="button"
-                        onClick={isListening ? stopListening : startListening}
-                        disabled={isProcessing}
-                        className="px-6 py-3 rounded-[16px] cursor-pointer text-white font-semibold shadow-md transition-transform duration-200"
-                        style={{
-                            background: isListening
-                                ? "linear-gradient(45deg, #ff6b6b, #ff8787)"
-                                : "linear-gradient(45deg, #7fbefcff, #7ab8f5)",
-                            boxShadow: isListening
-                                ? "0 6px 12px rgba(255,107,107,0.4)"
-                                : "0 6px 12px rgba(122,184,245,0.3)",
-                        }}
-                        onMouseEnter={(e) =>
-                            (e.currentTarget.style.transform = "scale(1.03)")
-                        }
-                        onMouseLeave={(e) =>
-                            (e.currentTarget.style.transform = "scale(1)")
-                        }
-                    >
-                        {isListening ? "⏸️ Stop Dictating" : "▶️ Start Dictation"}
-                    </button>
+            <button
+              type="button"
+              onClick={generateFormFromSpeech}
+              disabled={!speechText.trim() || isProcessing}
+              className="flex-1 px-6 py-3 rounded-2xl cursor-pointer font-semibold text-white shadow-md transition-transform active:scale-95"
+              style={{
+                background: "linear-gradient(45deg, rgb(16, 137, 211), rgb(18, 177, 209))",
+              }}
+            >
+              ✨ Fill Form
+            </button>
 
-                    {/* ✨ Fill Form */}
-                    <button
-                        type="button"
-                        onClick={generateFormFromSpeech}
-                        disabled={!speechText.trim() || isProcessing}
-                        className="px-6 py-3 rounded-[20px] cursor-pointer font-semibold text-white shadow-md transition-transform duration-200"
-                        style={{
-                            background:
-                                "linear-gradient(45deg, rgb(16, 137, 211), rgb(18, 177, 209))",
-                        }}
-                    >
-                        ✨ Fill Form
-                    </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSpeechText("");
+                setShowGeneratedForm(false);
+              }}
+              disabled={isProcessing}
+              className="flex-1 px-6 py-3 rounded-2xl cursor-pointer text-white font-semibold shadow-md"
+              style={{
+                background: "linear-gradient(45deg, #b3d9ff, #7ab8f5)",
+              }}
+            >
+              Clear
+            </button>
+          </div>
 
-                    {/* 🧹 Clear */}
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setSpeechText("");
-                            setShowGeneratedForm(false);
-                        }}
-                        disabled={isProcessing}
-                        className="px-6 py-3 rounded-[16px] cursor-pointer text-white font-semibold shadow-md"
-                        style={{
-                            background: "linear-gradient(45deg, #b3d9ff, #7ab8f5)",
-                        }}
-                    >
-                        Clear All
-                    </button>
-                </div>
-
-                {/* 🧠 Voice Command Help */}
-                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                    <p className="text-blue-900 font-semibold mb-2">
-                        🎙 You can say:
-                    </p>
-                    <ul className="list-disc list-inside text-blue-800 text-sm space-y-1">
-                        <li><b>Next field</b> – move forward</li>
-                        <li><b>Previous field</b> – go back</li>
-                        <li><b>Submit</b> – submit form</li>
-                        <li><b>Cancel / Clear</b> – reset form</li>
-                    </ul>
-                </div>
-
-                {/* Transcribed Text */}
-                {speechText && (
-                    <div className="bg-white p-5 rounded-xl border-2 border-blue-100 shadow-inner mt-4">
-                        <label className="block font-bold text-blue-700 mb-2">
-                            📝 Transcribed Speech:
-                        </label>
-                        <div className="text-gray-900 whitespace-pre-wrap">
-                            {speechText}
-                        </div>
-                    </div>
-                )}
-
-                {showGeneratedForm && (
-                    <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-green-800 font-medium">
-                            ✅ Form generated successfully. Please review before submitting.
-                        </p>
-                    </div>
-                )}
+          {/* 🧠 Voice Command Help */}
+          <div className="mt-4 p-4 bg-blue-50/50 border border-blue-200 rounded-xl">
+            <p className="text-blue-900 font-bold mb-2 text-sm">🎙 Voice Commands:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-blue-800 text-xs sm:text-sm">
+              <div>• <b>Next field</b> – move forward</div>
+              <div>• <b>Previous field</b> – go back</div>
+              <div>• <b>Submit</b> – submit form</div>
+              <div>• <b>Cancel / Clear</b> – reset</div>
             </div>
+          </div>
+
+          {/* Transcribed Text */}
+          {speechText && (
+            <div className="bg-white p-4 rounded-xl border-2 border-blue-100 shadow-inner mt-4">
+              <label className="block text-xs font-bold text-blue-700 mb-1">
+                📝 Transcribed Speech:
+              </label>
+              <div className="text-gray-900 text-sm whitespace-pre-wrap leading-relaxed">
+                {speechText}
+              </div>
+            </div>
+          )}
+
+          {showGeneratedForm && (
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 text-sm font-medium">
+                ✅ Form generated! Please review before submitting.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Audio Upload Section */}
+      <div
+        className="mt-6 p-4 sm:p-6 rounded-2xl border border-blue-200 shadow-lg"
+        style={{ background: "linear-gradient(135deg, #f0f7ff, #e6f0ff)" }}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-xl">🎧</span>
+          <h4 className="text-lg sm:text-xl font-bold text-blue-900">Upload Audio File</h4>
+        </div>
+
+        <label
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-xl border-2 border-dashed border-blue-300 cursor-pointer hover:border-blue-500 transition shadow-sm"
+        >
+          <span className="text-gray-600 text-sm font-medium text-center sm:text-left truncate w-full sm:w-auto">
+            {audioFile ? audioFile.name : "Choose audio (mp3, wav)"}
+          </span>
+          <span
+            className="w-full sm:w-auto px-5 py-2 rounded-xl text-white font-semibold text-center"
+            style={{ background: "linear-gradient(45deg, #7fbefc, #7ab8f5)" }}
+          >
+            Browse
+          </span>
+          <input
+            type="file"
+            accept=".mp3,.wav"
+            onChange={(e) => setAudioFile(e.target.files[0])}
+            className="hidden"
+          />
+        </label>
+
+        <div className="mt-4 flex flex-col sm:flex-row items-center gap-3">
+          <button
+            type="button"
+            onClick={transcribeUploadedAudio}
+            disabled={!audioFile || isProcessing}
+            className="w-full sm:w-auto px-6 py-3 rounded-xl text-white font-semibold shadow-md active:scale-95 transition-transform"
+            style={{
+              background: "linear-gradient(45deg, rgb(16, 137, 211), rgb(18, 177, 209))",
+            }}
+          >
+            🎧 Transcribe Audio
+          </button>
+
+          {isProcessing && (
+            <span className="text-blue-700 text-sm font-medium animate-pulse">
+              Transcribing...
+            </span>
+          )}
+        </div>
+
+        {audioError && (
+          <p className="mt-3 text-red-600 text-sm font-medium">⚠️ {audioError}</p>
         )}
 
-            {/* Audio Upload Section */}
+        {audioTranscript && (
+          <div className="mt-4 p-4 bg-white rounded-xl border border-blue-100 shadow-inner">
+            <p className="text-blue-700 text-xs font-bold mb-1">📝 Audio Transcript</p>
+            <p className="text-gray-900 text-sm leading-relaxed">{audioTranscript}</p>
+          </div>
+        )}
+      </div>
 
-            <div
-                className="mt-6 p-6 rounded-2xl border border-blue-200 shadow-lg"
-                style={{
-                    background: "linear-gradient(135deg, #f0f7ff, #e6f0ff)",
-                }}
-            >
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-4">
-                    <span className="text-2xl">🎧</span>
-                    <h4 className="text-xl font-bold text-blue-900">
-                        Upload Audio File
-                    </h4>
+      {!speechSupported && (
+        <div className="my-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+          <p className="text-yellow-800 text-sm flex items-start gap-2">
+            <span>⚠️</span>
+            Speech recognition not supported in this browser. Use Chrome, Edge, or Safari.
+          </p>
+        </div>
+      )}
+
+      {/* Form Fields */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 my-8">
+        {selectedCategory.fields.map((field, index) => {
+          const options = dropdownOptions[selectedCategory.name]?.[field.name] || null;
+          return (
+            <div key={index} className={`space-y-1.5 ${field.name.toLowerCase() === "notes" ? "md:col-span-2" : ""}`}>
+              <label className="block text-sm font-bold text-gray-700">
+                {field.name}
+                {field.required && <span className="text-red-500 ml-1">*</span>}
+              </label>
+
+              {field.type === "file" ? (
+                <div className="space-y-3">
+                  <input
+                    type="file"
+                    name={field.name}
+                    onChange={(e) => handleFileChange(e, field.name)}
+                    className="w-full p-3 rounded-lg bg-white border border-slate-200 text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Title (required)"
+                    name={`${field.name}_title`}
+                    onChange={handleChange}
+                    value={formData[`${field.name}_title`] || ""}
+                    required
+                    className="w-full p-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-blue-400 outline-none text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Description (required)"
+                    name={`${field.name}_description`}
+                    onChange={handleChange}
+                    value={formData[`${field.name}_description`] || ""}
+                    required
+                    className="w-full p-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-blue-400 outline-none text-sm"
+                  />
                 </div>
-
-
-
-
-                {/* File input wrapper */}
-                <label
-                    className="flex items-center justify-between gap-4 p-4 bg-white rounded-xl border-2 border-dashed border-blue-300 cursor-pointer hover:border-blue-500 transition"
-                    style={{
-                        boxShadow: "#cff0ff 0px 10px 10px -5px",
-                    }}
+              ) : options ? (
+                <select
+                  name={field.name}
+                  value={formData[field.name] || ""}
+                  onChange={handleChange}
+                  className="w-full p-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-blue-400 outline-none text-sm"
                 >
-                    <span className="text-gray-700 font-medium">
-                        {audioFile ? audioFile.name : "Choose audio file (mp3, wav)"}
-                    </span>
+                  <option value="">Select {field.name}</option>
+                  {options.map((option, idx) => (
+                    <option key={idx} value={option}>{option}</option>
+                  ))}
+                </select>
+              ) : field.name.toLowerCase() === "notes" ? (
+                <textarea
+                  name={field.name}
+                  value={formData[field.name] || ""}
+                  onChange={handleChange}
+                  placeholder={`Enter ${field.name}`}
+                  rows={4}
+                  className="w-full p-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-blue-400 outline-none text-sm"
+                />
+              ) : (
+                <input
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name] || ""}
+                  onChange={handleChange}
+                  placeholder={`Enter ${field.name}`}
+                  className="w-full p-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-blue-400 outline-none text-sm"
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
 
-                    <span
-                        className="px-5 py-2 rounded-xl text-white font-semibold"
-                        style={{
-                            background: "linear-gradient(45deg, #7fbefc, #7ab8f5)",
-                        }}
-                    >
-                        Browse
-                    </span>
-
-                    <input
-                        type="file"
-                        accept=".mp3,.wav"
-                        onChange={(e) => setAudioFile(e.target.files[0])}
-                        className="hidden"
-                    />
-                    {/* Transcribe Button */}
-                    <div className="mt-4 flex items-center gap-4">
-                        <button
-                            type="button"
-                            onClick={transcribeUploadedAudio}
-                            disabled={!audioFile || isProcessing}
-                            className="px-6 py-3 rounded-xl text-white font-semibold shadow-md transition-transform duration-200"
-                            style={{
-                                background: "linear-gradient(45deg, rgb(16, 137, 211), rgb(18, 177, 209))",
-                                boxShadow: "rgba(133, 189, 215, 0.6) 0px 8px 15px -8px",
-                            }}
-                            onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.03)")}
-                            onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-                        >
-                            🎧 Transcribe Audio
-                        </button>
-
-                        {isProcessing && (
-                            <span className="text-blue-700 font-medium">
-                                Transcribing audio…
-                            </span>
-                        )}
-                    </div>
-
-
-
-                </label>
-
-                {/* Error */}
-                {audioError && (
-                    <p className="mt-3 text-red-600 font-medium">
-                        ⚠️ {audioError}
-                    </p>
-                )}
-
-                {/* Transcript */}
-                {audioTranscript && (
-                    <div className="mt-4 p-4 bg-white rounded-xl border border-blue-100 shadow-inner">
-                        <p className="text-blue-700 font-bold mb-1">
-                            📝 Audio Transcript
-                        </p>
-                        <p className="text-gray-900 leading-relaxed">
-                            {audioTranscript}
-                        </p>
-                    </div>
-                )}
+      {/* Custom Fields Section */}
+      <div className="mb-8 p-4 bg-slate-50 rounded-xl border border-slate-200">
+        <h3 className="text-lg font-bold mb-4 text-gray-800">Custom Fields</h3>
+        {customFields.map((field, index) => (
+          <div key={index} className="mb-4 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-3 mb-3">
+              <input
+                type="text"
+                value={field.name}
+                placeholder="Field Name"
+                onChange={(e) => updateCustomField(index, "name", e.target.value)}
+                className="flex-1 p-2.5 rounded-lg border text-sm"
+              />
+              <div className="flex gap-2">
+                <select
+                  value={field.type}
+                  onChange={(e) => updateCustomField(index, "type", e.target.value)}
+                  className="flex-1 sm:w-32 p-2.5 rounded-lg border text-sm bg-slate-50"
+                >
+                  <option value="text">Text</option>
+                  <option value="file">File</option>
+                  <option value="number">Num</option>
+                  <option value="date">Date</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={() => deleteCustomField(index)}
+                  className="bg-red-500 text-white px-4 rounded-lg text-sm font-bold"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
-
-
-            {!speechSupported && (
-                <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <p className="text-yellow-800 flex items-center gap-2">
-                        <span>⚠️</span>
-                        Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari for voice dictation.
-                    </p>
-                </div>
+            {field.name && (
+              <div className="mt-2">
+                {field.type === "file" ? (
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileChange(e, field.name)}
+                    className="w-full p-2 text-xs"
+                  />
+                ) : (
+                  <input
+                    type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
+                    name={field.name}
+                    value={formData[field.name] || ""}
+                    onChange={handleChange}
+                    placeholder={`Value for ${field.name}`}
+                    className="w-full p-2.5 rounded-lg border text-sm"
+                  />
+                )}
+              </div>
             )}
+          </div>
+        ))}
 
-            {/* Form Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                {selectedCategory.fields.map((field, index) => {
-                    const options = dropdownOptions[selectedCategory.name]?.[field.name] || null;
+        <button
+          type="button"
+          onClick={addCustomField}
+          className="w-full py-3 rounded-xl border-2 border-dashed border-blue-300 text-blue-600 font-bold hover:bg-blue-50 transition text-sm"
+        >
+          + Add Custom Field
+        </button>
+      </div>
 
-                    return (
-                        <div key={index} className={`space-y-2 ${field.name.toLowerCase() === "notes" ? "col-span-1" : ""}`}>
-                            <label className="block text-sm font-medium text-gray-700">
-                                {field.name}
-                                {field.required && <span className="text-red-500 ml-1">*</span>}
-                            </label>
+      {/* Submit Button */}
+      <div className="sticky bottom-4 sm:relative sm:bottom-0 flex justify-center mt-8">
+        <button
+          type="submit"
+          className="w-full sm:w-auto px-10 py-4 rounded-2xl cursor-pointer font-bold text-white shadow-xl active:scale-95 transition-transform"
+          style={{
+            background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
+          }}
+        >
+          Submit Log Entry
+        </button>
+      </div>
 
-                            {field.type === "file" ? (
-                                <>
-                                    <input
-                                        type="file"
-                                        name={field.name}
-                                        onChange={(e) => handleFileChange(e, field.name)}
-                                        ref={(el) => (fieldRefs.current[index] = el)}
-                                        className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
-                                        style={{
-                                            boxShadow: "#cff0ff 0px 10px 10px -5px",
-                                        }}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Title (required)"
-                                        name={`${field.name}_title`}
-                                        onChange={handleChange}
-                                        ref={(el) => (fieldRefs.current[index] = el)}
-                                        value={formData[`${field.name}_title`] || ""}
-                                        required
-                                        className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
-                                        style={{
-                                            boxShadow: "#cff0ff 0px 10px 10px -5px",
-                                        }}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Description (required)"
-                                        name={`${field.name}_description`}
-                                        onChange={handleChange}
-                                        ref={(el) => (fieldRefs.current[index] = el)}
-                                        value={formData[`${field.name}_description`] || ""}
-                                        required
-                                        className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
-                                        style={{
-                                            boxShadow: "#cff0ff 0px 10px 10px -5px",
-                                        }}
-                                    />
-                                </>
-                            ) : options ? (
-                                <select
-                                    name={field.name}
-                                    value={formData[field.name] || ""}
-                                    onChange={handleChange}
-                                    ref={(el) => (fieldRefs.current[index] = el)}
-                                    className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
-                                    style={{
-                                        boxShadow: "#cff0ff 0px 10px 10px -5px",
-                                    }}
-                                >
-                                    <option value="">Select {field.name}</option>
-                                    {options.map((option, idx) => (
-                                        <option key={idx} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </select>
-                            ) : field.name.toLowerCase() === "notes" ? (
-                                <textarea
-                                    name={field.name}
-                                    value={formData[field.name] || ""}
-                                    onChange={handleChange}
-                                    ref={(el) => (fieldRefs.current[index] = el)}
-                                    placeholder={`Enter ${field.name}`}
-                                    rows={5}
-                                    className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
-                                    style={{
-                                        boxShadow: "#cff0ff 0px 10px 10px -5px",
-                                        resize: "vertical",
-                                        width: "100%",
-                                        maxWidth: "100%"
-                                    }}
-                                />
-                            ) : (
-                                <input
-                                    type={field.type}
-                                    name={field.name}
-                                    value={formData[field.name] || ""}
-                                    onChange={handleChange}
-                                    ref={(el) => (fieldRefs.current[index] = el)}
-                                    placeholder={`Enter ${field.name}`}
-                                    className="text-black w-full p-3 rounded-lg bg-white border-2 border-transparent focus:border-blue-400 outline-none transition-all duration-200"
-                                    style={{
-                                        boxShadow: "#cff0ff 0px 10px 10px -5px",
-                                    }}
-                                />
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* Custom Fields Section */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">Custom Fields</h3>
-                {customFields.map((field, index) => (
-                    <div key={index} className="mb-4 p-4 bg-white rounded-lg border">
-                        <div className="flex gap-3 mb-3">
-                            <input
-                                type="text"
-                                value={field.name}
-                                placeholder="Field Name"
-                                onChange={(e) => updateCustomField(index, "name", e.target.value)}
-                                className="flex-1 p-3 rounded-lg bg-white border-2 border-gray-200 focus:border-blue-400 outline-none transition-all duration-200"
-                            />
-                            <select
-                                value={field.type}
-                                onChange={(e) => updateCustomField(index, "type", e.target.value)}
-                                className="p-3 rounded-lg bg-white border-2 border-gray-200 focus:border-blue-400 outline-none transition-all duration-200"
-                            >
-                                <option value="text">Text</option>
-                                <option value="file">File</option>
-                                <option value="number">Number</option>
-                                <option value="date">Date</option>
-                            </select>
-                            <button
-                                type="button"
-                                onClick={() => deleteCustomField(index)}
-                                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-                            >
-                                Remove
-                            </button>
-                        </div>
-
-                        {field.name && (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {field.name}
-                                </label>
-                                {field.type === "file" ? (
-                                    <input
-                                        type="file"
-                                        name={field.name}
-                                        onChange={(e) => handleFileChange(e, field.name)}
-                                        className="w-full p-3 rounded-lg bg-white border-2 border-gray-200 focus:border-blue-400 outline-none transition-all duration-200"
-                                    />
-                                ) : (
-                                    <input
-                                        type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
-                                        name={field.name}
-                                        value={formData[field.name] || ""}
-                                        onChange={handleChange}
-                                        placeholder={`Enter ${field.name}`}
-                                        className="w-full p-3 rounded-lg bg-white border-2 border-gray-200 focus:border-blue-400 outline-none transition-all duration-200"
-                                    />
-                                )}
-                            </div>
-                        )}
-                    </div>
-                ))}
-
-                <button
-                    type="button"
-                    onClick={addCustomField}
-                    className="w-full px-6 py-3 rounded-[16px] cursor-pointer flex justify-center items-center gap-1.5 mt-2 text-white font-semibold transition-transform duration-200 shadow-md"
-                    style={{
-                        background: "linear-gradient(45deg, #b3d9ff, #7ab8f5)",
-                        boxShadow: "0 6px 12px rgba(122, 184, 245, 0.3)",
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.03)")}
-                    onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-                >
-                    + Add Custom Field
-                </button>
-            </div>
-
-            {/* Submit Button */}
-            <div className="flex justify-center">
-                <button
-                    type="submit"
-                    className=" px-6 py-3 rounded-[20px] cursor-pointer font-semibold text-white shadow-md transition-transform duration-200"
-                    style={{
-                        background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-                        boxShadow: "rgba(133, 189, 215, 0.88) 0px 10px 15px -10px",
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.03)")}
-                    onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-                >
-                    Submit Log Entry
-                </button>
-            </div>
-
-            <Notification
-                isOpen={notification.isOpen}
-                onRequestClose={() => setNotification({ ...notification, isOpen: false })}
-                title="Notification"
-                message={notification.message}
-                type={notification.type}
-            />
-        </form>
-    );
+      <Notification
+        isOpen={notification.isOpen}
+        onRequestClose={() => setNotification({ ...notification, isOpen: false })}
+        title="Notification"
+        message={notification.message}
+        type={notification.type}
+      />
+    </form>
+  );
 };
 
 export default DynamicCategoryForm;
