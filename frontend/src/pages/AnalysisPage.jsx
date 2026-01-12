@@ -74,7 +74,21 @@ const AnalysisPage = () => {
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="min-h-[100dvh] bg-slate-50 px-4 py-6 sm:px-6 lg:px-10 font-['Inter']">
+    <div
+      className="
+        min-h-[100dvh]
+        bg-slate-50
+        px-4
+        py-6
+        pt-20
+        pl-16
+        sm:px-6
+        sm:pt-6
+        sm:pl-6
+        lg:px-10
+        font-['Inter']
+      "
+    >
       <div className="max-w-7xl mx-auto space-y-10">
 
         {/* HEADER */}
@@ -105,7 +119,7 @@ const AnalysisPage = () => {
           />
         </section>
 
-        {/* TRENDS */}
+        {/* ACTIVITY TREND */}
         <section className="space-y-4">
           <SectionTitle title="Activity Trend" />
           <Card>
@@ -154,10 +168,7 @@ const AnalysisPage = () => {
                     outerRadius={90}
                   >
                     {categoryPercentage.map((_, i) => (
-                      <Cell
-                        key={i}
-                        fill={COLORS[i % COLORS.length]}
-                      />
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(v) => `${v}%`} />
@@ -167,7 +178,7 @@ const AnalysisPage = () => {
           </div>
         </section>
 
-        {/* GOALS — MOBILE DROPDOWN FIX */}
+        {/* GOALS */}
         <section className="space-y-4 relative z-50">
           <SectionTitle title="Goals & Progress" />
           <Card allowOverflow>

@@ -50,7 +50,7 @@ const JobsPage = () => {
 
   if (loading) {
     return (
-      <p className="text-center text-base text-gray-700 mt-12 font-['Inter'] font-medium">
+      <p className="text-center text-base text-gray-700 mt-20 font-['Inter'] font-medium">
         Loading jobs…
       </p>
     );
@@ -60,38 +60,36 @@ const JobsPage = () => {
     <div
       className="
         font-['Inter']
-        px-6
-        py-8
-        lg:px-10
+        text-gray-900
         max-w-7xl
         mx-auto
-        text-gray-900
+
+        /* 🔑 IMPORTANT: mobile hamburger spacing */
+        pt-20
+        pl-16
+        px-4
+        py-8
+
+        sm:pt-8
+        sm:pl-6
+        sm:px-6
+
+        lg:px-10
       "
     >
+      {/* Page Heading */}
+      <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-2">
+        Assignment History
+      </h1>
+
       {/* Description */}
-      <p
-        className="
-          text-base
-          text-gray-700
-          leading-relaxed
-          mb-8
-          max-w-4xl
-          font-medium
-        "
-      >
+      <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-8 max-w-4xl">
         Manage your training posts, specialties, and access logbook entries
         associated with your current or previous jobs.
       </p>
 
       {/* Section Title */}
-      <h3
-        className="
-          text-lg
-          font-bold
-          text-gray-900
-          mb-6
-        "
-      >
+      <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-4">
         Primary Job
       </h3>
 
@@ -99,92 +97,78 @@ const JobsPage = () => {
         <div
           key={job.id}
           className="
-            relative
             bg-white
-
-            /* Black / dark corners */
             border
             border-gray-800
             rounded-xl
 
-            px-7
-            py-6
+            p-5
+            sm:p-6
+
             mb-6
 
             flex
             flex-col
-            gap-6
-            lg:flex-row
-            lg:items-center
-            lg:justify-between
+            gap-5
+            sm:flex-row
+            sm:items-center
+            sm:justify-between
 
-            /* Edge depth */
             shadow-[0_8px_24px_rgba(0,0,0,0.15)]
             ring-1
             ring-black/30
             ring-inset
 
-            /* Subtle hover */
             transition-all
             duration-200
             hover:-translate-y-[2px]
             hover:shadow-[0_12px_32px_rgba(0,0,0,0.18)]
           "
         >
-          {/* Left Section */}
-          <div className="flex items-start gap-6">
+          {/* Left Content */}
+          <div className="flex items-start gap-4">
             <img
               src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg"
               alt="India"
-              className="w-10 h-7 mt-1 shrink-0"
+              className="w-9 h-6 mt-1 shrink-0"
             />
 
             <div>
-              {/* Job Title */}
-              <p
-                className="
-                  text-base
-                  lg:text-lg
-                  font-bold
-                  text-gray-900
-                "
-              >
+              <p className="text-base sm:text-lg font-bold text-gray-900">
                 {job.trainingYear} — {job.specialty}
               </p>
 
-              {/* Date (bold but muted) */}
-              <p
-                className="
-                  text-sm
-                  lg:text-base
-                  font-semibold
-                  text-gray-700
-                  mt-1
-                "
-              >
+              <p className="text-sm font-medium text-gray-700 mt-1">
                 {job.startDate} – {job.endDate}
               </p>
             </div>
           </div>
 
-          {/* Action Button */}
+          {/* Action */}
           <button
             onClick={() => navigate("/view-entries")}
             className="
               w-full
-              lg:w-auto
-              px-7
-              py-3.5
-              text-base
-              font-bold
+              sm:w-auto
+
+              px-6
+              py-3
+
+              text-sm
+              sm:text-base
+              font-semibold
+
               text-white
               rounded-lg
+
               bg-blue-600
               hover:bg-blue-700
+
               focus:outline-none
               focus:ring-2
               focus:ring-blue-500
               focus:ring-offset-2
+
               transition
             "
           >
