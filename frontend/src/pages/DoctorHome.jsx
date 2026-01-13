@@ -6,57 +6,37 @@ const DoctorHome = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 mb-10">
+  return (
+    <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex flex-col items-center justify-center p-6 sm:p-10">
+
       {/* Welcome Card */}
-      <div className="bg-white text-black p-6 rounded-lg shadow-lg max-w-2xl w-full text-center font-sans">
-        <h2
-          className="text-2xl font-bold mb-6"
-          style={{
-            textAlign: "center",
-            fontWeight: 900,
-            fontSize: "30px",
-            color: "rgb(16, 137, 211)",
-          }}
-        >
-          Welcome, Doctor!
-        </h2>
+      <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 sm:p-12 max-w-3xl w-full text-center">
+        <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+          Welcome, <span className="text-blue-600">Doctor!</span>
+        </h1>
 
-        <p className="mb-4 text-lg">
-          As a doctor, your expertise and guidance help shape the future of
-          medicine. This logbook allows you to monitor students’ progress,
-          review their entries, and provide feedback to enhance their learning
-          experience.
+        <p className="text-slate-600 text-lg sm:text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
+          Your expertise shapes the future. Monitor student progress, review logbook entries, and provide the feedback they need to excel in their medical training.
         </p>
 
-        <p className="text-lg">
-          Navigate to{" "}
-          <strong className="text-[#00d9c0]">View Students</strong> to manage
-          student logbook entries.
-        </p>
-      </div>
-
-      {/* ONLY ONE BUTTON */}
-      <div className="mt-10">
-        <button
-          onClick={() => navigate("/doctor/categories")}
-          className="flex items-center gap-2 px-6 py-3 text-white rounded-[20px] font-semibold shadow-md transition-transform duration-200"
-          style={{
-            background:
-              "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-            boxShadow: "rgba(133, 189, 215, 0.88) 0px 10px 15px -10px",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.transform = "scale(1.03)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.transform = "scale(1)")
-          }
-        >
-          <FaChevronRight />
-          Manage Logbook Categories
-        </button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+          <button
+            onClick={() => navigate("/doctor/categories")}
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 active:scale-95 w-full sm:w-auto"
+          >
+            <FaChevronRight />
+            Manage Categories
+          </button>
+          <button
+            onClick={() => navigate("/doctor/view-students")}
+            className="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-8 py-4 rounded-xl text-lg font-bold shadow-sm hover:shadow-md transition-all duration-200 w-full sm:w-auto"
+          >
+            View Students
+          </button>
+        </div>
       </div>
     </div>
+  );
   );
 };
 
