@@ -10,12 +10,9 @@ const DoctorHome = () => {
       {/* Welcome Card */}
       <div className="bg-white text-black p-6 rounded-lg shadow-lg max-w-2xl w-full text-center font-sans">
         <h2
-          className="text-2xl font-bold mb-6"
+          className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#1089d3]"
           style={{
-            textAlign: "center",
             fontWeight: 900,
-            fontSize: "30px",
-            color: "rgb(16, 137, 211)",
           }}
         >
           Welcome, Doctor!
