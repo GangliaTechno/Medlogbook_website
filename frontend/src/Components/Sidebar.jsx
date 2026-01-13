@@ -25,10 +25,9 @@ const Sidebar = () => {
   const getLinkStyle = (path) => {
     const isActive = location.pathname === path;
     return `px-6 py-4 flex items-center gap-3 cursor-pointer rounded-lg transition-all duration-200
-      ${
-        isActive
-          ? "bg-white/20 border-l-4 border-white pl-4 font-semibold"
-          : "hover:bg-white/20 hover:border-l-4 hover:border-white hover:pl-4"
+      ${isActive
+        ? "bg-white/20 border-l-4 border-white pl-4 font-semibold"
+        : "hover:bg-white/20 hover:border-l-4 hover:border-white hover:pl-4"
       }`;
   };
 
@@ -36,7 +35,7 @@ const Sidebar = () => {
     <>
       {/* 🍔 HAMBURGER (MOBILE ONLY) */}
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(!isOpen)}
         className="
           md:hidden
           fixed top-4 left-4 z-50

@@ -23,10 +23,9 @@ const AdminSidebar = () => {
       : location.pathname.startsWith(path);
 
     return `px-6 py-4 flex gap-3 items-center cursor-pointer rounded-lg transition-all duration-200
-      ${
-        isActive
-          ? "bg-white/20 border-l-4 border-white font-semibold text-white"
-          : "hover:bg-white/20 hover:border-l-4 hover:border-white"
+      ${isActive
+        ? "bg-white/20 border-l-4 border-white font-semibold text-white"
+        : "hover:bg-white/20 hover:border-l-4 hover:border-white"
       }`;
   };
 
@@ -34,28 +33,23 @@ const AdminSidebar = () => {
     <>
       {/* 🍔 Burger Icon */}
       {!isOpen && (
-        <div className="md:hidden p-4 fixed top-0 left-0 z-50">
-          <button
-            onClick={() => setIsOpen(true)}
-            style={{
-              display: "block",
-              width: "100%",
-              fontWeight: "bold",
-              background:
-                "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-              color: "white",
-              padding: "12px 20px",
-              margin: "auto",
-              borderRadius: "20px",
-              boxShadow: "rgba(133, 189, 215, 0.88) 0px 20px 10px -15px",
-              border: "none",
-              fontSize: "24px",
-              transition: "all 0.2s ease-in-out",
-            }}
-          >
-            <IoMenu />
-          </button>
-        </div>
+        <button
+          onClick={() => setIsOpen(true)}
+          className="
+            md:hidden
+            fixed top-4 left-4 z-50
+            w-12 h-12
+            rounded-full
+            bg-gradient-to-br from-blue-600 to-cyan-500
+            text-white
+            flex items-center justify-center
+            shadow-xl
+            active:scale-95
+            transition-transform
+          "
+        >
+          <IoMenu size={26} />
+        </button>
       )}
 
       {/* 🧱 Sidebar Panel */}
@@ -93,7 +87,7 @@ const AdminSidebar = () => {
             }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#e3e3e3">
-              <path d="M252-212h85v-188q0-26 18.5-44.5T400-463h160q26 0 44.5 18.5T623-400v188h85v-342L480-725 252-554v342Z"/>
+              <path d="M252-212h85v-188q0-26 18.5-44.5T400-463h160q26 0 44.5 18.5T623-400v188h85v-342L480-725 252-554v342Z" />
             </svg>
             Home
           </li>

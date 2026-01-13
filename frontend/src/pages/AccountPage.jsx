@@ -109,156 +109,194 @@ const AccountPage = () => {
   const isIndia = formData.country === "India";
 
   return (
-    <div
-      className="min-h-screen w-full flex items-center justify-center px-4 py-10 bg-cover bg-center"
-      style={{ backgroundImage: `url(${medicalBg})` }}
-    >
-      {/* CARD */}
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-blue-700 text-center mb-1">
-          Account Information
-        </h2>
-        <p className="text-center text-sm text-slate-600 mb-8">
-          Manage your personal and professional details
-        </p>
+    <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 py-10 px-4 sm:px-6 flex items-center justify-center">
 
-        {/* Email */}
-        <div className="mb-5">
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Email
-          </label>
-          <div className="flex items-center gap-3 border border-slate-300 rounded-lg px-4 py-2 bg-slate-50">
-            <span className="flex-1 text-sm text-slate-700 truncate">
-              {formData.email}
-            </span>
-            <FaCheckCircle className="text-green-600" />
-          </div>
+      <div className="w-full max-w-2xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">
+            Account Settings
+          </h1>
+          <p className="text-slate-500">
+            Manage your profile details and preferences.
+          </p>
         </div>
 
-        {/* Password */}
-        <div className="mb-5">
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            New Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter new password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+        {/* Card */}
+        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+          {/* Accent Line */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 to-indigo-500"></div>
+
+          <div className="p-8 sm:p-10">
+            {/* Email Section */}
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                Email Address
+              </label>
+              <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+                <span className="flex-1 text-sm font-medium text-slate-600 truncate">
+                  {formData.email}
+                </span>
+                <div className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-lg border border-green-100">
+                  <FaCheckCircle className="text-sm" />
+                  <span className="text-xs font-bold uppercase tracking-wide">Verified</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Password Section */}
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                New Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter a new password to update"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              />
+            </div>
+
+            <div className="h-px bg-slate-100 w-full my-8"></div>
+
+            {/* Grid Inputs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+              {/* Country */}
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                  Country
+                </label>
+                <div className="relative">
+                  <select
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer"
+                  >
+                    <option value="">Select country</option>
+                    <option value="India">India</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Training Year */}
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                  Training Year
+                </label>
+                <div className="relative">
+                  <select
+                    name="trainingYear"
+                    value={formData.trainingYear}
+                    onChange={handleChange}
+                    disabled={!formData.country}
+                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
+                  >
+                    <option value="">Select year</option>
+                    {(isIndia
+                      ? ["Residency", "Postgraduate year 1", "Internship", "Resident medical officer"]
+                      : ["Medical Year 1", "Medical Year 2", "Medical Year 3"]
+                    ).map((y) => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hospital */}
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                  Hospital
+                </label>
+                <div className="relative">
+                  <select
+                    name="hospital"
+                    value={formData.hospital}
+                    onChange={handleChange}
+                    disabled={!formData.country}
+                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
+                  >
+                    <option value="">Select hospital</option>
+                    {(isIndia
+                      ? ["KMC Manipal", "AIIMS Delhi", "Fortis Hospital"]
+                      : ["Mayo Clinic", "Cleveland Clinic", "Johns Hopkins Hospital"]
+                    ).map((h) => (
+                      <option key={h} value={h}>{h}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Specialty */}
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                  Specialty
+                </label>
+                <div className="relative">
+                  <select
+                    name="specialty"
+                    value={formData.specialty}
+                    onChange={handleChange}
+                    disabled={!formData.country}
+                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
+                  >
+                    <option value="">Select specialty</option>
+                    {(isIndia
+                      ? ["Allergy", "Cardiology", "Dermatology", "Emergency medicine"]
+                      : ["Oncology", "Pediatrics", "Neurology"]
+                    ).map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <button
+                onClick={handleUpdate}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 active:scale-95"
+              >
+                Save Changes
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="flex-1 bg-white border border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-100 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 group"
+              >
+                <FaTrash className="group-hover:scale-110 transition-transform" />
+                Delete Account
+              </button>
+            </div>
+          </div>
         </div>
-
-        {/* Grid for selects */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Country
-            </label>
-            <select
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm bg-white"
-            >
-              <option value="">Select country</option>
-              <option value="India">India</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Training Year
-            </label>
-            <select
-              name="trainingYear"
-              value={formData.trainingYear}
-              onChange={handleChange}
-              disabled={!formData.country}
-              className="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm bg-white disabled:bg-slate-100"
-            >
-              <option value="">Select training year</option>
-              {(isIndia
-                ? ["Residency", "Postgraduate year 1", "Internship", "Resident medical officer"]
-                : ["Medical Year 1", "Medical Year 2", "Medical Year 3"]
-              ).map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Hospital
-            </label>
-            <select
-              name="hospital"
-              value={formData.hospital}
-              onChange={handleChange}
-              disabled={!formData.country}
-              className="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm bg-white disabled:bg-slate-100"
-            >
-              <option value="">Select hospital</option>
-              {(isIndia
-                ? ["KMC Manipal", "AIIMS Delhi", "Fortis Hospital"]
-                : ["Mayo Clinic", "Cleveland Clinic", "Johns Hopkins Hospital"]
-              ).map((h) => (
-                <option key={h} value={h}>{h}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Specialty
-            </label>
-            <select
-              name="specialty"
-              value={formData.specialty}
-              onChange={handleChange}
-              disabled={!formData.country}
-              className="w-full border border-slate-300 rounded-lg px-4 py-2 text-sm bg-white disabled:bg-slate-100"
-            >
-              <option value="">Select specialty</option>
-              {(isIndia
-                ? ["Allergy", "Cardiology", "Dermatology", "Emergency medicine"]
-                : ["Oncology", "Pediatrics", "Neurology"]
-              ).map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-4">
-          <button
-            onClick={handleUpdate}
-            className="flex-1 bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded-lg text-sm font-semibold"
-          >
-            Update Account
-          </button>
-
-          <button
-            onClick={handleDelete}
-            className="flex-1 border border-red-500 text-red-600 hover:bg-red-50 py-2.5 rounded-lg text-sm font-semibold"
-          >
-            <FaTrash className="inline mr-1" /> Delete Account
-          </button>
-        </div>
-
-        <Notification
-          isOpen={notification.isOpen}
-          onRequestClose={() =>
-            setNotification({ ...notification, isOpen: false })
-          }
-          title="Notification"
-          message={notification.message}
-          type={notification.type}
-        />
       </div>
+
+      <Notification
+        isOpen={notification.isOpen}
+        onRequestClose={() =>
+          setNotification({ ...notification, isOpen: false })
+        }
+        title="Notification"
+        message={notification.message}
+        type={notification.type}
+      />
     </div>
   );
 };

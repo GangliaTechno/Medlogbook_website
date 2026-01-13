@@ -61,7 +61,7 @@ const AdminLayout = () => (
       <AdminSidebar />
     </div>
 
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-white via-[#e8f5fe] to-[#dbefff]">
+    <div className="flex-1 overflow-y-auto p-4 pt-20 md:p-6 bg-gradient-to-br from-white via-[#e8f5fe] to-[#dbefff]">
       <Outlet />
     </div>
   </div>
@@ -94,7 +94,7 @@ const App = () => (
         <Route path="/view-entries" element={<ViewEntriesPage />} />
         <Route path="/logbook/:category" element={<GeneratedForm />} />
         <Route path="/account" element={<AccountPage />} />
-  <Route path="/support" element={<Support />} />
+        <Route path="/support" element={<Support />} />
       </Route>
 
       {/* Doctor (UNCHANGED) */}
@@ -113,7 +113,7 @@ const App = () => (
       {/* Admin */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminHome />} />
-        <Route path="register" element={<RegistrationPage />} /> 
+        <Route path="register" element={<RegistrationPage />} />
         <Route path="users" element={<AdminPage />} />
         <Route path="pending-approval" element={<PendingApproval />} />
         <Route path="assign-task" element={<AssignTaskPage />} />
