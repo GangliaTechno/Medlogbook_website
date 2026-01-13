@@ -7,6 +7,8 @@ import axios from "axios";
 const LogbookPage = () => {
   const userEmail = useSelector((state) => state.auth?.user?.email);
   const [categoryList, setCategoryList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!userEmail) return;
@@ -19,14 +21,14 @@ const LogbookPage = () => {
           )}`
         );
 
-        const categories = response.data.map((category) => ({
+        const fetchedCategories = response.data.map((category) => ({
           name: category.name,
           description: `Manage ${category.name} log entries`,
           icon: <FaClipboardList />,
           route: `/logbook/${category.name}`,
         }));
 
-        setCategories(fetchedCategories);
+        setCategoryList(fetchedCategories);
       } catch (err) {
         console.error("Error fetching categories:", err);
         setError(err.message || "Failed to fetch categories.");
