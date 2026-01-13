@@ -297,7 +297,7 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
 
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full min-h-screen overflow-x-hidden">
 
       <button
         className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md mb-4"
@@ -368,7 +368,7 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
         displayedEntries.map((entry) => (
           <div
             key={entry._id}
-            className="relative p-6 mb-8"
+            className="relative p-4 md:p-6 mb-8"
             style={{
               borderRadius: "28px",
               background: "#ffffff",

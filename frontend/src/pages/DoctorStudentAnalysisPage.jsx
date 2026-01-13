@@ -139,7 +139,7 @@ const DoctorStudentAnalysisPage = () => {
   };
 
   return (
-    <div className="p-6 min-h-screen bg-slate-50">
+    <div className="w-full min-h-screen bg-slate-50 p-4 md:p-6 overflow-x-hidden">
 
 
 

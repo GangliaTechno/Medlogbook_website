@@ -11,7 +11,7 @@ const DoctorLayout = () => {
 
       {/* Main content area with background */}
       <main
-        className="pt-20 md:pt-6 px-6 md:ml-[250px] min-h-screen overflow-y-auto"
+        className="pt-20 md:pt-6 px-4 md:px-6 md:ml-[250px] min-h-screen overflow-x-hidden overflow-y-auto"
         style={{
           backgroundImage: `url(${doctorBg})`,
           backgroundSize: "cover",
@@ -20,7 +20,7 @@ const DoctorLayout = () => {
         }}
       >
         {/* Content wrapper */}
-        <div className="flex-1 p-4 md:p-6 overflow-y-auto">
+        <div className="flex-1 w-full max-w-full">
           <Outlet />
         </div>
       </main>

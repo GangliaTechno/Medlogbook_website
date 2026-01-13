@@ -6,7 +6,7 @@ const DoctorHome = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 mb-10">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 mb-10 overflow-x-hidden">
       {/* Welcome Card */}
       <div className="bg-white text-black p-6 rounded-lg shadow-lg max-w-2xl w-full text-center font-sans">
         <h2
