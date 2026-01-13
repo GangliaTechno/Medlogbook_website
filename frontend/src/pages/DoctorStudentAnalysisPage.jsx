@@ -600,7 +600,10 @@ const handleViewEntries = (studentEmail) => {
   };
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white">
+    <div className="p-6 min-h-screen bg-slate-50">
+
+
+
 
       
       <h2 className="text-2xl font-bold text-blue-600 mb-6"
@@ -764,3 +767,5 @@ const handleViewEntries = (studentEmail) => {
 };
 
 export default DoctorStudentAnalysisPage;
+
+

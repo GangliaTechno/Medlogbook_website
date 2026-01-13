@@ -1,90 +1,73 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaTrash } from "react-icons/fa";
 
 const CategoryList = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.error("No token found");
-      setLoading(false);
-      return;
-    }
-
-    fetch("https://medlogbook-website.onrender.com/api/category", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Unauthorized");
-        return res.json();
-      })
-      .then((data) => {
-        setCategories(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Category fetch failed:", err);
-        setCategories([]);
-        setLoading(false);
-      });
+    const stored =
+      JSON.parse(localStorage.getItem("doctorLogbookCategories")) || [];
+    setCategories(stored);
   }, []);
 
-  return (
-    <div className="min-h-screen bg-white px-6 py-10">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-[#0a8fb6] mb-2">
-          Manage Logbook Categories
-        </h2>
+  const deleteCategory = (index) => {
+    const updated = categories.filter((_, i) => i !== index);
+    setCategories(updated);
+    localStorage.setItem(
+      "doctorLogbookCategories",
+      JSON.stringify(updated)
+    );
+  };
 
-        <p className="text-center text-gray-600 mb-8">
-          Add and manage logbook categories for students.
+  return (
+    <div className="min-h-screen bg-[#eef7fd] px-6 py-10 flex justify-center">
+      <div className="w-full max-w-3xl text-center">
+
+        <h1 className="text-3xl font-bold text-blue-600 mb-3">
+          Manage logbook categories
+        </h1>
+
+        <p className="text-gray-600 mb-10">
+          You can change the name of a category and delete categories you no longer require.
         </p>
 
-        {/* ✅ FIXED PATH */}
+        {/* ADD CATEGORY */}
         <button
           onClick={() => navigate("/doctor/categories/add")}
-          className="w-full mb-8 py-4 rounded-xl text-white font-semibold"
-          style={{
-            background: "linear-gradient(90deg, #0a8fb6, #0fb9d8)",
-          }}
+          className="w-full py-4 mb-12 rounded-full
+                     text-white font-semibold text-lg
+                     bg-gradient-to-r from-blue-600 to-cyan-500
+                     shadow-lg hover:opacity-90 transition"
         >
-          Add Additional Category
+          Add additional category
         </button>
 
-        {loading ? (
-          <p className="text-center text-gray-500">
-            Loading categories...
-          </p>
-        ) : categories.length === 0 ? (
-          <p className="text-center text-gray-500">
-            No categories found.
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {categories.map((cat) => (
-              <div
-                key={cat._id}
-                className="flex justify-between items-center bg-white rounded-xl shadow-md px-6 py-5"
-              >
-                <span className="text-lg font-medium">
-                  {cat.name}
-                </span>
-
-                {/* ✔ Disabled safely for submission */}
-                <span className="text-green-600 font-semibold">
-                  ✓
-                </span>
+        {/* CATEGORY LIST */}
+        <div className="space-y-6">
+          {categories.map((cat, index) => (
+            <div key={index} className="flex items-center gap-4">
+              <div className="flex-1 bg-white rounded-full px-6 py-4 shadow-md text-left">
+                <p className="font-medium">{cat.name}</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Fields: {cat.fields.join(", ")}
+                </p>
               </div>
-            ))}
-          </div>
-        )}
+
+              <button
+                onClick={() => deleteCategory(index)}
+                className="text-gray-400 hover:text-red-500 transition"
+              >
+                <FaTrash />
+              </button>
+            </div>
+          ))}
+
+          {categories.length === 0 && (
+            <p className="text-gray-400">No categories added yet.</p>
+          )}
+        </div>
       </div>
     </div>
   );
