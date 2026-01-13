@@ -58,10 +58,10 @@ const AddCategory = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#eef7fd] px-6 py-10 flex justify-center">
+    <div className="min-h-screen bg-[#eef7fd] px-4 py-6 md:px-6 md:py-10 flex justify-center">
       <div className="w-full max-w-3xl text-center">
 
-        <h1 className="text-3xl font-bold text-blue-600 mb-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-blue-600 mb-4">
           Add Category
         </h1>
 
@@ -77,7 +77,7 @@ const AddCategory = () => {
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full px-6 py-4 rounded-full shadow-md outline-none mb-8 bg-white"
+          className="w-full px-6 py-4 rounded-full shadow-md outline-none mb-8 bg-white appearance-none"
         >
           <option value="">Select a category</option>
           {CATEGORY_OPTIONS.map((cat) => (
@@ -92,28 +92,28 @@ const AddCategory = () => {
           Define Fields
         </div>
 
-        <div className="flex gap-3 mb-6">
+        <div className="flex flex-col md:flex-row gap-3 mb-6">
           <input
             value={fieldInput}
             onChange={(e) => setFieldInput(e.target.value)}
             placeholder="Enter field name"
-            className="flex-1 px-6 py-3 rounded-full shadow outline-none"
+            className="flex-1 px-6 py-3 rounded-full shadow outline-none w-full"
           />
           <button
             onClick={addField}
-            className="px-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500
-                       text-white font-semibold shadow"
+            className="px-6 py-3 md:py-0 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500
+                       text-white font-semibold shadow w-full md:w-auto hover:opacity-90 transition-opacity"
           >
             Add
           </button>
         </div>
 
         {/* FIELD LIST */}
-        <div className="flex flex-wrap gap-3 mb-10">
+        <div className="flex flex-wrap gap-3 mb-10 justify-start">
           {fields.map((field, index) => (
             <div
               key={index}
-              className="bg-white px-5 py-2 rounded-full shadow text-sm"
+              className="bg-white px-5 py-2 rounded-full shadow text-sm break-all"
             >
               {field}
             </div>
@@ -127,17 +127,17 @@ const AddCategory = () => {
         </div>
 
         {/* ACTION BUTTONS */}
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <button
             onClick={() => navigate("/doctor/categories")}
-            className="flex-1 py-4 rounded-lg bg-blue-300 text-white font-semibold"
+            className="flex-1 py-4 rounded-lg bg-blue-300 text-white font-semibold hover:bg-blue-400 transition-colors"
           >
             Cancel
           </button>
 
           <button
             onClick={saveCategory}
-            className="flex-1 py-4 rounded-lg bg-blue-500 text-white font-semibold"
+            className="flex-1 py-4 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors"
           >
             Save
           </button>
