@@ -38,7 +38,7 @@ const DoctorHome = () => {
       {/* ONLY ONE BUTTON */}
       <div className="mt-10">
         <button
-          onClick={() => navigate("/doctor/view-students")}
+          onClick={() => navigate("/doctor/categories")}
           className="flex items-center gap-2 px-6 py-3 text-white rounded-[20px] font-semibold shadow-md transition-transform duration-200"
           style={{
             background:
