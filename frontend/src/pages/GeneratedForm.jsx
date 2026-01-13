@@ -125,7 +125,27 @@ const GeneratedForm = () => {
   const selectedCategory = categories.find((cat) => cat.name === category);
 
   return (
-    <div style={styles.container}>
+    <div
+      className="
+        w-full
+        max-w-[1200px]
+        mx-auto
+        my-6
+        sm:my-10
+        p-4
+        sm:p-8
+        rounded-2xl
+        sm:rounded-[30px]
+        text-black
+        border-[5px]
+        border-white
+        shadow-[0_30px_30px_-20px_rgba(133,189,215,0.88)]
+      "
+      style={{
+        background:
+          "linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(219, 239, 245) 100%)",
+      }}
+    >
       {loading ? (
         <p>Loading form fields...</p>
       ) : error ? (
@@ -135,24 +155,11 @@ const GeneratedForm = () => {
       ) : (
         <DynamicCategoryForm categoryName={category} className="text-black" />
       )}
-    
     </div>
   );
 };
 
-const styles = {
-  container: {
-    padding: "30px",
-    maxWidth: "1200px",
-    margin: "40px auto",
-    width: "100%",
-    borderRadius: "30px",
-    color: "black",
-    background: "linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(219, 239, 245) 100%)",
-    border: "5px solid rgb(255, 255, 255)",
-    boxShadow: "rgba(133, 189, 215, 0.88) 0px 30px 30px -20px",
-  },
-};
+
 
 
 export default GeneratedForm;

@@ -8,7 +8,7 @@ const StudentWrapper = () => {
       <Sidebar />
 
       <div className="h-full overflow-y-auto ml-0 md:ml-[250px] text-gray-800">
-        <div className="p-4 md:p-6 min-h-full bg-gray-50">
+        <div className="p-4 pt-20 md:p-6 min-h-full bg-gray-50">
           <Outlet />
         </div>
       </div>

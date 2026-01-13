@@ -50,46 +50,27 @@ const JobsPage = () => {
 
   if (loading) {
     return (
-      <p className="text-center text-base text-gray-700 mt-20 font-['Inter'] font-medium">
-        Loading jobs…
-      </p>
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
+      </div>
     );
   }
 
   return (
-    <div
-      className="
-        font-['Inter']
-        text-gray-900
-        max-w-7xl
-        mx-auto
-
-        /* 🔑 IMPORTANT: mobile hamburger spacing */
-        pt-20
-        pl-16
-        px-4
-        py-8
-
-        sm:pt-8
-        sm:pl-6
-        sm:px-6
-
-        lg:px-10
-      "
-    >
+    <div className="font-['Inter'] max-w-7xl mx-auto pt-20 px-4 pb-10 sm:pt-8 sm:px-6 lg:px-10 min-h-full bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-3xl shadow-sm border border-slate-100">
       {/* Page Heading */}
-      <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-2">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
         Assignment History
       </h1>
 
       {/* Description */}
-      <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-8 max-w-4xl">
+      <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-8 max-w-3xl">
         Manage your training posts, specialties, and access logbook entries
         associated with your current or previous jobs.
       </p>
 
       {/* Section Title */}
-      <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-4">
+      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2">
         Primary Job
       </h3>
 
@@ -99,47 +80,37 @@ const JobsPage = () => {
           className="
             bg-white
             border
-            border-gray-800
-            rounded-xl
-
-            p-5
-            sm:p-6
-
+            border-slate-300
+            rounded-2xl
+            p-5 sm:p-6
             mb-6
-
-            flex
-            flex-col
-            gap-5
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-
-            shadow-[0_8px_24px_rgba(0,0,0,0.15)]
-            ring-1
-            ring-black/30
-            ring-inset
-
+            flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between
+            shadow-[0_4px_12px_rgba(0,0,0,0.1)]
+            hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]
             transition-all
-            duration-200
-            hover:-translate-y-[2px]
-            hover:shadow-[0_12px_32px_rgba(0,0,0,0.18)]
+            duration-300
+            hover:-translate-y-1
           "
         >
           {/* Left Content */}
           <div className="flex items-start gap-4">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg"
-              alt="India"
-              className="w-9 h-6 mt-1 shrink-0"
-            />
+            <div className="p-3 bg-blue-50 rounded-xl shrink-0">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg"
+                alt="India"
+                className="w-8 h-auto rounded shadow-sm"
+              />
+            </div>
 
             <div>
-              <p className="text-base sm:text-lg font-bold text-gray-900">
-                {job.trainingYear} — {job.specialty}
+              <p className="text-lg sm:text-xl font-bold text-gray-900">
+                {job.specialty}
               </p>
-
-              <p className="text-sm font-medium text-gray-700 mt-1">
-                {job.startDate} – {job.endDate}
+              <p className="text-sm sm:text-base text-blue-700 font-medium">
+                {job.trainingYear}
+              </p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1 flex items-center gap-1">
+                <span>📅</span> {job.startDate} – {job.endDate}
               </p>
             </div>
           </div>
@@ -150,29 +121,22 @@ const JobsPage = () => {
             className="
               w-full
               sm:w-auto
-
               px-6
-              py-3
-
+              py-2.5
               text-sm
-              sm:text-base
               font-semibold
-
               text-white
-              rounded-lg
-
-              bg-blue-600
-              hover:bg-blue-700
-
-              focus:outline-none
-              focus:ring-2
-              focus:ring-blue-500
-              focus:ring-offset-2
-
-              transition
+              rounded-xl
+              bg-gradient-to-r from-blue-600 to-blue-700
+              hover:from-blue-700 hover:to-blue-800
+              shadow-md
+              hover:shadow-lg
+              active:scale-95
+              transition-all
+              duration-200
             "
           >
-            View logbook entries
+            View Logbook Entries
           </button>
         </div>
       ))}

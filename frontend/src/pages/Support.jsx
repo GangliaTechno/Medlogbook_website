@@ -66,89 +66,98 @@ const Support = () => {
   return (
     <div
       className="
-        min-h-screen
+        font-['Manrope']
+        min-h-full
+        w-full
+        bg-gradient-to-br from-blue-50 via-white to-blue-50
         flex
         items-start
         justify-center
+        pt-10
+        pb-20
         px-4
-        pt-20
-        pb-8
-        sm:pt-8
-        bg-gradient-to-b
-        from-slate-50
-        to-slate-100
-        text-black
+        sm:px-6
       "
     >
-      {/* CARD */}
-      <div className="w-full max-w-md sm:max-w-xl bg-white border border-slate-200 rounded-2xl shadow-lg p-5 sm:p-8">
-        {/* HEADER */}
-        <div className="mb-6 text-center">
-          <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">
-            Request Support
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed">
-            Tell us what you need help with and our support team will respond as
-            soon as possible.
+      <div className="w-full max-w-xl">
+
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">
+            Support Center
+          </h1>
+          <p className="text-slate-500">
+            Need help? Submit a request and we'll get back to you.
           </p>
         </div>
 
-        {/* FORM */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* SUPPORT TYPE */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Support Type <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={supportType}
-              onChange={(e) => setSupportType(e.target.value)}
-              required
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">Select an option</option>
-              <option value="additional logbook category">
-                Additional logbook category
-              </option>
-              <option value="bug report">Bug report</option>
-              <option value="data protection report">
-                Data protection report
-              </option>
-              <option value="email verification">Email verification</option>
-              <option value="feedback">Feedback</option>
-              <option value="general support">General support</option>
-              <option value="hospital request">Hospital request</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
+        {/* Card */}
+        <div className="bg-white border border-slate-100 rounded-3xl shadow-xl overflow-hidden">
+          {/* Accent Line */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 to-indigo-500"></div>
 
-          {/* DETAILS */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Details <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              value={detail}
-              onChange={(e) => setDetail(e.target.value)}
-              required
-              rows={5}
-              placeholder="Describe the issue clearly with relevant details…"
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm resize-none
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
+          <div className="p-8 sm:p-10">
+            <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* SUBMIT */}
-          <button
-            type="submit"
-            className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700
-                       text-white text-sm font-semibold shadow-sm transition
-                       active:scale-[0.98]"
-          >
-            Submit Request
-          </button>
-        </form>
+              {/* Type Selection */}
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                  How can we help? <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <select
+                    value={supportType}
+                    onChange={(e) => setSupportType(e.target.value)}
+                    required
+                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer placeholder-slate-400"
+                  >
+                    <option value="">Select a category...</option>
+                    <option value="additional logbook category">Request New Logbook Category</option>
+                    <option value="bug report">Report a Bug</option>
+                    <option value="data protection report">Data Privacy Issue</option>
+                    <option value="email verification">Email Verification</option>
+                    <option value="feedback">General Feedback</option>
+                    <option value="hospital request">Request New Hospital</option>
+                    <option value="other">Other Inquiry</option>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Details Textarea */}
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                  Details <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={detail}
+                  onChange={(e) => setDetail(e.target.value)}
+                  required
+                  rows={6}
+                  placeholder="Please describe your issue or request in detail. The more info, the faster we can help..."
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow resize-none leading-relaxed"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 rounded-xl text-lg font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 active:scale-95"
+                >
+                  Submit Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Footer Note */}
+        <p className="text-center text-xs text-slate-400 mt-8 font-medium">
+          We usually respond within 24 hours.
+        </p>
 
         {/* NOTIFICATION */}
         <Notification

@@ -10,10 +10,9 @@ const DoctorSidebar = () => {
   const menuItem = (label, path) => (
     <li
       className={`px-4 py-3 rounded-lg cursor-pointer transition
-        ${
-          location.pathname.startsWith(path)
-            ? "bg-white/30 font-semibold"
-            : "hover:bg-white/20"
+        ${location.pathname.startsWith(path)
+          ? "bg-white/30 font-semibold"
+          : "hover:bg-white/20"
         }`}
       onClick={() => {
         navigate(path);
@@ -28,11 +27,21 @@ const DoctorSidebar = () => {
     <>
       {/* 🍔 HAMBURGER (MOBILE ONLY) */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50
-                   bg-blue-600 text-white p-3 rounded-lg shadow-lg"
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen(!open)}
+        className="
+          md:hidden
+          fixed top-4 left-4 z-50
+          w-12 h-12
+          rounded-full
+          bg-gradient-to-br from-blue-600 to-cyan-500
+          text-white
+          flex items-center justify-center
+          shadow-xl
+          active:scale-95
+          transition-transform
+        "
       >
-        <IoMenu size={24} />
+        <IoMenu size={26} />
       </button>
 
       {/* OVERLAY */}
@@ -70,7 +79,7 @@ const DoctorSidebar = () => {
 
           {menuItem("Assign Task", "/doctor/assign-task")}
           {menuItem("Student Analysis", "/doctor/student-analysis")}
-          {menuItem("Account","/doctor/account")}
+          {menuItem("Account", "/doctor/account")}
 
           <li
             className="px-4 py-3 rounded-lg cursor-pointer flex items-center gap-2 hover:bg-white/20"

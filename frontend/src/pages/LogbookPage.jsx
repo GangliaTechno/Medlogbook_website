@@ -26,9 +26,12 @@ const LogbookPage = () => {
           route: `/logbook/${category.name}`,
         }));
 
-        setCategoryList(categories);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
+        setCategories(fetchedCategories);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setError(err.message || "Failed to fetch categories.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -38,80 +41,80 @@ const LogbookPage = () => {
   return (
     <div
       className="
-        min-h-screen
-        w-full
+        font-['Manrope']
+        max-w-7xl
+        mx-auto
+        pt-20
         px-4
-        py-6
+        pb-10
+        sm:pt-8
         sm:px-6
         lg:px-10
-        font-['Inter']
-        bg-gray-100
-        overflow-x-hidden
+        min-h-full
+        bg-gradient-to-br from-blue-50 via-white to-indigo-50
+        rounded-3xl
+        shadow-sm
+        border
+        border-slate-100
       "
     >
-      <div className="max-w-7xl mx-auto">
-        {/* Heading */}
-        <h2
-          className="
-            text-2xl
-            sm:text-3xl
-            lg:text-4xl
-            font-bold
-            text-gray-900
-            mb-2
-            text-center
-            sm:text-left
-          "
-        >
-          Logbook
-        </h2>
+      <div className="space-y-8 sm:space-y-10">
 
-        {/* Description */}
-        <p
-          className="
-            text-sm
-            sm:text-base
-            text-gray-600
-            max-w-3xl
-            mb-8
-            text-center
-            sm:text-left
-            leading-relaxed
-            mx-auto
-            sm:mx-0
-          "
-        >
-          Access and manage your clinical logbook categories. Entries from
-          previous jobs are stored separately but can be combined for reporting.
-        </p>
+        {/* HEADER */}
+        <header className="border-b border-slate-100 pb-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight">
+            Clinical Logbook
+          </h1>
+          <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">
+            Access and manage your clinical logbook categories. Entries from
+            previous jobs are stored separately but can be combined for reporting.
+          </p>
+        </header>
 
-        {/* Cards Grid */}
-        <div
-          className="
-            grid
-            grid-cols-1
-            md:grid-cols-2
-            lg:grid-cols-3
-            gap-4
-            sm:gap-6
-          "
-        >
-          {categoryList.length > 0 ? (
-            categoryList.map((category, index) => (
-              <LogbookCategory
-                key={index}
-                icon={category.icon}
-                title={category.name}
-                description={category.description}
-                route={category.route}
-              />
-            ))
-          ) : (
-            <div className="col-span-full py-10 text-center text-gray-500">
-              Loading categories...
-            </div>
-          )}
-        </div>
+        {/* ERROR STATE */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* LOADING STATE */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <p className="mt-4 text-slate-500 font-medium animate-pulse">
+              Loading logbooks...
+            </p>
+          </div>
+        ) : (
+          /* Cards Grid */
+          <div
+            className="
+              grid
+              grid-cols-1
+              md:grid-cols-2
+              lg:grid-cols-3
+              gap-4
+              sm:gap-6
+            "
+          >
+            {categoryList.length > 0 ? (
+              categoryList.map((category, index) => (
+                <LogbookCategory
+                  key={index}
+                  icon={category.icon}
+                  title={category.name}
+                  description={category.description}
+                  route={category.route}
+                />
+              ))
+            ) : (
+              <div className="col-span-full py-20 text-center bg-white rounded-3xl border border-slate-200 border-dashed">
+                <p className="text-slate-500">No categories available.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

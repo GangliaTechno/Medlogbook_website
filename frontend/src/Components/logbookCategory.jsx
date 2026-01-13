@@ -1,88 +1,85 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
+import { FaFileMedical, FaChevronRight } from "react-icons/fa";
 
-const LogbookCategory = ({ icon, title, description, route }) => {
+const LogbookCategory = ({ title, description }) => {
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/logbook/${title}`);
+  };
 
   return (
     <div
-      onClick={() => navigate(route)}
+      onClick={handleClick}
       className="
+        group
         relative
-        cursor-pointer
         bg-white
-        rounded-lg
-        border
-        border-gray-300
-
+        rounded-2xl
         p-6
-        flex
-        gap-5
-        items-start
-
-        shadow-[0_4px_14px_rgba(0,0,0,0.08)]
+        cursor-pointer
+        border
+        border-slate-200
+        shadow-[0_2px_8px_rgba(0,0,0,0.04)]
         transition-all
-        duration-200
-
-        sm:hover:shadow-[0_10px_26px_rgba(0,0,0,0.12)]
-        sm:hover:-translate-y-[2px]
+        duration-300
+        hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)]
+        hover:border-blue-200
+        hover:-translate-y-1
+        flex
+        flex-col
+        h-full
+        justify-between
+        overflow-hidden
       "
     >
-      {/* LEFT BLUE ACCENT BAR */}
-      <div className="absolute left-0 top-0 h-full w-[3px] bg-blue-600 rounded-l-lg" />
+      {/* Top decorative line/gradient */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Icon */}
-      <div
-        className="
-          ml-3
-          flex
-          items-center
-          justify-center
-          w-12
-          h-12
-          rounded-md
-          bg-blue-50
-          text-blue-700
-          text-lg
-          shrink-0
-        "
-      >
-        {icon}
-      </div>
+      <div>
+        {/* Icon / Avatar Header */}
+        <div className="mb-4 flex items-center justify-between">
+          <div className="
+                w-12 h-12 
+                rounded-xl 
+                bg-blue-50 
+                text-blue-600 
+                flex items-center justify-center 
+                text-xl
+                group-hover:bg-blue-600 
+                group-hover:text-white 
+                transition-colors 
+                duration-300
+            ">
+            <FaFileMedical />
+          </div>
 
-      {/* Content */}
-      <div className="flex-1">
-        <h3
-          className="
-            text-base
-            sm:text-lg
-            font-semibold
-            text-gray-900
-            mb-1.5
-            leading-snug
-          "
-        >
+          <div className="
+                w-8 h-8 
+                rounded-full 
+                bg-slate-50 
+                flex items-center justify-center 
+                text-slate-400
+                group-hover:text-blue-600
+                group-hover:bg-blue-50
+                transition-all
+                duration-300
+                group-hover:translate-x-1
+            ">
+            <FaChevronRight size={14} />
+          </div>
+        </div>
+
+        {/* Content */}
+        <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-blue-700 transition-colors">
           {title}
         </h3>
-
-        <p
-          className="
-            text-sm
-            font-normal
-            text-gray-600
-            leading-relaxed
-          "
-        >
-          {description}
+        <p className="text-sm text-slate-500 leading-relaxed mb-4">
+          {description || "View and manage entries for this category."}
         </p>
       </div>
-
-      {/* Arrow */}
-      <FiChevronRight
-        size={20}
-        className="text-gray-400 mt-1"
-      />
     </div>
   );
 };
