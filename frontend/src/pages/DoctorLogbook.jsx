@@ -40,8 +40,8 @@ const DoctorLogbook = () => {
   };
 
   return (
-    <div className="flex min-h-screen text-black">
-      <div className="flex-grow px-4 sm:px-6 py-6 max-w-4xl mx-auto">
+    <div className="w-full min-h-screen text-black overflow-x-hidden">
+      <div className="w-full px-4 sm:px-6 py-6 max-w-4xl mx-auto">
         <h2
           className="text-2xl md:text-3xl font-black text-[#1089d3] mb-6 text-center"
         >
