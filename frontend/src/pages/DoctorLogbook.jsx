@@ -37,61 +37,53 @@ const DoctorLogbook = () => {
 
   return (
 
-    <div className="flex h-screen text-black">
-      <div className="flex-grow px-6 py-10 max-w-4xl mx-auto">
-        
-        <h2 className="text-2xl font-bold text-blue-600 mb-6"
-      style={{
-    textAlign: "center",
-    fontWeight: 900,
-    fontSize: "30px",
-    color: "rgb(16, 137, 211)"
-  }}>Doctor Logbook - View Student Entries</h2>
+  return (
+    <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 py-10 px-4 sm:px-8">
+
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-10 text-center sm:text-left">
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 tracking-tight mb-2">
+            Student Overview
+          </h1>
+          <p className="text-slate-500 text-lg">
+            Select a student to view and review their logbook entries.
+          </p>
+        </div>
 
         {students.length === 0 ? (
-          <p className="text-center text-gray-400">No students found.</p>
+          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-200 border-dashed">
+            <p className="text-slate-400 font-medium text-lg">No students found matching your specialty.</p>
+          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border border-gray-700 rounded-lg overflow-hidden">
-              <thead>
-                <tr className="bg-white text-gray-800">
-                  <th className="p-3 text-left">Student Name</th>
-                  <th className="p-3 text-left">Email</th>
-                  <th className="p-3 text-left">Actions</th>
+          /* Responsive Grid */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {students.map((student) => (
+              <div
+                key={student._id}
+                className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 flex flex-col items-center sm:items-start group"
+              >
+                {/* Avatar Placeholder */}
+                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                  {student.fullName ? student.fullName.charAt(0).toUpperCase() : "?"}
+                </div>
 
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((student) => (
-                  <tr
-                    key={student._id}
-                    className="odd:bg-gray even:bg-gray-800"
-                  >
-                    <td className="p-3">{student.fullName}</td>
-                    <td className="p-3">{student.email}</td>
-                    <td className="p-3">
-                      <button
-                         className=" px-6 py-3 rounded-[20px] cursor-pointer font-semibold text-white shadow-md transition-transform duration-200"
-  style={{
-    background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-    boxShadow: "rgba(133, 189, 215, 0.88) 0px 10px 15px -10px",
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-                        onClick={() => handleViewEntries(student)}
+                <h3 className="text-xl font-bold text-slate-800 mb-1">{student.fullName}</h3>
+                <p className="text-slate-500 text-sm mb-6">{student.email}</p>
 
-                      >
-                        View Entries
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                <button
+                  onClick={() => handleViewEntries(student)}
+                  className="w-full mt-auto bg-white border-2 border-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-95"
+                >
+                  View Logbook Entries
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>
     </div>
+  );
   );
 };
 

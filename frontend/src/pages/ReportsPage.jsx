@@ -589,7 +589,7 @@ const ReportsPage = () => {
   };
 
   return (
-    <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 pt-10 pb-20 px-4 sm:px-6">
+    <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 pt-20 pb-20 px-4 sm:pt-10 sm:px-6">
       <div className="max-w-2xl mx-auto">
 
         <div className="text-center mb-10">
@@ -605,7 +605,7 @@ const ReportsPage = () => {
           {/* Accent Line */}
           <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 to-indigo-500"></div>
 
-          <div className="p-8 sm:p-10">
+          <div className="p-5 sm:p-10">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
