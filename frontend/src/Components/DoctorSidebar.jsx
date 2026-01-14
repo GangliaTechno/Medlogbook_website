@@ -7,21 +7,24 @@ const DoctorSidebar = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  const menuItem = (label, path) => (
-    <li
-      className={`px-4 py-3 rounded-lg cursor-pointer transition
-        ${location.pathname.startsWith(path)
-          ? "bg-white/30 font-semibold"
-          : "hover:bg-white/20"
-        }`}
-      onClick={() => {
-        navigate(path);
-        setOpen(false);
-      }}
-    >
-      {label}
-    </li>
-  );
+  const menuItem = (label, path) => {
+    const isActive = path === "/doctor"
+      ? location.pathname === "/doctor"
+      : location.pathname.startsWith(path);
+
+    return (
+      <li
+        className={`px-4 py-3 rounded-lg cursor-pointer transition
+          ${isActive ? "bg-white/30 font-semibold" : "hover:bg-white/20"}`}
+        onClick={() => {
+          navigate(path);
+          setOpen(false);
+        }}
+      >
+        {label}
+      </li>
+    );
+  };
 
   return (
     <>

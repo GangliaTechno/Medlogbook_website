@@ -67,22 +67,21 @@ const AssignedTasksPage = () => {
   return (
     <div
       className="
-        font-['Manrope']
-        max-w-7xl
-        mx-auto
-        pt-6
-        px-4
-        pb-24
-        sm:pt-8
-        sm:px-6
-        lg:px-10
-        min-h-full
-        bg-gradient-to-br from-blue-50 via-white to-blue-50
-        rounded-3xl
-        shadow-sm
-        border
-        border-slate-100
-      "
+      max-w-7xl
+      mx-auto
+      pt-6
+      px-4
+      pb-24
+      sm:pt-8
+      sm:px-6
+      lg:px-10
+      min-h-fullwhen
+      bg-gradient-to-br from-blue-50 via-white to-blue-50
+      rounded-3xl
+      shadow-sm
+      border
+      border-slate-100
+    "
     >
       <div className="space-y-8 sm:space-y-10">
 
@@ -176,7 +175,7 @@ const AssignedTasksPage = () => {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 
