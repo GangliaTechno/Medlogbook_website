@@ -133,7 +133,7 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full font-['Inter']">
+    <div className="relative min-h-screen w-full">
       {/* Background */}
       <div
         className="fixed inset-0 z-0"

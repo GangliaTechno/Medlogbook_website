@@ -8,7 +8,7 @@ const DoctorHome = () => {
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 mb-10 overflow-x-hidden">
       {/* Welcome Card */}
-      <div className="bg-white text-black p-6 rounded-lg shadow-lg max-w-2xl w-full text-center font-sans">
+      <div className="bg-white text-black p-6 rounded-lg shadow-lg max-w-2xl w-full text-center">
         <h2
           className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#1089d3]"
           style={{

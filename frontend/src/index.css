@@ -21,7 +21,14 @@ body {
   height: 100%;
   background-color: #f8fafc;
   /* light neutral base */
-  font-family: "Inter", sans-serif;
+  font-family: "Times New Roman", Times, serif;
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
 }
 
 #root {

@@ -57,7 +57,7 @@ const JobsPage = () => {
   }
 
   return (
-    <div className="font-['Inter'] max-w-7xl mx-auto pt-20 px-4 pb-10 sm:pt-8 sm:px-6 lg:px-10 min-h-full bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-3xl shadow-sm border border-slate-100">
+    <div className="max-w-7xl mx-auto pt-20 px-4 pb-10 sm:pt-8 sm:px-6 lg:px-10 min-h-full bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-3xl shadow-sm border border-slate-100">
       {/* Page Heading */}
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
         Assignment History

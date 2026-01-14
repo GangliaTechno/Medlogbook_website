@@ -66,7 +66,6 @@ const Support = () => {
   return (
     <div
       className="
-        font-['Manrope']
         min-h-full
         w-full
         bg-gradient-to-br from-blue-50 via-white to-blue-50
@@ -170,7 +169,7 @@ const Support = () => {
           type={notification.type}
         />
       </div>
-    </div>
+    </div >
   );
 };
 
