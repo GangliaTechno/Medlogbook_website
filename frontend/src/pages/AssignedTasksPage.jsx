@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import studentPanelBg from "../assets/studentPanelBg.png";
 
 const AssignedTasksPage = () => {
   const user = useSelector((state) => state.auth.user);
@@ -67,41 +68,42 @@ const AssignedTasksPage = () => {
   return (
     <div
       className="
-      max-w-7xl
-      mx-auto
+      w-full
       pt-6
       px-4
       pb-24
       sm:pt-8
       sm:px-6
       lg:px-10
-      min-h-fullwhen
-      bg-gradient-to-br from-blue-50 via-white to-blue-50
-      rounded-3xl
-      shadow-sm
-      border
-      border-slate-100
+      min-h-screen
     "
+      style={{
+        backgroundImage: `url(${studentPanelBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
-      <div className="space-y-8 sm:space-y-10">
+      <div className="max-w-7xl mx-auto">
+        <div className="space-y-8 sm:space-y-10">
 
-        {/* Header */}
-        <header className="border-b border-slate-100 pb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight">
-            Assigned Tasks
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">
-            Tasks assigned to you based on your department or specialty. Prioritize and complete them efficiently.
-          </p>
-        </header>
+          {/* Header */}
+          <header className="border-b border-slate-100 pb-6">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-600 tracking-tight">
+              Assigned Tasks
+            </h1>
+            <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">
+              Tasks assigned to you based on your department or specialty. Prioritize and complete them efficiently.
+            </p>
+          </header>
 
-        {/* Tasks */}
-        {filteredTasks.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredTasks.map((task, index) => (
-              <div
-                key={index}
-                className={`
+          {/* Tasks */}
+          {filteredTasks.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredTasks.map((task, index) => (
+                <div
+                  key={index}
+                  className={`
                   group
                   bg-white
                   border
@@ -118,64 +120,65 @@ const AssignedTasksPage = () => {
                   h-full
                   border-l-4
                   ${task.priority === 'High' ? 'border-l-red-500' :
-                    task.priority === 'Medium' ? 'border-l-amber-500' :
-                      'border-l-green-500'}
+                      task.priority === 'Medium' ? 'border-l-amber-500' :
+                        'border-l-green-500'}
                 `}
-              >
-                {/* Top Row: Priority & Time */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`
+                >
+                  {/* Top Row: Priority & Time */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`
                     px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
                     ${task.priority === 'High' ? 'bg-red-50 text-red-600' :
-                      task.priority === 'Medium' ? 'bg-amber-50 text-amber-600' :
-                        'bg-green-50 text-green-600'}
+                        task.priority === 'Medium' ? 'bg-amber-50 text-amber-600' :
+                          'bg-green-50 text-green-600'}
                   `}>
-                    {task.priority || "Low Priority"}
+                      {task.priority || "Low Priority"}
+                    </div>
+                    <span className="text-xs text-slate-400 font-medium whitespace-nowrap">
+                      {timeSince(task.dateAssigned || task.createdAt)}
+                    </span>
                   </div>
-                  <span className="text-xs text-slate-400 font-medium whitespace-nowrap">
-                    {timeSince(task.dateAssigned || task.createdAt)}
-                  </span>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2">
+                    {task.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm text-slate-600 leading-relaxed mb-6 line-clamp-3">
+                    {task.description}
+                  </p>
+
+                  {/* Spacer to push footer down */}
+                  <div className="mt-auto"></div>
+
+                  {/* Divider */}
+                  <div className="h-px bg-slate-100 w-full mb-4 group-hover:bg-blue-50 transition-colors" />
+
+                  {/* Footer Meta Grid */}
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
+                    <MetaItem icon="📅" label="Due Date" value={formatDate(task.targetDate)} />
+                    <MetaItem icon="🏥" label="Dept" value={task.department} />
+                    <MetaItem icon="🩺" label="Specialty" value={task.specialty} />
+                    <MetaItem icon="👤" label="By" value={task.assignedBy} />
+                  </div>
                 </div>
-
-                {/* Title */}
-                <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2">
-                  {task.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-sm text-slate-600 leading-relaxed mb-6 line-clamp-3">
-                  {task.description}
-                </p>
-
-                {/* Spacer to push footer down */}
-                <div className="mt-auto"></div>
-
-                {/* Divider */}
-                <div className="h-px bg-slate-100 w-full mb-4 group-hover:bg-blue-50 transition-colors" />
-
-                {/* Footer Meta Grid */}
-                <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
-                  <MetaItem icon="📅" label="Due Date" value={formatDate(task.targetDate)} />
-                  <MetaItem icon="🏥" label="Dept" value={task.department} />
-                  <MetaItem icon="🩺" label="Specialty" value={task.specialty} />
-                  <MetaItem icon="👤" label="By" value={task.assignedBy} />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-3xl border border-slate-200 border-dashed">
-            <div className="bg-slate-50 p-4 rounded-full mb-4">
-              <span className="text-4xl">🎉</span>
+              ))}
             </div>
-            <h3 className="text-lg font-bold text-slate-800">All Caught Up!</h3>
-            <p className="text-slate-500 max-w-sm mt-2">
-              You have no pending tasks assigned at the moment. Enjoy your free time!
-            </p>
-          </div>
-        )}
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-3xl border border-slate-200 border-dashed">
+              <div className="bg-slate-50 p-4 rounded-full mb-4">
+                <span className="text-4xl">🎉</span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">All Caught Up!</h3>
+              <p className="text-slate-500 max-w-sm mt-2">
+                You have no pending tasks assigned at the moment. Enjoy your free time!
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </div >
+    </div>
   );
 };
 

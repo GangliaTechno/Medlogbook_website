@@ -36,10 +36,11 @@
 
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaRegUserCircle } from "react-icons/fa";
+import { FaRegUserCircle, FaEnvelope } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -72,8 +73,9 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex justify-between items-center px-5 py-2 text-lg bg-teal-500 shadow-md">
-      <div className="flex items-center gap-2">
+    <div className="flex justify-between items-center px-5 py-2 text-lg shadow-md" style={{ backgroundColor: "rgb(20, 110, 180)" }}>
+      <div className="flex items-center gap-3">
+        <img src={logo} alt="Logo" className="h-10 w-auto rounded-lg shadow-sm" />
         <h2 className="text-lg font-bold">Medical Logbook</h2>
       </div>
       <ToastContainer />
@@ -81,7 +83,8 @@ const Navbar = () => {
       <div className="navbar-right">
         {isLoggedIn ? (
           <>
-            <span className="user-email">
+            <span className="user-email flex items-center gap-2">
+              <FaEnvelope className="text-gray-600" />
               <Link to="/account">{email}</Link>
             </span>
             <FaRegUserCircle className="icon profile-icon" onClick={handleProfileClick} />

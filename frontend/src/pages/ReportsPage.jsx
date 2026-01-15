@@ -13,8 +13,18 @@ import {
   setReportFormat,
   setReportFileType,
 } from "../reducers/reportsReducer";
+import {
+  FaUser,
+  FaFileAlt,
+  FaCog,
+  FaFileDownload,
+  FaCalendarAlt,
+  FaFilter,
+  FaFileExport
+} from "react-icons/fa";
 import "../styles.css";
 import Notification from "../Components/Notification";
+import studentPanelBg from "../assets/studentPanelBg.png";
 
 const API_URL = "https://medlogbook-website.onrender.com/api/auth";
 
@@ -589,11 +599,19 @@ const ReportsPage = () => {
   };
 
   return (
-    <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 pt-10 pb-20 px-4 sm:px-6">
+    <div
+      className="max-w-7xl mx-auto min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 pt-10 pb-20 px-4 sm:px-6"
+      style={{
+        backgroundImage: `url(${studentPanelBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <div className="max-w-2xl mx-auto">
 
         <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 tracking-tight mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold text-blue-600 tracking-tight mb-3">
             Generate Reports
           </h1>
           <p className="text-slate-500 text-lg">
@@ -621,7 +639,8 @@ const ReportsPage = () => {
                 {/* Name Field */}
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Full Name</label>
-                  <div className="bg-slate-50 border border-slate-200 text-slate-500 rounded-xl px-4 py-3 text-sm font-medium">
+                  <div className="flex items-center bg-slate-50 border border-slate-200 text-slate-500 rounded-xl px-4 py-3 text-sm font-medium">
+                    <FaUser className="text-blue-500 mr-3" />
                     {userData.fullName || "N/A"}
                   </div>
                 </div>
@@ -629,8 +648,9 @@ const ReportsPage = () => {
                 {/* Report Type */}
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Report Type</label>
-                  <div className="relative">
-                    <select className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer">
+                  <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow">
+                    <FaFileAlt className="text-blue-500 mr-3" />
+                    <select className="w-full appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none cursor-pointer">
                       <option>Logbook Report</option>
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
@@ -643,11 +663,12 @@ const ReportsPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 ml-1">Format</label>
-                    <div className="relative">
+                    <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow">
+                      <FaCog className="text-blue-500 mr-3" />
                       <select
                         value={reportFormat}
                         onChange={(e) => dispatch(setReportFormat(e.target.value))}
-                        className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer"
+                        className="w-full appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none cursor-pointer"
                       >
                         <option>Summary Report</option>
                         <option>Full Disclosure Report</option>
@@ -660,11 +681,12 @@ const ReportsPage = () => {
 
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 ml-1">File Format</label>
-                    <div className="relative">
+                    <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow">
+                      <FaFileDownload className="text-blue-500 mr-3" />
                       <select
                         value={reportFileType}
                         onChange={(e) => dispatch(setReportFileType(e.target.value))}
-                        className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer"
+                        className="w-full appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none cursor-pointer"
                       >
                         <option>PDF (Read-only)</option>
                         <option>Docx (Editable)</option>
@@ -679,10 +701,11 @@ const ReportsPage = () => {
                 {/* Date Filter */}
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Date Range</label>
-                  <div className="relative">
+                  <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow">
+                    <FaFilter className="text-blue-500 mr-3" />
                     <select
                       onChange={(e) => handleDateFilter(e.target.value)}
-                      className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer"
+                      className="w-full appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none cursor-pointer"
                     >
                       <option value="all">All Time</option>
                       <option value="10days">Last 10 Days</option>
@@ -701,21 +724,27 @@ const ReportsPage = () => {
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col sm:flex-row gap-4 items-end animate-fadeIn">
                     <div className="w-full">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">From</label>
-                      <input
-                        type="date"
-                        value={customFrom}
-                        onChange={(e) => setCustomFrom(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+                      <div className="flex items-center bg-white border border-slate-200 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow">
+                        <FaCalendarAlt className="text-blue-500 mr-2 text-xs" />
+                        <input
+                          type="date"
+                          value={customFrom}
+                          onChange={(e) => setCustomFrom(e.target.value)}
+                          className="w-full bg-transparent text-sm focus:outline-none"
+                        />
+                      </div>
                     </div>
                     <div className="w-full">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 block">To</label>
-                      <input
-                        type="date"
-                        value={customTo}
-                        onChange={(e) => setCustomTo(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+                      <div className="flex items-center bg-white border border-slate-200 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow">
+                        <FaCalendarAlt className="text-blue-500 mr-2 text-xs" />
+                        <input
+                          type="date"
+                          value={customTo}
+                          onChange={(e) => setCustomTo(e.target.value)}
+                          className="w-full bg-transparent text-sm focus:outline-none"
+                        />
+                      </div>
                     </div>
                     <button
                       type="button"
