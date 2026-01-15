@@ -28,37 +28,37 @@ const AssignTaskPage = () => {
   }, [doctor]);
 
   const timeSince = (dateString) => {
-  if (!dateString) return "Unknown time";
+    if (!dateString) return "Unknown time";
 
-  const past = new Date(dateString);
-  if (isNaN(past.getTime())) return "Invalid date";
+    const past = new Date(dateString);
+    if (isNaN(past.getTime())) return "Invalid date";
 
-  const now = new Date();
-  const diffMs = now - past;
+    const now = new Date();
+    const diffMs = now - past;
 
-  const minutes = Math.floor(diffMs / 60000);
-  const hours = Math.floor(diffMs / 3600000);
-  const days = Math.floor(diffMs / 86400000);
+    const minutes = Math.floor(diffMs / 60000);
+    const hours = Math.floor(diffMs / 3600000);
+    const days = Math.floor(diffMs / 86400000);
 
-  if (minutes < 1) return "Just now";
-  if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
-  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  return `${days} day${days > 1 ? "s" : ""} ago`;
-};
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+    if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    return `${days} day${days > 1 ? "s" : ""} ago`;
+  };
 
   const fetchTasks = async () => {
-  try {
-    const response = await axios.get(`https://medlogbook-website.onrender.com/api/tasks?assignedBy=${doctor.email}`);
-    const sortedTasks = response.data.sort((a, b) => {
-      const dateA = new Date(a.dateAssigned || a.createdAt);
-      const dateB = new Date(b.dateAssigned || b.createdAt);
-      return dateB - dateA; // newest first
-    });
-    setAssignedTasks(sortedTasks);
-  } catch (error) {
-    console.error("Error fetching tasks:", error);
-  }
-};
+    try {
+      const response = await axios.get(`https://medlogbook-website.onrender.com/api/tasks?assignedBy=${doctor.email}`);
+      const sortedTasks = response.data.sort((a, b) => {
+        const dateA = new Date(a.dateAssigned || a.createdAt);
+        const dateB = new Date(b.dateAssigned || b.createdAt);
+        return dateB - dateA; // newest first
+      });
+      setAssignedTasks(sortedTasks);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
 
 
   const fetchStudents = async () => {
@@ -69,53 +69,53 @@ const AssignTaskPage = () => {
       console.error("Failed to fetch students:", err);
     }
   };
-// In your AssignTaskPage.js, update the taskData object in handleSubmit function:
+  // In your AssignTaskPage.js, update the taskData object in handleSubmit function:
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!doctor || doctor.role !== "doctor") {
-    alert("Only doctors can assign tasks.");
-    return;
-  }
-
-  const taskData = {
-    title: taskTitle,
-    description: taskDescription,
-    priority,
-    targetDate: dueDate,
-    assignedBy: doctor.email,
-    specialty: doctor.specialty,
-    assignmentType,
-    department: assignmentType === "department" ? department : null,
-    // Use assignedTo for consistency with your database structure
-    assignedTo: assignmentType === "students" ? selectedStudents : [],
-    // Keep selectedStudents for backward compatibility if needed
-    selectedStudents: assignmentType === "students" ? selectedStudents : [],
-  };
-
-  try {
-    const response = await axios.post("https://medlogbook-website.onrender.com/api/assign-task", taskData);
-    if (response.status === 201) {
-      setNotification({ message: "Task assigned successfully!", type: "success" });
-      // Reset form fields
-      setTaskTitle("");
-      setTaskDescription("");
-      setDueDate("");
-      setPriority("");
-      setDepartment("");
-      setAssignmentType("department");
-      setSelectedStudents([]);
-      fetchTasks();
+    if (!doctor || doctor.role !== "doctor") {
+      alert("Only doctors can assign tasks.");
+      return;
     }
-  } catch (error) {
-    setNotification({
-      message: error.response?.data?.error || "Error assigning task",
-      type: "error"
-    });
-    console.error("Error:", error);
-  }
-};
+
+    const taskData = {
+      title: taskTitle,
+      description: taskDescription,
+      priority,
+      targetDate: dueDate,
+      assignedBy: doctor.email,
+      specialty: doctor.specialty,
+      assignmentType,
+      department: assignmentType === "department" ? department : null,
+      // Use assignedTo for consistency with your database structure
+      assignedTo: assignmentType === "students" ? selectedStudents : [],
+      // Keep selectedStudents for backward compatibility if needed
+      selectedStudents: assignmentType === "students" ? selectedStudents : [],
+    };
+
+    try {
+      const response = await axios.post("https://medlogbook-website.onrender.com/api/assign-task", taskData);
+      if (response.status === 201) {
+        setNotification({ message: "Task assigned successfully!", type: "success" });
+        // Reset form fields
+        setTaskTitle("");
+        setTaskDescription("");
+        setDueDate("");
+        setPriority("");
+        setDepartment("");
+        setAssignmentType("department");
+        setSelectedStudents([]);
+        fetchTasks();
+      }
+    } catch (error) {
+      setNotification({
+        message: error.response?.data?.error || "Error assigning task",
+        type: "error"
+      });
+      console.error("Error:", error);
+    }
+  };
 
   const handlePopupClose = (e) => {
     if (e.target.id === "tasks-popup") setShowTasksPopup(false);
@@ -131,32 +131,32 @@ const handleSubmit = async (e) => {
 
   return (
     <div
-  style={{
-    maxWidth: "1350px",
-    background: "linear-gradient(0deg, rgb(255, 255, 255) 0%, rgba(224, 225, 217, 1) 100%)",
-    borderRadius: "40px",
-    padding: "25px 35px",
-    border: "5px solid rgb(255, 255, 255)",
-    boxShadow: "rgba(133, 189, 215, 0.88) 0px 30px 30px -20px",
-    margin: "20px auto",
-    position: "relative"
-  }}
->
+      style={{
+        maxWidth: "1350px",
+        background: "linear-gradient(0deg, rgb(255, 255, 255) 0%, rgba(224, 225, 217, 1) 100%)",
+        borderRadius: "40px",
+        padding: "25px 35px",
+        border: "5px solid rgb(255, 255, 255)",
+        boxShadow: "rgba(133, 189, 215, 0.88) 0px 30px 30px -20px",
+        margin: "20px auto",
+        position: "relative"
+      }}
+    >
 
       <button
         onClick={() => setShowTasksPopup(true)}
-        className="absolute top-0 right-0 mt-4 mr-4 bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+        className="w-full md:w-auto md:absolute md:top-0 md:right-0 mt-0 mb-4 md:mt-4 md:mr-4 bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
       >
         View Assigned Tasks
       </button>
 
       <h2 className="text-2xl font-bold text-blue-600 mb-6"
-      style={{
-    textAlign: "center",
-    fontWeight: 900,
-    fontSize: "30px",
-    color: "rgb(16, 137, 211)"
-  }}>Assign Task to Students</h2>
+        style={{
+          textAlign: "center",
+          fontWeight: 900,
+          fontSize: "30px",
+          color: "rgb(16, 137, 211)"
+        }}>Assign Task to Students</h2>
 
       {notification.message && (
         <Notification
@@ -174,26 +174,26 @@ const handleSubmit = async (e) => {
             type="text"
             value={taskTitle}
             onChange={(e) => setTaskTitle(e.target.value)}
-             placeholder="Enter task title"
-  style={{
-    width: "100%",
-    background: "white",
-    border: "none",
-    padding: "15px 20px",
-    borderRadius: "20px",
-    marginTop: "15px",
-    boxShadow: "#cff0ff 0px 10px 10px -5px",
-    borderInline: "2px solid transparent",
-    color: "#000",
-    outline: "none",
-    fontSize: "14px"
-  }}
-  onFocus={(e) =>
-    (e.target.style.borderInline = "2px solid #12b1d1")
-  }
-  onBlur={(e) =>
-    (e.target.style.borderInline = "2px solid transparent")
-  }
+            placeholder="Enter task title"
+            style={{
+              width: "100%",
+              background: "white",
+              border: "none",
+              padding: "15px 20px",
+              borderRadius: "20px",
+              marginTop: "15px",
+              boxShadow: "#cff0ff 0px 10px 10px -5px",
+              borderInline: "2px solid transparent",
+              color: "#000",
+              outline: "none",
+              fontSize: "14px"
+            }}
+            onFocus={(e) =>
+              (e.target.style.borderInline = "2px solid #12b1d1")
+            }
+            onBlur={(e) =>
+              (e.target.style.borderInline = "2px solid transparent")
+            }
             required
           />
         </div>
@@ -203,26 +203,26 @@ const handleSubmit = async (e) => {
           <textarea
             value={taskDescription}
             onChange={(e) => setTaskDescription(e.target.value)}
-             placeholder="Description"
-  style={{
-    width: "100%",
-    background: "white",
-    border: "none",
-    padding: "15px 20px",
-    borderRadius: "20px",
-    marginTop: "15px",
-    boxShadow: "#cff0ff 0px 10px 10px -5px",
-    borderInline: "2px solid transparent",
-    color: "#000",
-    outline: "none",
-    fontSize: "14px"
-  }}
-  onFocus={(e) =>
-    (e.target.style.borderInline = "2px solid #12b1d1")
-  }
-  onBlur={(e) =>
-    (e.target.style.borderInline = "2px solid transparent")
-  }
+            placeholder="Description"
+            style={{
+              width: "100%",
+              background: "white",
+              border: "none",
+              padding: "15px 20px",
+              borderRadius: "20px",
+              marginTop: "15px",
+              boxShadow: "#cff0ff 0px 10px 10px -5px",
+              borderInline: "2px solid transparent",
+              color: "#000",
+              outline: "none",
+              fontSize: "14px"
+            }}
+            onFocus={(e) =>
+              (e.target.style.borderInline = "2px solid #12b1d1")
+            }
+            onBlur={(e) =>
+              (e.target.style.borderInline = "2px solid transparent")
+            }
           />
         </div>
 
@@ -232,26 +232,26 @@ const handleSubmit = async (e) => {
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-             
-  style={{
-    width: "100%",
-    background: "white",
-    border: "none",
-    padding: "15px 20px",
-    borderRadius: "20px",
-    marginTop: "15px",
-    boxShadow: "#cff0ff 0px 10px 10px -5px",
-    borderInline: "2px solid transparent",
-    color: "#000",
-    outline: "none",
-    fontSize: "14px"
-  }}
-  onFocus={(e) =>
-    (e.target.style.borderInline = "2px solid #12b1d1")
-  }
-  onBlur={(e) =>
-    (e.target.style.borderInline = "2px solid transparent")
-  }
+
+            style={{
+              width: "100%",
+              background: "white",
+              border: "none",
+              padding: "15px 20px",
+              borderRadius: "20px",
+              marginTop: "15px",
+              boxShadow: "#cff0ff 0px 10px 10px -5px",
+              borderInline: "2px solid transparent",
+              color: "#000",
+              outline: "none",
+              fontSize: "14px"
+            }}
+            onFocus={(e) =>
+              (e.target.style.borderInline = "2px solid #12b1d1")
+            }
+            onBlur={(e) =>
+              (e.target.style.borderInline = "2px solid transparent")
+            }
             required
           />
         </div>
@@ -261,27 +261,27 @@ const handleSubmit = async (e) => {
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-             placeholder="Enter task title"
-  style={{
-    width: "100%",
-    background: "white",
-    border: "none",
-    padding: "15px 20px",
-    borderRadius: "20px",
-    marginTop: "15px",
-    boxShadow: "#cff0ff 0px 10px 10px -5px",
-    borderInline: "2px solid transparent",
-    color: "#000",
-    outline: "none",
-    fontSize: "14px",
-    
-  }}
-  onFocus={(e) =>
-    (e.target.style.borderInline = "2px solid #12b1d1")
-  }
-  onBlur={(e) =>
-    (e.target.style.borderInline = "2px solid transparent")
-  }
+            placeholder="Enter task title"
+            style={{
+              width: "100%",
+              background: "white",
+              border: "none",
+              padding: "15px 20px",
+              borderRadius: "20px",
+              marginTop: "15px",
+              boxShadow: "#cff0ff 0px 10px 10px -5px",
+              borderInline: "2px solid transparent",
+              color: "#000",
+              outline: "none",
+              fontSize: "14px",
+
+            }}
+            onFocus={(e) =>
+              (e.target.style.borderInline = "2px solid #12b1d1")
+            }
+            onBlur={(e) =>
+              (e.target.style.borderInline = "2px solid transparent")
+            }
             required
           >
             <option value="">Select Priority</option>
@@ -300,26 +300,26 @@ const handleSubmit = async (e) => {
               setSelectedStudents([]);
               setDepartment("");
             }}
-             placeholder="Enter task title"
-  style={{
-    width: "100%",
-    background: "white",
-    border: "none",
-    padding: "15px 20px",
-    borderRadius: "20px",
-    marginTop: "15px",
-    boxShadow: "#cff0ff 0px 10px 10px -5px",
-    borderInline: "2px solid transparent",
-    color: "#000",
-    outline: "none",
-    fontSize: "14px"
-  }}
-  onFocus={(e) =>
-    (e.target.style.borderInline = "2px solid #12b1d1")
-  }
-  onBlur={(e) =>
-    (e.target.style.borderInline = "2px solid transparent")
-  }
+            placeholder="Enter task title"
+            style={{
+              width: "100%",
+              background: "white",
+              border: "none",
+              padding: "15px 20px",
+              borderRadius: "20px",
+              marginTop: "15px",
+              boxShadow: "#cff0ff 0px 10px 10px -5px",
+              borderInline: "2px solid transparent",
+              color: "#000",
+              outline: "none",
+              fontSize: "14px"
+            }}
+            onFocus={(e) =>
+              (e.target.style.borderInline = "2px solid #12b1d1")
+            }
+            onBlur={(e) =>
+              (e.target.style.borderInline = "2px solid transparent")
+            }
           >
             <option value="department">Department</option>
             <option value="students">Specific Students</option>
@@ -332,26 +332,26 @@ const handleSubmit = async (e) => {
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-               placeholder="Enter task title"
-  style={{
-    width: "100%",
-    background: "white",
-    border: "none",
-    padding: "15px 20px",
-    borderRadius: "20px",
-    marginTop: "15px",
-    boxShadow: "#cff0ff 0px 10px 10px -5px",
-    borderInline: "2px solid transparent",
-    color: "#000",
-    outline: "none",
-    fontSize: "14px"
-  }}
-  onFocus={(e) =>
-    (e.target.style.borderInline = "2px solid #12b1d1")
-  }
-  onBlur={(e) =>
-    (e.target.style.borderInline = "2px solid transparent")
-  }
+              placeholder="Enter task title"
+              style={{
+                width: "100%",
+                background: "white",
+                border: "none",
+                padding: "15px 20px",
+                borderRadius: "20px",
+                marginTop: "15px",
+                boxShadow: "#cff0ff 0px 10px 10px -5px",
+                borderInline: "2px solid transparent",
+                color: "#000",
+                outline: "none",
+                fontSize: "14px"
+              }}
+              onFocus={(e) =>
+                (e.target.style.borderInline = "2px solid #12b1d1")
+              }
+              onBlur={(e) =>
+                (e.target.style.borderInline = "2px solid transparent")
+              }
               required
             >
               <option value="">Select Department</option>
@@ -369,27 +369,27 @@ const handleSubmit = async (e) => {
           <div className="mt-4">
             <label className="block text-gray-700 font-semibold mb-2">Select Students</label>
             <div style={{
-    width: "100%",
-    background: "white",
-    border: "none",
-    padding: "15px 20px",
-    borderRadius: "20px",
-    marginTop: "15px",
-    boxShadow: "#cff0ff 0px 10px 10px -5px",
-    borderInline: "2px solid transparent",
-    color: "#000",
-    outline: "none",
-    fontSize: "14px",
-      overflowY: "auto",
-      maxHeight: "150px"
-    
-  }}
-  onFocus={(e) =>
-    (e.target.style.borderInline = "2px solid #12b1d1")
-  }
-  onBlur={(e) =>
-    (e.target.style.borderInline = "2px solid transparent")
-  }>
+              width: "100%",
+              background: "white",
+              border: "none",
+              padding: "15px 20px",
+              borderRadius: "20px",
+              marginTop: "15px",
+              boxShadow: "#cff0ff 0px 10px 10px -5px",
+              borderInline: "2px solid transparent",
+              color: "#000",
+              outline: "none",
+              fontSize: "14px",
+              overflowY: "auto",
+              maxHeight: "150px"
+
+            }}
+              onFocus={(e) =>
+                (e.target.style.borderInline = "2px solid #12b1d1")
+              }
+              onBlur={(e) =>
+                (e.target.style.borderInline = "2px solid transparent")
+              }>
               {studentsList.map((student) => (
                 <div key={student.email} className="flex items-center mb-2">
                   <input
@@ -432,41 +432,41 @@ const handleSubmit = async (e) => {
             />
           </div>
         )}
-<button
-  type="submit"
-  style={{
-    display: "block",
-    width: "100%",
-    fontWeight: "bold",
-    background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-    color: "white",
-    paddingBlock: "15px",
-    margin: "20px auto",
-    borderRadius: "20px",
-    boxShadow: "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px",
-    border: "none",
-    transition: "all 0.2s ease-in-out",
-    cursor: "pointer"
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.transform = "scale(1.03)";
-    e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.transform = "scale(1)";
-    e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px";
-  }}
-  onMouseDown={(e) => {
-    e.currentTarget.style.transform = "scale(0.95)";
-    e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px";
-  }}
-  onMouseUp={(e) => {
-    e.currentTarget.style.transform = "scale(1.03)";
-    e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
-  }}
->
-  Assign Task
-</button>
+        <button
+          type="submit"
+          style={{
+            display: "block",
+            width: "100%",
+            fontWeight: "bold",
+            background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
+            color: "white",
+            paddingBlock: "15px",
+            margin: "20px auto",
+            borderRadius: "20px",
+            boxShadow: "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px",
+            border: "none",
+            transition: "all 0.2s ease-in-out",
+            cursor: "pointer"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "scale(1.03)";
+            e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px";
+          }}
+          onMouseDown={(e) => {
+            e.currentTarget.style.transform = "scale(0.95)";
+            e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px";
+          }}
+          onMouseUp={(e) => {
+            e.currentTarget.style.transform = "scale(1.03)";
+            e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
+          }}
+        >
+          Assign Task
+        </button>
 
       </form>
 
@@ -477,21 +477,21 @@ const handleSubmit = async (e) => {
           className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50"
         >
           <div className="bg-white rounded-lg shadow-xl p-6 w-[1200px] max-h-[80vh] overflow-y-auto" style={{
-    borderRadius: "50px",
-    background: "#e0e0e0",
-    boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
-  }}>
+            borderRadius: "50px",
+            background: "#e0e0e0",
+            boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
+          }}>
             <h3 className="text-xl font-semibold mb-4">Assigned Tasks</h3>
             {assignedTasks.length > 0 ? (
               assignedTasks.map((task, index) => (
-                <div key={index} className="mb-4 p-6  relative"  style={{
-    borderRadius: "50px",
-    background: "#e0e0e0",
-    boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
-  }}>
-    <div className="absolute top-4 right-8 text-sm text-gray-500 font-medium">
-    Assigned: {timeSince(task.dateAssigned || task.createdAt)}
-  </div>
+                <div key={index} className="mb-4 p-6  relative" style={{
+                  borderRadius: "50px",
+                  background: "#e0e0e0",
+                  boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
+                }}>
+                  <div className="absolute top-4 right-8 text-sm text-gray-500 font-medium">
+                    Assigned: {timeSince(task.dateAssigned || task.createdAt)}
+                  </div>
                   <p><strong>Title:</strong> {task.title}</p>
                   <p><strong>Description:</strong> {task.description}</p>
                   <p><strong>Priority:</strong> {task.priority}</p>
@@ -500,28 +500,28 @@ const handleSubmit = async (e) => {
                   <p><strong>Assigned By:</strong> {task.assignedBy}</p>
                   <p><strong>Specialty:</strong> {task.specialty}</p>
                   <p>
-  <strong>Assigned To:</strong>{" "}
-  {task.assignedTo?.length > 0 && task.assignedTo[0] !== "all"
-    ? task.assignedTo.join(", ")
-    : task.selectedStudents?.length > 0
-    ? task.selectedStudents.join(", ")
-    : `All in ${task.department || "department"}`}
-</p>
+                    <strong>Assigned To:</strong>{" "}
+                    {task.assignedTo?.length > 0 && task.assignedTo[0] !== "all"
+                      ? task.assignedTo.join(", ")
+                      : task.selectedStudents?.length > 0
+                        ? task.selectedStudents.join(", ")
+                        : `All in ${task.department || "department"}`}
+                  </p>
 
                 </div>
               ))
             ) : (
               <p>No tasks assigned yet.</p>
             )}
-            
+
           </div>
           <button
-  onClick={() => setShowTasksPopup(false)}
-  className="absolute top-4 left-4 text-gray-600 hover:text-gray-800 text-xl flex items-center gap-2"
->
-  <FaArrowLeft />
-  <span className="text-sm font-semibold">Back</span>
-</button>
+            onClick={() => setShowTasksPopup(false)}
+            className="absolute top-4 left-4 text-gray-600 hover:text-gray-800 text-xl flex items-center gap-2"
+          >
+            <FaArrowLeft />
+            <span className="text-sm font-semibold">Back</span>
+          </button>
 
         </div>
       )}

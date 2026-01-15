@@ -6,7 +6,6 @@ const DoctorHome = () => {
   const navigate = useNavigate();
 
   return (
-  return (
     <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex flex-col items-center justify-center p-6 sm:p-10">
 
       {/* Welcome Card */}
@@ -36,7 +35,6 @@ const DoctorHome = () => {
         </div>
       </div>
     </div>
-  );
   );
 };
 
