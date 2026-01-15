@@ -22,7 +22,6 @@ const DoctorAccount = () => {
   };
 
   return (
-  return (
     <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 py-10 px-4 sm:px-6 flex items-center justify-center">
 
       <div className="w-full max-w-2xl">
