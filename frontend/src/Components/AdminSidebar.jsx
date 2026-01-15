@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoLogOutOutline, IoMenu, IoClose } from "react-icons/io5";
-import { MdDashboard, MdGroup, MdSupport, MdAccountCircle } from "react-icons/md";
+import {
+  FaHome,
+  FaUserPlus,
+  FaUsers,
+  FaHeadset,
+  FaUserCog
+} from "react-icons/fa";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
@@ -22,10 +28,10 @@ const AdminSidebar = () => {
       ? location.pathname === "/admin"
       : location.pathname.startsWith(path);
 
-    return `px-6 py-4 flex gap-3 items-center cursor-pointer rounded-lg transition-all duration-200
+    return `px-6 py-4 flex gap-3 items-center cursor-pointer rounded-lg transition-all duration-200 text-base
       ${isActive
         ? "bg-white/20 border-l-4 border-white font-semibold text-white"
-        : "hover:bg-white/20 hover:border-l-4 hover:border-white"
+        : "text-white/80 hover:bg-white/20 hover:border-l-4 hover:border-white hover:text-white"
       }`;
   };
 
@@ -52,13 +58,11 @@ const AdminSidebar = () => {
         </button>
       )}
 
-      {/* 🧱 Sidebar Panel */}
       <div
         className={`w-[250px] h-screen text-white flex flex-col pt-5 fixed top-0 z-40 transition-transform duration-300 shadow-lg
         ${isOpen ? "left-0" : "-left-[250px]"} md:left-0`}
         style={{
-          background:
-            "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
+          backgroundColor: "rgb(35, 125, 195)",
           borderTopRightRadius: "30px",
           borderBottomRightRadius: "30px",
         }}
@@ -86,9 +90,7 @@ const AdminSidebar = () => {
               setIsOpen(false);
             }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#e3e3e3">
-              <path d="M252-212h85v-188q0-26 18.5-44.5T400-463h160q26 0 44.5 18.5T623-400v188h85v-342L480-725 252-554v342Z" />
-            </svg>
+            <FaHome className="text-xl" />
             Home
           </li>
 
@@ -99,7 +101,7 @@ const AdminSidebar = () => {
               setIsOpen(false);
             }}
           >
-            {/* SVG KEPT */}
+            <FaUserPlus className="text-xl" />
             Register User
           </li>
 
@@ -110,7 +112,7 @@ const AdminSidebar = () => {
               setIsOpen(false);
             }}
           >
-            {/* SVG KEPT */}
+            <FaUsers className="text-xl" />
             View Users
           </li>
 
@@ -121,7 +123,7 @@ const AdminSidebar = () => {
               setIsOpen(false);
             }}
           >
-            {/* SVG KEPT */}
+            <FaHeadset className="text-xl" />
             Support
           </li>
 
@@ -132,19 +134,19 @@ const AdminSidebar = () => {
               setIsOpen(false);
             }}
           >
-            {/* SVG KEPT */}
+            <FaUserCog className="text-xl" />
             Account
           </li>
 
           {/* 🚪 LOGOUT */}
           <li
-            className="px-6 py-5 flex gap-3 items-center cursor-pointer rounded-lg transition-all duration-300 hover:bg-white/20 hover:border-l-[4px] hover:border-white hover:pl-[16px] text-white"
+            className="px-6 py-4 flex gap-3 items-center cursor-pointer rounded-lg transition-all duration-300 text-base text-white/80 hover:bg-white/20 hover:border-l-4 hover:border-white hover:text-white"
             onClick={() => {
               handleLogout();
               setIsOpen(false);
             }}
           >
-            <IoLogOutOutline /> Log Out
+            <IoLogOutOutline className="text-xl" /> Log Out
           </li>
         </ul>
       </div>

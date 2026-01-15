@@ -6,10 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        arial: ['"Times New Roman"', 'Times', 'serif'],
-        sans: ['"Times New Roman"', 'Times', 'serif'],
-        serif: ['"Times New Roman"', 'Times', 'serif'],
-        mono: ['"Times New Roman"', 'Times', 'serif'],
+        inter: ['"Inter"', 'sans-serif'],
+        sans: ['"Inter"', 'sans-serif'],
       },
     },
   },

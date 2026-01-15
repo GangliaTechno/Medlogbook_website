@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaList, FaEdit } from "react-icons/fa";
 
 const CATEGORY_OPTIONS = [
   "Bone Marrow Reporting",
@@ -74,18 +75,21 @@ const AddCategory = () => {
           Logbook category *
         </div>
 
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full px-6 py-4 rounded-full shadow-md outline-none mb-8 bg-white appearance-none"
-        >
-          <option value="">Select a category</option>
-          {CATEGORY_OPTIONS.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+        <div className="relative flex items-center bg-white rounded-full shadow-md px-6 py-4 mb-8">
+          <FaList className="text-blue-500 mr-3" />
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full outline-none bg-transparent appearance-none cursor-pointer"
+          >
+            <option value="">Select a category</option>
+            {CATEGORY_OPTIONS.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* DEFINE FIELDS */}
         <div className="text-left mb-4 font-semibold">
@@ -93,12 +97,15 @@ const AddCategory = () => {
         </div>
 
         <div className="flex flex-col md:flex-row gap-3 mb-6">
-          <input
-            value={fieldInput}
-            onChange={(e) => setFieldInput(e.target.value)}
-            placeholder="Enter field name"
-            className="flex-1 px-6 py-3 rounded-full shadow outline-none w-full"
-          />
+          <div className="flex-1 flex items-center bg-white px-6 py-3 rounded-full shadow-sm focus-within:ring-2 focus-within:ring-blue-400 transition-all">
+            <FaEdit className="text-blue-500 mr-3" />
+            <input
+              value={fieldInput}
+              onChange={(e) => setFieldInput(e.target.value)}
+              placeholder="Enter field name"
+              className="flex-1 outline-none bg-transparent w-full"
+            />
+          </div>
           <button
             onClick={addField}
             className="px-6 py-3 md:py-0 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500

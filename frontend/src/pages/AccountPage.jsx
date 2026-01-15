@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FaTrash, FaCheckCircle } from "react-icons/fa";
+import {
+  FaTrash,
+  FaCheckCircle,
+  FaLock,
+  FaGlobe,
+  FaGraduationCap,
+  FaHospital,
+  FaUserMd,
+  FaEnvelope
+} from "react-icons/fa";
 import Notification from "../Components/Notification";
 import { updateUserLocally } from "../reducers/authReducer";
 import medicalBg from "../assets/medicalBg.png";
+import studentPanelBg from "../assets/studentPanelBg.png";
 
 const AccountPage = () => {
   const navigate = useNavigate();
@@ -109,15 +119,23 @@ const AccountPage = () => {
   const isIndia = formData.country === "India";
 
   return (
-    <div className="font-['Manrope'] min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 py-10 px-4 sm:px-6 flex items-center justify-center">
+    <div
+      className="max-w-7xl mx-auto min-h-full w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 py-10 px-4 sm:px-6 flex items-center justify-center"
+      style={{
+        backgroundImage: `url(${studentPanelBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
 
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">
+          <h1 className="text-3xl font-bold text-blue-600 tracking-tight mb-2">
             Account Settings
           </h1>
-          <p className="text-slate-500">
+          <p className="text-base text-slate-500">
             Manage your profile details and preferences.
           </p>
         </div>
@@ -130,11 +148,12 @@ const AccountPage = () => {
           <div className="p-8 sm:p-10">
             {/* Email Section */}
             <div className="mb-8">
-              <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+              <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                 Email Address
               </label>
               <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                <span className="flex-1 text-sm font-medium text-slate-600 truncate">
+                <FaEnvelope className="text-blue-500" />
+                <span className="flex-1 text-base font-medium text-slate-600 truncate">
                   {formData.email}
                 </span>
                 <div className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-lg border border-green-100">
@@ -146,17 +165,20 @@ const AccountPage = () => {
 
             {/* Password Section */}
             <div className="mb-8">
-              <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+              <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                 New Password
               </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter a new password to update"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-              />
+              <div className="flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                <FaLock className="text-blue-500 mr-3" />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter a new password to update"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full bg-transparent text-base font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                />
+              </div>
             </div>
 
             <div className="h-px bg-slate-100 w-full my-8"></div>
@@ -165,15 +187,16 @@ const AccountPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               {/* Country */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Country
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                  <FaGlobe className="text-blue-500 mr-3" />
                   <select
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer"
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer"
                   >
                     <option value="">Select country</option>
                     <option value="India">India</option>
@@ -187,16 +210,17 @@ const AccountPage = () => {
 
               {/* Training Year */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Training Year
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                  <FaGraduationCap className="text-blue-500 mr-3" />
                   <select
                     name="trainingYear"
                     value={formData.trainingYear}
                     onChange={handleChange}
                     disabled={!formData.country}
-                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer disabled:text-slate-400"
                   >
                     <option value="">Select year</option>
                     {(isIndia
@@ -214,16 +238,17 @@ const AccountPage = () => {
 
               {/* Hospital */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Hospital
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                  <FaHospital className="text-blue-500 mr-3" />
                   <select
                     name="hospital"
                     value={formData.hospital}
                     onChange={handleChange}
                     disabled={!formData.country}
-                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer disabled:text-slate-400"
                   >
                     <option value="">Select hospital</option>
                     {(isIndia
@@ -241,16 +266,17 @@ const AccountPage = () => {
 
               {/* Specialty */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Specialty
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                  <FaUserMd className="text-blue-500 mr-3" />
                   <select
                     name="specialty"
                     value={formData.specialty}
                     onChange={handleChange}
                     disabled={!formData.country}
-                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer disabled:text-slate-400"
                   >
                     <option value="">Select specialty</option>
                     {(isIndia
@@ -271,14 +297,14 @@ const AccountPage = () => {
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <button
                 onClick={handleUpdate}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 active:scale-95"
+                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 rounded-xl text-base font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 active:scale-95"
               >
                 Save Changes
               </button>
 
               <button
                 onClick={handleDelete}
-                className="flex-1 bg-white border border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-100 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 group"
+                className="flex-1 bg-white border border-slate-200 text-red-500 hover:bg-red-50 hover:border-red-100 py-3.5 rounded-xl text-base font-bold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 group"
               >
                 <FaTrash className="group-hover:scale-110 transition-transform" />
                 Delete Account

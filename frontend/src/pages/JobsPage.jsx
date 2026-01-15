@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import studentPanelBg from "../assets/studentPanelBg.png";
 
 const JobsPage = () => {
   const navigate = useNavigate();
@@ -57,89 +58,99 @@ const JobsPage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto pt-20 px-4 pb-10 sm:pt-8 sm:px-6 lg:px-10 min-h-full bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-3xl shadow-sm border border-slate-100">
-      {/* Page Heading */}
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-        Assignment History
-      </h1>
+    <div
+      className="w-full min-h-screen pt-20 px-4 pb-10 sm:pt-8 sm:px-6 lg:px-10"
+      style={{
+        backgroundImage: `url(${studentPanelBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Page Heading */}
+        <h1 className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">
+          Assignment History
+        </h1>
 
-      {/* Description */}
-      <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-8 max-w-3xl">
-        Manage your training posts, specialties, and access logbook entries
-        associated with your current or previous jobs.
-      </p>
+        {/* Description */}
+        <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-8 max-w-3xl">
+          Manage your training posts, specialties, and access logbook entries
+          associated with your current or previous jobs.
+        </p>
 
-      {/* Section Title */}
-      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2">
-        Primary Job
-      </h3>
+        {/* Section Title */}
+        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2">
+          Primary Job
+        </h3>
 
-      {jobs.map((job) => (
-        <div
-          key={job.id}
-          className="
-            bg-white
-            border
-            border-slate-300
-            rounded-2xl
-            p-5 sm:p-6
-            mb-6
-            flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between
-            shadow-[0_4px_12px_rgba(0,0,0,0.1)]
-            hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]
-            transition-all
-            duration-300
-            hover:-translate-y-1
-          "
-        >
-          {/* Left Content */}
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-blue-50 rounded-xl shrink-0">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg"
-                alt="India"
-                className="w-8 h-auto rounded shadow-sm"
-              />
-            </div>
-
-            <div>
-              <p className="text-lg sm:text-xl font-bold text-gray-900">
-                {job.specialty}
-              </p>
-              <p className="text-sm sm:text-base text-blue-700 font-medium">
-                {job.trainingYear}
-              </p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 flex items-center gap-1">
-                <span>📅</span> {job.startDate} – {job.endDate}
-              </p>
-            </div>
-          </div>
-
-          {/* Action */}
-          <button
-            onClick={() => navigate("/view-entries")}
+        {jobs.map((job) => (
+          <div
+            key={job.id}
             className="
-              w-full
-              sm:w-auto
-              px-6
-              py-2.5
-              text-sm
-              font-semibold
-              text-white
-              rounded-xl
-              bg-gradient-to-r from-blue-600 to-blue-700
-              hover:from-blue-700 hover:to-blue-800
-              shadow-md
-              hover:shadow-lg
-              active:scale-95
+              bg-white
+              border
+              border-slate-300
+              rounded-2xl
+              p-5 sm:p-6
+              mb-6
+              flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between
+              shadow-[0_4px_12px_rgba(0,0,0,0.1)]
+              hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]
               transition-all
-              duration-200
+              duration-300
+              hover:-translate-y-1
             "
           >
-            View Logbook Entries
-          </button>
-        </div>
-      ))}
+            {/* Left Content */}
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-blue-50 rounded-xl shrink-0">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg"
+                  alt="India"
+                  className="w-8 h-auto rounded shadow-sm"
+                />
+              </div>
+
+              <div>
+                <p className="text-lg sm:text-xl font-bold text-gray-900">
+                  {job.specialty}
+                </p>
+                <p className="text-sm sm:text-base text-blue-700 font-medium">
+                  {job.trainingYear}
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1 flex items-center gap-1">
+                  <span>📅</span> {job.startDate} – {job.endDate}
+                </p>
+              </div>
+            </div>
+
+            {/* Action */}
+            <button
+              onClick={() => navigate("/view-entries")}
+              className="
+                w-full
+                sm:w-auto
+                px-6
+                py-2.5
+                text-sm
+                font-semibold
+                text-white
+                rounded-xl
+                bg-gradient-to-r from-blue-600 to-blue-700
+                hover:from-blue-700 hover:to-blue-800
+                shadow-md
+                hover:shadow-lg
+                active:scale-95
+                transition-all
+                duration-200
+              "
+            >
+              View Logbook Entries
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
