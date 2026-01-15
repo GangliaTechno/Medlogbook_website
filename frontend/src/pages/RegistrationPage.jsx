@@ -162,9 +162,9 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center font-['Inter'] overflow-x-hidden">
+    <div className="relative min-h-screen w-full flex flex-col items-center overflow-x-hidden">
       {/* BACKGROUND LAYER */}
-      <div 
+      <div
         className="fixed inset-0 z-0"
         style={{
           backgroundImage: `url(${medicalBg})`,
@@ -178,7 +178,7 @@ const RegistrationPage = () => {
       {/* CONTENT CONTAINER */}
       <div className="relative z-10 w-full px-4 py-8 flex justify-center">
         <div className="w-full max-w-2xl bg-white/90 backdrop-blur-lg rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl p-5 sm:p-10 border border-white/50">
-          
+
           <div className="text-center mb-6">
             <h2 className="text-2xl sm:text-4xl font-black text-blue-700 tracking-tight leading-tight">
               Register User
@@ -192,17 +192,15 @@ const RegistrationPage = () => {
           <div className="flex p-1 bg-gray-100/80 rounded-2xl mb-8 w-full max-w-[280px] sm:max-w-xs mx-auto">
             <button
               onClick={() => switchRole("student")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                role === "student" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
-              }`}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${role === "student" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
             >
               <FaUserGraduate /> Student
             </button>
             <button
               onClick={() => switchRole("doctor")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                role === "doctor" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
-              }`}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${role === "doctor" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
             >
               <FaUserMd /> Doctor
             </button>
@@ -212,7 +210,7 @@ const RegistrationPage = () => {
           <div className="space-y-4">
             <Input icon={<FaUser />} placeholder="Full Name *" value={fullName} onChange={setFullName} />
             <Input icon={<FaEnvelope />} placeholder="Email *" value={email} onChange={setEmail} />
-            
+
             <div className="relative">
               <Input icon={<FaLock />} value={password} readOnly />
               <span className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 text-[9px] font-bold text-blue-400 bg-blue-50 px-2 py-1 rounded">
@@ -237,16 +235,16 @@ const RegistrationPage = () => {
 
             {/* CSV SECTION */}
             <div className="mt-6">
-               <label className="flex items-center justify-center gap-2 w-full border-2 border-dashed border-blue-200 bg-blue-50/50 p-4 rounded-2xl cursor-pointer hover:border-blue-400 transition-colors group">
-                 <FaFileUpload className="text-blue-500 text-sm group-hover:scale-110 transition-transform" />
-                 <span className="text-xs sm:text-sm font-semibold text-blue-700">Batch Upload via CSV</span>
-                 <input
+              <label className="flex items-center justify-center gap-2 w-full border-2 border-dashed border-blue-200 bg-blue-50/50 p-4 rounded-2xl cursor-pointer hover:border-blue-400 transition-colors group">
+                <FaFileUpload className="text-blue-500 text-sm group-hover:scale-110 transition-transform" />
+                <span className="text-xs sm:text-sm font-semibold text-blue-700">Batch Upload via CSV</span>
+                <input
                   type="file"
                   accept=".csv"
                   className="hidden"
                   onChange={(e) => handleCSVUpload(e.target.files[0])}
                 />
-               </label>
+              </label>
             </div>
           </div>
 

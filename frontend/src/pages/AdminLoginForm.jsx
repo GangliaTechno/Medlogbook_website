@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../reducers/authReducer";
@@ -13,18 +13,6 @@ const AdminLoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.auth);
-
-  /* ================= AUTO REDIRECT ================= */
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
-
-    if (token && role) {
-      if (role === "admin") navigate("/admin", { replace: true });
-      else if (role === "doctor") navigate("/doctor-home", { replace: true });
-      else if (role === "student") navigate("/logbookpage", { replace: true });
-    }
-  }, [navigate]);
 
   /* ================= HANDLERS ================= */
   const handleChange = (e) => {

@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import studentPanelBg from "../assets/studentPanelBg.png";
 
 const COLORS = ["#2563eb", "#0ea5e9", "#22c55e", "#f59e0b"];
 
@@ -76,7 +77,6 @@ const AnalysisPage = () => {
   return (
     <div
       className="
-        font-['Manrope']
         max-w-7xl
         mx-auto
         pt-20
@@ -92,12 +92,18 @@ const AnalysisPage = () => {
         border
         border-slate-100
       "
+      style={{
+        backgroundImage: `url(${studentPanelBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
       <div className="space-y-8 sm:space-y-10">
 
         {/* HEADER */}
         <header className="border-b border-slate-100 pb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-600 tracking-tight">
             Analysis & Trends
           </h1>
           <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">

@@ -118,6 +118,7 @@ const App = () => (
 
 
       {/* Admin */}
+      
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminHome />} />
         <Route path="register" element={<RegistrationPage />} />

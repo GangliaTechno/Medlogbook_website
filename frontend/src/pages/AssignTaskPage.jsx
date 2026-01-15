@@ -2,7 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Notification from "../Components/Notification";
 import axios from "axios";
-import { FaArrowLeft } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaTasks,
+  FaFileAlt,
+  FaCalendarAlt,
+  FaExclamationTriangle,
+  FaUserFriends,
+  FaUserMd,
+  FaBuilding
+} from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 
 
 const AssignTaskPage = () => {
@@ -145,8 +155,9 @@ const AssignTaskPage = () => {
 
       <button
         onClick={() => setShowTasksPopup(true)}
-        className="w-full md:w-auto md:absolute md:top-0 md:right-0 mt-0 mb-4 md:mt-4 md:mr-4 bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+        className="w-full md:w-auto md:absolute md:top-4 md:right-8 mt-0 mb-4 md:mt-0 flex items-center justify-center gap-2 bg-blue-600 text-white py-2.5 px-6 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 hover:-translate-y-0.5 transition-all duration-300 active:scale-95"
       >
+        <FaTasks />
         View Assigned Tasks
       </button>
 
@@ -155,7 +166,7 @@ const AssignTaskPage = () => {
           textAlign: "center",
           fontWeight: 900,
           fontSize: "30px",
-          color: "rgb(16, 137, 211)"
+          color: "rgb(37, 99, 235)"
         }}>Assign Task to Students</h2>
 
       {notification.message && (
@@ -169,199 +180,105 @@ const AssignTaskPage = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-gray-700 font-semibold">Task Title</label>
-          <input
-            type="text"
-            value={taskTitle}
-            onChange={(e) => setTaskTitle(e.target.value)}
-            placeholder="Enter task title"
-            style={{
-              width: "100%",
-              background: "white",
-              border: "none",
-              padding: "15px 20px",
-              borderRadius: "20px",
-              marginTop: "15px",
-              boxShadow: "#cff0ff 0px 10px 10px -5px",
-              borderInline: "2px solid transparent",
-              color: "#000",
-              outline: "none",
-              fontSize: "14px"
-            }}
-            onFocus={(e) =>
-              (e.target.style.borderInline = "2px solid #12b1d1")
-            }
-            onBlur={(e) =>
-              (e.target.style.borderInline = "2px solid transparent")
-            }
-            required
-          />
+          <label className="block text-gray-700 font-semibold mb-2">Task Title</label>
+          <div className="flex items-center bg-white border border-slate-100 rounded-[20px] px-4 shadow-[#cff0ff_0px_10px_10px_-5px] focus-within:border-[#12b1d1] transition-all border-2 border-transparent">
+            <FaTasks className="text-blue-500 mr-3" />
+            <input
+              type="text"
+              value={taskTitle}
+              onChange={(e) => setTaskTitle(e.target.value)}
+              placeholder="Enter task title"
+              className="w-full py-4 outline-none text-sm bg-transparent"
+              required
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-gray-700 font-semibold">Description</label>
-          <textarea
-            value={taskDescription}
-            onChange={(e) => setTaskDescription(e.target.value)}
-            placeholder="Description"
-            style={{
-              width: "100%",
-              background: "white",
-              border: "none",
-              padding: "15px 20px",
-              borderRadius: "20px",
-              marginTop: "15px",
-              boxShadow: "#cff0ff 0px 10px 10px -5px",
-              borderInline: "2px solid transparent",
-              color: "#000",
-              outline: "none",
-              fontSize: "14px"
-            }}
-            onFocus={(e) =>
-              (e.target.style.borderInline = "2px solid #12b1d1")
-            }
-            onBlur={(e) =>
-              (e.target.style.borderInline = "2px solid transparent")
-            }
-          />
+          <label className="block text-gray-700 font-semibold mb-2">Description</label>
+          <div className="flex items-start bg-white border border-slate-100 rounded-[20px] px-4 shadow-[#cff0ff_0px_10px_10px_-5px] focus-within:border-[#12b1d1] transition-all border-2 border-transparent">
+            <FaFileAlt className="text-blue-500 mr-3 mt-4" />
+            <textarea
+              value={taskDescription}
+              onChange={(e) => setTaskDescription(e.target.value)}
+              placeholder="Description"
+              rows={4}
+              className="w-full py-4 outline-none text-sm bg-transparent resize-none"
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-gray-700 font-semibold">Due Date</label>
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-
-            style={{
-              width: "100%",
-              background: "white",
-              border: "none",
-              padding: "15px 20px",
-              borderRadius: "20px",
-              marginTop: "15px",
-              boxShadow: "#cff0ff 0px 10px 10px -5px",
-              borderInline: "2px solid transparent",
-              color: "#000",
-              outline: "none",
-              fontSize: "14px"
-            }}
-            onFocus={(e) =>
-              (e.target.style.borderInline = "2px solid #12b1d1")
-            }
-            onBlur={(e) =>
-              (e.target.style.borderInline = "2px solid transparent")
-            }
-            required
-          />
+          <label className="block text-gray-700 font-semibold mb-2">Due Date</label>
+          <div className="flex items-center bg-white border border-slate-100 rounded-[20px] px-4 shadow-[#cff0ff_0px_10px_10px_-5px] focus-within:border-[#12b1d1] transition-all border-2 border-transparent">
+            <FaCalendarAlt className="text-blue-500 mr-3" />
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="w-full py-4 outline-none text-sm bg-transparent"
+              required
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-gray-700 font-semibold">Priority</label>
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            placeholder="Enter task title"
-            style={{
-              width: "100%",
-              background: "white",
-              border: "none",
-              padding: "15px 20px",
-              borderRadius: "20px",
-              marginTop: "15px",
-              boxShadow: "#cff0ff 0px 10px 10px -5px",
-              borderInline: "2px solid transparent",
-              color: "#000",
-              outline: "none",
-              fontSize: "14px",
-
-            }}
-            onFocus={(e) =>
-              (e.target.style.borderInline = "2px solid #12b1d1")
-            }
-            onBlur={(e) =>
-              (e.target.style.borderInline = "2px solid transparent")
-            }
-            required
-          >
-            <option value="">Select Priority</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
+          <label className="block text-gray-700 font-semibold mb-2">Priority</label>
+          <div className="flex items-center bg-white border border-slate-100 rounded-[20px] px-4 shadow-[#cff0ff_0px_10px_10px_-5px] focus-within:border-[#12b1d1] transition-all border-2 border-transparent">
+            <FaExclamationTriangle className="text-blue-500 mr-3" />
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              className="w-full py-4 outline-none text-sm bg-transparent cursor-pointer"
+              required
+            >
+              <option value="">Select Priority</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
         </div>
 
         <div>
-          <label className="block text-gray-700 font-semibold">Assign To</label>
-          <select
-            value={assignmentType}
-            onChange={(e) => {
-              setAssignmentType(e.target.value);
-              setSelectedStudents([]);
-              setDepartment("");
-            }}
-            placeholder="Enter task title"
-            style={{
-              width: "100%",
-              background: "white",
-              border: "none",
-              padding: "15px 20px",
-              borderRadius: "20px",
-              marginTop: "15px",
-              boxShadow: "#cff0ff 0px 10px 10px -5px",
-              borderInline: "2px solid transparent",
-              color: "#000",
-              outline: "none",
-              fontSize: "14px"
-            }}
-            onFocus={(e) =>
-              (e.target.style.borderInline = "2px solid #12b1d1")
-            }
-            onBlur={(e) =>
-              (e.target.style.borderInline = "2px solid transparent")
-            }
-          >
-            <option value="department">Department</option>
-            <option value="students">Specific Students</option>
-          </select>
+          <label className="block text-gray-700 font-semibold mb-2">Assign To</label>
+          <div className="flex items-center bg-white border border-slate-100 rounded-[20px] px-4 shadow-[#cff0ff_0px_10px_10px_-5px] focus-within:border-[#12b1d1] transition-all border-2 border-transparent">
+            <FaUserFriends className="text-blue-500 mr-3" />
+            <select
+              value={assignmentType}
+              onChange={(e) => {
+                setAssignmentType(e.target.value);
+                setSelectedStudents([]);
+                setDepartment("");
+              }}
+              className="w-full py-4 outline-none text-sm bg-transparent cursor-pointer"
+            >
+              <option value="department">Department</option>
+              <option value="students">Specific Students</option>
+            </select>
+          </div>
         </div>
 
         {assignmentType === "department" && (
           <div>
-            <label className="block text-gray-700 font-semibold">Department</label>
-            <select
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              placeholder="Enter task title"
-              style={{
-                width: "100%",
-                background: "white",
-                border: "none",
-                padding: "15px 20px",
-                borderRadius: "20px",
-                marginTop: "15px",
-                boxShadow: "#cff0ff 0px 10px 10px -5px",
-                borderInline: "2px solid transparent",
-                color: "#000",
-                outline: "none",
-                fontSize: "14px"
-              }}
-              onFocus={(e) =>
-                (e.target.style.borderInline = "2px solid #12b1d1")
-              }
-              onBlur={(e) =>
-                (e.target.style.borderInline = "2px solid transparent")
-              }
-              required
-            >
-              <option value="">Select Department</option>
-              <option value="Cardiology">Cardiology</option>
-              <option value="Neurology">Neurology</option>
-              <option value="Orthopedics">Orthopedics</option>
-              <option value="Radiology">Radiology</option>
-              <option value="Pediatrics">Pediatrics</option>
-              <option value="Emergency Medicine">Emergency Medicine</option>
-            </select>
+            <label className="block text-gray-700 font-semibold mb-2">Department</label>
+            <div className="flex items-center bg-white border border-slate-100 rounded-[20px] px-4 shadow-[#cff0ff_0px_10px_10px_-5px] focus-within:border-[#12b1d1] transition-all border-2 border-transparent">
+              <FaBuilding className="text-blue-500 mr-3" />
+              <select
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="w-full py-4 outline-none text-sm bg-transparent cursor-pointer"
+                required
+              >
+                <option value="">Select Department</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="Radiology">Radiology</option>
+                <option value="Pediatrics">Pediatrics</option>
+                <option value="Emergency Medicine">Emergency Medicine</option>
+              </select>
+            </div>
           </div>
         )}
 
@@ -474,55 +391,117 @@ const AssignTaskPage = () => {
         <div
           id="tasks-popup"
           onClick={handlePopupClose}
-          className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[70] p-4"
         >
-          <div className="bg-white rounded-lg shadow-xl p-6 w-[1200px] max-h-[80vh] overflow-y-auto" style={{
-            borderRadius: "50px",
-            background: "#e0e0e0",
-            boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
-          }}>
-            <h3 className="text-xl font-semibold mb-4">Assigned Tasks</h3>
-            {assignedTasks.length > 0 ? (
-              assignedTasks.map((task, index) => (
-                <div key={index} className="mb-4 p-6  relative" style={{
-                  borderRadius: "50px",
-                  background: "#e0e0e0",
-                  boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff"
-                }}>
-                  <div className="absolute top-4 right-8 text-sm text-gray-500 font-medium">
-                    Assigned: {timeSince(task.dateAssigned || task.createdAt)}
-                  </div>
-                  <p><strong>Title:</strong> {task.title}</p>
-                  <p><strong>Description:</strong> {task.description}</p>
-                  <p><strong>Priority:</strong> {task.priority}</p>
-                  <p><strong>Target Date:</strong> {formatDate(task.targetDate)}</p>
-                  <p><strong>Department:</strong> {task.department}</p>
-                  <p><strong>Assigned By:</strong> {task.assignedBy}</p>
-                  <p><strong>Specialty:</strong> {task.specialty}</p>
-                  <p>
-                    <strong>Assigned To:</strong>{" "}
-                    {task.assignedTo?.length > 0 && task.assignedTo[0] !== "all"
-                      ? task.assignedTo.join(", ")
-                      : task.selectedStudents?.length > 0
-                        ? task.selectedStudents.join(", ")
-                        : `All in ${task.department || "department"}`}
-                  </p>
+          <div className="bg-white/95 rounded-[40px] shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300 border-4 border-white">
+            {/* Header */}
+            <div className="flex items-center justify-between px-8 py-6 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
+              <h3 className="text-2xl font-black text-slate-800 flex items-center gap-3">
+                <FaTasks className="text-blue-600" />
+                Assigned Tasks
+              </h3>
+              <button
+                onClick={() => setShowTasksPopup(false)}
+                className="w-10 h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors"
+              >
+                <IoClose size={24} />
+              </button>
+            </div>
 
+            {/* Content Container */}
+            <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50/30">
+              {assignedTasks.length > 0 ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {assignedTasks.map((task, index) => {
+                    const priorityColor =
+                      task.priority === "High" ? "bg-red-500" :
+                        task.priority === "Medium" ? "bg-amber-500" : "bg-emerald-500";
+
+                    const priorityBorder =
+                      task.priority === "High" ? "border-l-red-500" :
+                        task.priority === "Medium" ? "border-l-amber-500" : "border-l-emerald-500";
+
+                    return (
+                      <div key={index} className={`group relative bg-white rounded-3xl p-6 border-2 border-slate-100 ${priorityBorder} border-l-[6px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-all duration-300`}>
+                        {/* Priority Badge */}
+                        <div className={`absolute top-6 right-6 ${priorityColor} text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-sm`}>
+                          {task.priority}
+                        </div>
+
+                        {/* Relative Time */}
+                        <div className="mb-4 flex items-center gap-2 text-xs font-semibold text-slate-400">
+                          <FaCalendarAlt size={10} />
+                          Assigned {timeSince(task.dateAssigned || task.createdAt)}
+                        </div>
+
+                        <h4 className="text-lg font-bold text-slate-800 mb-3 group-hover:text-blue-600 transition-colors pr-20">
+                          {task.title}
+                        </h4>
+
+                        <div className="space-y-3">
+                          <p className="text-sm text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-2xl italic">
+                            "{task.description}"
+                          </p>
+
+                          <div className="grid grid-cols-2 gap-y-3 pt-2">
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                              <FaCalendarAlt className="text-blue-400 shrink-0" />
+                              <span className="truncate">Due: {formatDate(task.targetDate)}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                              <FaBuilding className="text-blue-400 shrink-0" />
+                              <span className="truncate">{task.department || "N/A"}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                              <FaUserMd className="text-blue-400 shrink-0" />
+                              <span className="truncate">{task.specialty || "Specialty"}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                              <FaUserFriends className="text-blue-400 shrink-0" />
+                              <span className="truncate">
+                                {task.assignedTo?.length > 0 && task.assignedTo[0] !== "all"
+                                  ? `${task.assignedTo.length} Students`
+                                  : task.selectedStudents?.length > 0
+                                    ? `${task.selectedStudents.length} Students`
+                                    : "Department"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Details Footer */}
+                        <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between text-[11px] font-bold text-slate-400">
+                          <span className="flex items-center gap-1.5">
+                            <FaUserMd className="text-slate-300" />
+                            By: {task.assignedBy}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))
-            ) : (
-              <p>No tasks assigned yet.</p>
-            )}
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center py-20 text-slate-400">
+                  <FaTasks size={48} className="mb-4 opacity-20" />
+                  <p className="font-bold">No tasks assigned yet.</p>
+                </div>
+              )}
+            </div>
 
+            {/* Footer */}
+            <div className="px-8 py-5 bg-white border-t border-slate-100 flex justify-between items-center">
+              <span className="text-xs font-bold text-slate-400">
+                {assignedTasks.length} Total Tasks
+              </span>
+              <button
+                onClick={() => setShowTasksPopup(false)}
+                className="flex items-center gap-2 px-8 py-3 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all active:scale-95"
+              >
+                <FaArrowLeft size={14} />
+                Back to Dashboard
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => setShowTasksPopup(false)}
-            className="absolute top-4 left-4 text-gray-600 hover:text-gray-800 text-xl flex items-center gap-2"
-          >
-            <FaArrowLeft />
-            <span className="text-sm font-semibold">Back</span>
-          </button>
-
         </div>
       )}
     </div>

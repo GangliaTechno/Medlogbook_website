@@ -1,8 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import Notification from "../Components/Notification";
 import parseCsvBreakdown from "../utils/parseCsvBreakdown";
+import {
+  FaArrowLeft,
+  FaUserGraduate,
+  FaClipboardList,
+  FaCheckCircle,
+  FaSearch,
+  FaCalendarAlt,
+  FaEraser,
+  FaStethoscope,
+  FaFileAlt,
+  FaDownload,
+  FaCommentMedical,
+  FaStar,
+  FaRobot,
+  FaEdit,
+  FaChevronDown,
+  FaPaperPlane,
+  FaUpload,
+  FaTrash,
+  FaPlus,
+  FaMapMarkerAlt,
+  FaUserFriends,
+  FaUserMd,
+  FaVenusMars,
+  FaCheckDouble,
+  FaShieldAlt,
+  FaNotesMedical,
+  FaHashtag,
+  FaFileUpload,
+  FaSave,
+  FaRegEdit
+} from "react-icons/fa";
+import studentPanelBg from "../assets/studentPanelBg.png";
 
 
 const StudentEntries = () => {
@@ -16,6 +48,23 @@ const StudentEntries = () => {
   const [isSummarizing, setIsSummarizing] = useState({});
 
   const [editingSummary, setEditingSummary] = useState({});
+
+  const getFieldIcon = (fieldName) => {
+    const lower = fieldName.toLowerCase();
+    if (lower.includes("location") || lower.includes("site")) return <FaMapMarkerAlt />;
+    if (lower.includes("referral")) return <FaUserFriends />;
+    if (lower.includes("role") || lower.includes("provider") || lower.includes("supervisor")) return <FaUserMd />;
+    if (lower.includes("gender")) return <FaVenusMars />;
+    if (lower.includes("specialty") || lower.includes("diagnosis")) return <FaStethoscope />;
+    if (lower.includes("outcome") || lower.includes("result") || lower.includes("credits")) return <FaCheckCircle />;
+    if (lower.includes("type") || lower.includes("category")) return <FaClipboardList />;
+    if (lower.includes("supervision") || lower.includes("level")) return <FaShieldAlt />;
+    if (lower.includes("procedure") || lower.includes("reflection") || lower.includes("learning")) return <FaNotesMedical />;
+    if (lower.includes("date") || lower.includes("time")) return <FaCalendarAlt />;
+    if (lower.includes("number") || lower.includes("count") || lower.includes("hours")) return <FaHashtag />;
+    if (lower.includes("file") || lower.includes("upload") || lower.includes("attachment")) return <FaFileUpload />;
+    return <FaEdit />;
+  };
 
 
   const [reviewedEntries, setReviewedEntries] = useState([]);
@@ -297,64 +346,85 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
 
 
   return (
-    <div className="w-full min-h-screen overflow-x-hidden">
+    <div
+      className="w-full min-h-screen overflow-x-hidden p-4 sm:p-6"
+      style={{
+        backgroundImage: `url(${studentPanelBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
 
       <button
-        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md mb-4"
+        className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl mb-6 shadow-sm transition-all active:scale-95 font-bold"
         onClick={() => navigate(-1)}
       >
+        <FaArrowLeft />
         Back
       </button>
 
 
-      <h2 className="text-xl md:text-2xl font-bold text-blue-600 mb-6 text-center"
+      <h2 className="text-xl md:text-3xl font-black text-blue-600 mb-8 text-center flex items-center justify-center gap-3"
         style={{
           color: "rgb(16, 137, 211)"
-        }}>Entries for {student.fullName}</h2>
+        }}>
+        <FaUserGraduate />
+        Entries for {student.fullName}
+      </h2>
 
       {/* Filters */}
       <div className="flex justify-center mb-6">
         <button
-          className={`px-6 py-2 rounded-full mx-2 ${selectedTab === "not-reviewed"
-            ? "bg-blue-400 text-white"
-            : "bg-blue-300 text-white"
+          className={`flex items-center gap-2 px-8 py-2.5 rounded-full mx-2 font-bold transition-all ${selectedTab === "not-reviewed"
+            ? "bg-blue-500 text-white shadow-lg shadow-blue-200"
+            : "bg-blue-100 text-blue-500 hover:bg-blue-200"
             }`}
           onClick={() => setSelectedTab("not-reviewed")}
         >
+          <FaClipboardList />
           Not Reviewed
         </button>
         <button
-          className={`px-6 py-2 rounded-full mx-2 ${selectedTab === "reviewed"
-            ? "bg-blue-400 text-white"
-            : "bg-blue-300 text-white"
+          className={`flex items-center gap-2 px-8 py-2.5 rounded-full mx-2 font-bold transition-all ${selectedTab === "reviewed"
+            ? "bg-blue-500 text-white shadow-lg shadow-blue-200"
+            : "bg-blue-100 text-blue-500 hover:bg-blue-200"
             }`}
           onClick={() => setSelectedTab("reviewed")}
         >
+          <FaCheckDouble />
           Reviewed
         </button>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search by category..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 rounded-full border bg-white text-black placeholder:text-gray-500 w-full sm:w-auto"
-        />
-        <input
-          type="date"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
-          className="px-4 py-2 rounded-full border bg-white text-black"
-        />
+      <div className="flex flex-wrap justify-center gap-4 mb-8">
+        <div className="relative w-full sm:w-auto">
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search by category..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-12 pr-6 py-3 rounded-2xl border border-slate-200 bg-white text-black placeholder:text-gray-400 w-full focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none shadow-sm"
+          />
+        </div>
+        <div className="relative w-full sm:w-auto">
+          <FaCalendarAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="date"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+            className="pl-12 pr-6 py-3 rounded-2xl border border-slate-200 bg-white text-black focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none shadow-sm"
+          />
+        </div>
         <button
           onClick={() => {
             setSearchTerm("");
             setFilterDate("");
           }}
-          className="px-4 py-2 rounded-md bg-red-600 text-white"
+          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-red-500 text-white font-bold hover:bg-red-600 transition-all active:scale-95 shadow-sm"
         >
+          <FaEraser />
           Clear Filters
         </button>
       </div>
@@ -377,102 +447,92 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
             }}
           >
 
-            <h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
-              <span>🩺</span> {capitalize(entry.categoryName)}
+            <h3 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-3 border-b border-slate-100 pb-3">
+              <FaStethoscope className="text-blue-500" /> {capitalize(entry.categoryName)}
             </h3>
 
             <div className="mb-4">
               {Object.entries(entry.data).map(([key, value]) => (
-                <p key={key} className="text-black text-sm mb-2">
-                  <strong>{capitalize(key.replace(/_/g, " "))}:</strong>{" "}
-                  {typeof value === "string" && value.startsWith("/uploads/") ? (
-                    <a
-                      href={`https://medlogbook-website.onrender.com${value}`}
-                      download
-                      className="text-teal-600 underline"
-                    >
-                      📄 Download File
-                    </a>
-                  ) : typeof value === "string" && isUrl(value) ? (
-                    <a
-                      href={value}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-teal-600 underline"
-                    >
-                      📄 View File
-                    </a>
-                  ) : typeof value === "string" ? (
-                    capitalize(value)
-                  ) : (
-                    value || "N/A"
-                  )}
+                <p key={key} className="text-slate-700 text-sm mb-3 flex items-start gap-2">
+                  <span className="text-blue-400 mt-1 shrink-0">{getFieldIcon(key)}</span>
+                  <span className="flex-1">
+                    <strong className="text-slate-800 font-bold capitalize">{key.replace(/_/g, " ")}:</strong>{" "}
+                    {typeof value === "string" && value.startsWith("/uploads/") ? (
+                      <a
+                        href={`https://medlogbook-website.onrender.com${value}`}
+                        download
+                        className="text-teal-600 underline"
+                      >
+                        📄 Download File
+                      </a>
+                    ) : typeof value === "string" && isUrl(value) ? (
+                      <a
+                        href={value}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-teal-600 underline"
+                      >
+                        📄 View File
+                      </a>
+                    ) : typeof value === "string" ? (
+                      capitalize(value)
+                    ) : (
+                      value || "N/A"
+                    )}
+                  </span>
                 </p>
               ))}
             </div>
 
             {selectedTab === "reviewed" ? (
               <>
-                <p className="text-black text-sm mb-2">
-                  <strong>Doctor's Comments:</strong> {entry.comments}
-                </p>
-                <p className="text-black text-sm">
-                  <strong>Score:</strong> {entry.score}/100
-                </p>
+                <div className="mt-4 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+                  <p className="text-slate-800 text-sm mb-2 flex items-center gap-2">
+                    <FaCommentMedical className="text-blue-500" />
+                    <strong className="font-bold">Doctor's Comments:</strong>
+                    <span className="italic">"{entry.comments}"</span>
+                  </p>
+                  <p className="text-slate-800 text-sm flex items-center gap-2">
+                    <FaStar className="text-amber-400" />
+                    <strong className="font-bold">Score:</strong>
+                    <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full font-black text-xs">
+                      {entry.score} / 100
+                    </span>
+                  </p>
+                </div>
               </>
             ) : (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col w-full">
-                  <textarea
-                    className="w-full min-h-[80px] p-3 rounded-md border border-gray-300 bg-white text-black resize-none"
-                    placeholder="Write a comment..."
-                    value={comments[entry._id] || ""}
-                    onChange={(e) =>
-                      handleCommentChange(entry._id, e.target.value)
-                    }
-                  />
+                  <div className="relative">
+                    <FaCommentMedical className="absolute left-4 top-4 text-slate-300 pointer-events-none" />
+                    <textarea
+                      className="w-full min-h-[100px] pl-11 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-black resize-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all"
+                      placeholder="Write your professional feedback here..."
+                      value={comments[entry._id] || ""}
+                      onChange={(e) =>
+                        handleCommentChange(entry._id, e.target.value)
+                      }
+                    />
+                  </div>
                   <button
                     onClick={() => handleGenerateSummary(entry)}
                     disabled={isSummarizing[entry._id]}
-                    className="text-xs mt-1 w-max bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md disabled:opacity-50"
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      fontWeight: "bold",
-                      background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-                      color: "white",
-                      paddingBlock: "15px",
-                      margin: "20px auto",
-                      borderRadius: "20px",
-                      boxShadow: "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px",
-                      border: "none",
-                      transition: "all 0.2s ease-in-out",
-                      cursor: "pointer"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "scale(1.03)";
-                      e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "scale(1)";
-                      e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px";
-                    }}
-                    onMouseDown={(e) => {
-                      e.currentTarget.style.transform = "scale(0.95)";
-                      e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px";
-                    }}
-                    onMouseUp={(e) => {
-                      e.currentTarget.style.transform = "scale(1.03)";
-                      e.currentTarget.style.boxShadow = "rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px";
-                    }}
+                    className="group flex items-center justify-center gap-3 text-sm mt-4 w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-6 py-4 rounded-2xl font-black shadow-xl shadow-blue-100 hover:shadow-blue-200 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50"
                   >
-                    {isSummarizing[entry._id] ? "Generating..." : "Generate Summary from Entry"}
+                    {isSummarizing[entry._id] ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <FaRobot className="text-lg animate-pulse" />
+                    )}
+                    {isSummarizing[entry._id] ? "Processing AI Summary..." : "Generate AI Medical Summary"}
                   </button>
                   {summaries[entry._id] && (
                     <div className="mt-4 bg-white p-5 rounded-xl border-l-4 border-teal-500 shadow-sm">
                       <div className="flex justify-between items-center mb-2">
-                        <strong className="text-blue-700 text-sm">
-                          🤖 AI Generated Medical Summary
+                        <strong className="text-blue-700 text-sm flex items-center gap-2">
+                          <FaRobot />
+                          AI Generated Medical Summary
                         </strong>
 
                         <button
@@ -484,7 +544,10 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
                           }
                           className="text-xs text-blue-600 hover:underline"
                         >
-                          {editingSummary[entry._id] ? "Save" : "Edit"}
+                          <span className="flex items-center gap-1">
+                            {editingSummary[entry._id] ? <FaSave /> : <FaRegEdit />}
+                            {editingSummary[entry._id] ? "Save" : "Edit"}
+                          </span>
                         </button>
                       </div>
 
@@ -524,22 +587,25 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
                     />
                     <label
                       htmlFor={`enhance-${entry._id}`}
-                      className="text-black"
+                      className="text-slate-700 font-bold text-sm cursor-pointer flex items-center gap-2"
                     >
-                      Enhance comment
+                      <FaEdit className="text-blue-400" />
+                      AI Enhance Feedback?
                     </label>
                   </div>
 
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    placeholder="Score"
-                    className="w-20 py-2 px-2 rounded-md bg-white text-black border text-center"
-                    value={scores[entry._id] || ""}
-                    readOnly
-                    style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
-                  />
+                  <div className="relative">
+                    <FaStar className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400" />
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      placeholder="Score"
+                      className="w-24 py-2 pl-9 pr-2 rounded-xl bg-slate-100 text-slate-800 font-black border-none text-center outline-none"
+                      value={scores[entry._id] || ""}
+                      readOnly
+                    />
+                  </div>
 
                   <button
                     onClick={() =>
@@ -548,73 +614,75 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
                         [entry._id]: !prev[entry._id],
                       }))
                     }
-                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-md"
-                    style={{
-                      background: "linear-gradient(45deg, #8abff4ff, #7ab8f5)", // light blue tones
-                      boxShadow: "0 6px 12px rgba(122, 184, 245, 0.3)",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-50 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-95"
                   >
-                    Score Valuation ⬇
+                    <FaChevronDown className={`transition-transform duration-300 ${scoresBreakdownVisible[entry._id] ? "rotate-180" : ""}`} />
+                    Detailed Scoring
                   </button>
 
                   <button
-                    className="bg-teal-600 hover:bg-teal-700 text-white py-2 px-4 rounded-md"
-                    style={{
-                      background: "linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%)",
-                      boxShadow: "rgba(133, 189, 215, 0.88) 0px 10px 15px -10px",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-black shadow-lg shadow-blue-100 hover:shadow-blue-200 hover:-translate-y-0.5 transition-all active:scale-95"
                     onClick={() => handleReviewSubmit(entry._id)}
                   >
+                    <FaPaperPlane />
                     Submit Review
                   </button>
                 </div>
 
                 {scoresBreakdownVisible[entry._id] && (
-                  <div className="mt-2 w-full max-w-2xl rounded bg-white shadow-sm p-6">
-                    <div className="border-2 border-blue-300 rounded-lg p-3 mb-2 bg-blue-50 flex items-center gap-2">
-                      <input
-                        type="file"
-                        accept=".csv"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          if (!file) return;
-                          const reader = new FileReader();
-                          reader.onload = (evt) => {
-                            const csvText = evt.target.result;
-                            // Parse CSV: label,value,max, skip header if present
-                            let lines = csvText.split(/\r?\n/).filter(Boolean);
-                            if (lines.length && lines[0].toLowerCase().replace(/\s/g, "") === "label,value,max") {
-                              lines = lines.slice(1);
-                            }
-                            const parsedBreakdown = lines.map((line) => {
-                              const [label, value, max] = line.split(",").map((s) => s.trim());
-                              return {
-                                label: label || "",
-                                value: value ? Number(value) : 0,
-                                max: max ? Number(max) : 10,
-                              };
-                            });
-                            setScoreBreakdown((prev) => ({
-                              ...prev,
-                              [entry._id]: parsedBreakdown,
-                            }));
-                            setScores((prev) => ({
-                              ...prev,
-                              [entry._id]: parsedBreakdown.reduce((acc, item) => acc + (item.value || 0), 0),
-                            }));
-                          };
-                          reader.readAsText(file);
-                        }}
-                        className="mt-0"
-                      />
-                      <span className="text-xs text-blue-700 font-medium ml-2">Choose CSV file</span>
+                  <div className="mt-4 w-full bg-slate-50/50 rounded-3xl border border-slate-100 p-6 animate-in slide-in-from-top-4 duration-300">
+                    <div className="border-2 border-dashed border-blue-200 rounded-2xl p-4 mb-6 bg-white flex items-center gap-4 group hover:border-blue-400 transition-all">
+                      <div className="bg-blue-50 p-3 rounded-xl text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                        <FaUpload size={20} />
+                      </div>
+                      <div className="flex-1">
+                        <input
+                          type="file"
+                          accept=".csv"
+                          id={`csv-upload-${entry._id}`}
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = (evt) => {
+                              const csvText = evt.target.result;
+                              // Parse CSV: label,value,max, skip header if present
+                              let lines = csvText.split(/\r?\n/).filter(Boolean);
+                              if (lines.length && lines[0].toLowerCase().replace(/\s/g, "") === "label,value,max") {
+                                lines = lines.slice(1);
+                              }
+                              const parsedBreakdown = lines.map((line) => {
+                                const [label, value, max] = line.split(",").map((s) => s.trim());
+                                return {
+                                  label: label || "",
+                                  value: value ? Number(value) : 0,
+                                  max: max ? Number(max) : 10,
+                                };
+                              });
+                              setScoreBreakdown((prev) => ({
+                                ...prev,
+                                [entry._id]: parsedBreakdown,
+                              }));
+                              setScores((prev) => ({
+                                ...prev,
+                                [entry._id]: parsedBreakdown.reduce((acc, item) => acc + (item.value || 0), 0),
+                              }));
+                            };
+                            reader.readAsText(file);
+                          }}
+                          className="hidden"
+                        />
+                        <label htmlFor={`csv-upload-${entry._id}`} className="cursor-pointer">
+                          <p className="text-sm font-black text-slate-800">Import Scoring Criteria</p>
+                          <p className="text-xs text-slate-500">Click to upload .csv template</p>
+                        </label>
+                      </div>
                     </div>
 
-                    <h3 className="text-sm font-bold text-black mb-2">Score Breakdown</h3>
+                    <h3 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
+                      <FaClipboardList className="text-blue-500" />
+                      Detailed Breakdown
+                    </h3>
                     <div className="flex flex-col gap-2">
                       {(() => {
                         const breakdown = scoreBreakdown[entry._id] || [];
@@ -679,10 +747,10 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
                                 </div>
                                 <button
                                   onClick={() => removeBreakdown(entry._id, breakdown.indexOf(mainItem))}
-                                  className="ml-1 text-red-400 hover:text-red-600 text-base font-bold"
+                                  className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm"
                                   title="Remove"
                                 >
-                                  ✖
+                                  <FaTrash size={14} />
                                 </button>
                               </div>
                               {/* Render sublabels indented */}
@@ -722,10 +790,10 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
                                   </div>
                                   <button
                                     onClick={() => removeBreakdown(entry._id, subItem.idx)}
-                                    className="ml-1 text-red-400 hover:text-red-600 text-base font-bold"
+                                    className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm"
                                     title="Remove"
                                   >
-                                    ✖
+                                    <FaTrash size={14} />
                                   </button>
                                 </div>
                               ))}
@@ -736,9 +804,10 @@ Overall, the entry demonstrates appropriate clinical reasoning, documentation qu
                     </div>
                     <button
                       onClick={() => addBreakdown(entry._id)}
-                      className="mt-2 text-xs text-blue-500 hover:underline font-semibold"
+                      className="mt-4 flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-black px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100 hover:border-blue-200 transition-all"
                     >
-                      + Add Breakdown
+                      <FaPlus size={12} />
+                      Add Manual Criteria
                     </button>
                   </div>
                 )}
