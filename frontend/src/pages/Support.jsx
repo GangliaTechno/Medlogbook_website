@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { FaInfoCircle, FaComment } from "react-icons/fa";
 import Notification from "../Components/Notification";
+import studentPanelBg from "../assets/studentPanelBg.png";
 
 const Support = () => {
   const [supportType, setSupportType] = useState("");
@@ -66,7 +68,6 @@ const Support = () => {
   return (
     <div
       className="
-        font-['Manrope']
         min-h-full
         w-full
         bg-gradient-to-br from-blue-50 via-white to-blue-50
@@ -78,15 +79,21 @@ const Support = () => {
         px-4
         sm:px-6
       "
+      style={{
+        backgroundImage: `url(${studentPanelBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
       <div className="w-full max-w-xl">
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">
+          <h1 className="text-3xl font-bold text-blue-600 tracking-tight mb-2">
             Support Center
           </h1>
-          <p className="text-slate-500">
+          <p className="text-base text-slate-500">
             Need help? Submit a request and we'll get back to you.
           </p>
         </div>
@@ -101,15 +108,16 @@ const Support = () => {
 
               {/* Type Selection */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   How can we help? <span className="text-red-500">*</span>
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow">
+                  <FaInfoCircle className="text-blue-500 mr-3" />
                   <select
                     value={supportType}
                     onChange={(e) => setSupportType(e.target.value)}
                     required
-                    className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow cursor-pointer placeholder-slate-400"
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer placeholder-slate-400"
                   >
                     <option value="">Select a category...</option>
                     <option value="additional logbook category">Request New Logbook Category</option>
@@ -128,17 +136,20 @@ const Support = () => {
 
               {/* Details Textarea */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">
+                <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Details <span className="text-red-500">*</span>
                 </label>
-                <textarea
-                  value={detail}
-                  onChange={(e) => setDetail(e.target.value)}
-                  required
-                  rows={6}
-                  placeholder="Please describe your issue or request in detail. The more info, the faster we can help..."
-                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow resize-none leading-relaxed"
-                />
+                <div className="flex bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow">
+                  <FaComment className="text-blue-500 mr-3 mt-1.5" />
+                  <textarea
+                    value={detail}
+                    onChange={(e) => setDetail(e.target.value)}
+                    required
+                    rows={6}
+                    placeholder="Please describe your issue or request in detail. The more info, the faster we can help..."
+                    className="w-full bg-transparent text-base font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed"
+                  />
+                </div>
               </div>
 
               {/* Submit Button */}
@@ -155,7 +166,7 @@ const Support = () => {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-xs text-slate-400 mt-8 font-medium">
+        <p className="text-center text-sm text-slate-400 mt-8 font-medium">
           We usually respond within 24 hours.
         </p>
 
@@ -170,7 +181,7 @@ const Support = () => {
           type={notification.type}
         />
       </div>
-    </div>
+    </div >
   );
 };
 

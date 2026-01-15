@@ -67,12 +67,12 @@ const AdminSupportPage = () => {
 
   return (
     <div
-      className="min-h-screen w-full bg-cover bg-center bg-fixed flex justify-center px-3 py-6 sm:px-6 sm:py-10 font-['Inter']"
+      className="min-h-screen w-full bg-cover bg-center bg-fixed flex justify-center px-3 py-6 sm:px-6 sm:py-10"
       style={{ backgroundImage: `url(${medicalBg})` }}
     >
       {/* MAIN GLASS PANEL */}
       <div className="w-full max-w-5xl bg-white/90 backdrop-blur-md rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden border border-white/50">
-        
+
         {/* Header Section */}
         <div className="p-6 sm:p-10 text-center border-b border-gray-100">
           <h2 className="text-2xl sm:text-4xl font-black text-blue-700 tracking-tight">
@@ -92,9 +92,9 @@ const AdminSupportPage = () => {
                 onClick={() => setFilter(f)}
                 className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-sm
                   ${filter === f
-                    ? f === "pending" ? "bg-amber-400 text-amber-900" 
-                    : f === "resolved" ? "bg-emerald-500 text-white" 
-                    : "bg-blue-600 text-white"
+                    ? f === "pending" ? "bg-amber-400 text-amber-900"
+                      : f === "resolved" ? "bg-emerald-500 text-white"
+                        : "bg-blue-600 text-white"
                     : "bg-white text-gray-400 hover:text-gray-600 border border-gray-100"
                   }`}
               >
@@ -121,8 +121,8 @@ const AdminSupportPage = () => {
                   {/* Status & Date Header */}
                   <div className="flex justify-between items-center pb-4 border-b border-gray-50">
                     <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border
-                      ${query.status === "resolved" 
-                        ? "bg-emerald-50 border-emerald-200 text-emerald-600" 
+                      ${query.status === "resolved"
+                        ? "bg-emerald-50 border-emerald-200 text-emerald-600"
                         : "bg-amber-50 border-amber-200 text-amber-600"}`}>
                       {query.status}
                     </span>

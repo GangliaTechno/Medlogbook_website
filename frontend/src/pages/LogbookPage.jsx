@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import LogbookCategory from "../Components/logbookCategory";
 import { FaClipboardList } from "react-icons/fa";
 import axios from "axios";
+import studentPanelBg from "../assets/studentPanelBg.png";
 
 const LogbookPage = () => {
   const userEmail = useSelector((state) => state.auth?.user?.email);
@@ -43,28 +44,27 @@ const LogbookPage = () => {
   return (
     <div
       className="
-        font-['Manrope']
-        max-w-7xl
-        mx-auto
+        w-full
         pt-20
         px-4
         pb-10
         sm:pt-8
         sm:px-6
         lg:px-10
-        min-h-full
-        bg-gradient-to-br from-blue-50 via-white to-indigo-50
-        rounded-3xl
-        shadow-sm
-        border
-        border-slate-100
+        min-h-screen
       "
+      style={{
+        backgroundImage: `url(${studentPanelBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
       <div className="space-y-8 sm:space-y-10">
 
         {/* HEADER */}
         <header className="border-b border-slate-100 pb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-600 tracking-tight">
             Clinical Logbook
           </h1>
           <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">
