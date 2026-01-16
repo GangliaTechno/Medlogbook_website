@@ -65,6 +65,7 @@ const AdminSidebar = () => {
           backgroundColor: "rgb(35, 125, 195)",
           borderTopRightRadius: "30px",
           borderBottomRightRadius: "30px",
+          bottom: 0,
         }}
       >
         {/* 🔠 Title & Close Button */}

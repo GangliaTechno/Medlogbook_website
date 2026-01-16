@@ -19,7 +19,7 @@ import {
   FaEdit
 } from "react-icons/fa";
 import Notification from "../Components/Notification";
-import studentPanelBg from "../assets/studentPanelBg.png";
+import studentPanelBg from "../assets/studentPanelBg_updated.png";
 
 const DynamicCategoryForm = () => {
   const { category } = useParams();

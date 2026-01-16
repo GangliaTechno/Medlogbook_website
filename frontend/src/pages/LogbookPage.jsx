@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import LogbookCategory from "../Components/logbookCategory";
 import { FaClipboardList } from "react-icons/fa";
 import axios from "axios";
-import studentPanelBg from "../assets/studentPanelBg.png";
+import studentPanelBg from "../assets/studentPanelBg_updated.png";
 
 const LogbookPage = () => {
   const userEmail = useSelector((state) => state.auth?.user?.email);

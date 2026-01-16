@@ -14,7 +14,7 @@ import {
 import Notification from "../Components/Notification";
 import { updateUserLocally } from "../reducers/authReducer";
 import medicalBg from "../assets/medicalBg.png";
-import studentPanelBg from "../assets/studentPanelBg.png";
+import studentPanelBg from "../assets/studentPanelBg_updated.png";
 
 const AccountPage = () => {
   const navigate = useNavigate();
