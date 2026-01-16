@@ -67,7 +67,7 @@ const AdminSupportPage = () => {
 
   return (
     <div
-      className="min-h-screen w-full bg-cover bg-center bg-fixed flex justify-center px-3 py-6 sm:px-6 sm:py-10"
+      className="min-h-screen w-full bg-cover bg-center flex justify-center px-3 py-6 sm:px-6 sm:py-10"
       style={{ backgroundImage: `url(${medicalBg})` }}
     >
       {/* MAIN GLASS PANEL */}
@@ -85,12 +85,12 @@ const AdminSupportPage = () => {
 
         {/* Filter Section - Responsive Scrollable on Mobile */}
         <div className="p-4 sm:p-6 bg-gray-50/50">
-          <div className="flex flex-wrap sm:flex-nowrap justify-center gap-3">
+          <div className="grid grid-cols-3 sm:flex sm:flex-nowrap justify-center gap-2 sm:gap-3">
             {["pending", "resolved", "all"].map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-sm
+                className={`px-2 sm:px-6 py-2.5 rounded-xl font-bold text-[10px] sm:text-sm uppercase tracking-wider transition-all shadow-sm flex items-center justify-center
                   ${filter === f
                     ? f === "pending" ? "bg-amber-400 text-amber-900"
                       : f === "resolved" ? "bg-emerald-500 text-white"
