@@ -67,6 +67,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
+  'http://localhost:5175',
+  'http://localhost:5176',
   'https://medlogbook.ganglia.in',
   'https://medlogbook-website-frontend.onrender.com',
   'http://100.120.81.61',
@@ -115,7 +117,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
@@ -126,7 +128,7 @@ const upload = multer({
     const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-    
+
     if (mimetype && extname) {
       return cb(null, true);
     } else {
@@ -202,7 +204,7 @@ const connectDB = async () => {
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
       bufferCommands: false, // Disable mongoose buffering
     });
-    
+
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
@@ -215,7 +217,7 @@ connectDB();
 // Global error handler
 app.use((error, req, res, next) => {
   console.error('Global error handler:', error);
-  
+
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({ error: 'File too large' });
@@ -224,7 +226,7 @@ app.use((error, req, res, next) => {
       return res.status(400).json({ error: 'Too many files' });
     }
   }
-  
+
   res.status(error.status || 500).json({
     error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message
   });
@@ -279,7 +281,7 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  
+
   if (!process.env.GEMINI_API_KEY) {
     console.error('⚠️  WARNING: GEMINI_API_KEY not loaded!');
   } else {
@@ -292,9 +294,9 @@ server.on('error', (error) => {
   if (error.syscall !== 'listen') {
     throw error;
   }
-  
+
   const bind = typeof PORT === 'string' ? 'Pipe ' + PORT : 'Port ' + PORT;
-  
+
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');

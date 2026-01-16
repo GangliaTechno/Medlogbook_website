@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL = "https://medlogbook-website.onrender.com/api/auth";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/auth";
 
 export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAPI) => {
   try {
@@ -58,16 +58,16 @@ const authSlice = createSlice({
     isLoading: false,
     error: null,
   },
-reducers: {
-  logout: (state) => {
-    state.user = null;
-    localStorage.removeItem("user");
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      localStorage.removeItem("user");
+    },
+    updateUserLocally: (state, action) => {
+      state.user = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload));
+    }
   },
-  updateUserLocally: (state, action) => {
-    state.user = action.payload;
-    localStorage.setItem("user", JSON.stringify(action.payload));
-  }
-},
 
   extraReducers: (builder) => {
     builder
