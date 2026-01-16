@@ -12,6 +12,7 @@ import RegistrationPage from "./pages/RegistrationPage";
 import VerifyOtp from "./pages/VerifyOtp";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 
 /* Common Pages */
 import AccountPage from "./pages/AccountPage";
@@ -100,25 +101,25 @@ const App = () => (
 
       {/* Doctor (UNCHANGED) */}
       <Route path="/doctor/*" element={<DoctorLayout />}>
-  <Route index element={<DoctorHome />} />
+        <Route index element={<DoctorHome />} />
 
-  <Route path="view-students" element={<DoctorLogbook />} />
-  <Route path="student-entries" element={<StudentEntries />} />
+        <Route path="view-students" element={<DoctorLogbook />} />
+        <Route path="student-entries" element={<StudentEntries />} />
 
-  {/* ✅ MOST SPECIFIC FIRST */}
-  <Route path="categories/add" element={<AddCategory />} />
-  <Route path="categories" element={<CategoryList />} />
-  <Route path="categories/:category" element={<CategoryForm />} />
+        {/* ✅ MOST SPECIFIC FIRST */}
+        <Route path="categories/add" element={<AddCategory />} />
+        <Route path="categories" element={<CategoryList />} />
+        <Route path="categories/:category" element={<CategoryForm />} />
 
-  <Route path="assign-task" element={<AssignTaskPage />} />
-  <Route path="assigned-tasks" element={<AssignedTasksPage />} />
-  <Route path="student-analysis" element={<DoctorStudentAnalysisPage />} />
-  <Route path="account" element={<DoctorAccount />} />
-</Route>
+        <Route path="assign-task" element={<AssignTaskPage />} />
+        <Route path="assigned-tasks" element={<AssignedTasksPage />} />
+        <Route path="student-analysis" element={<DoctorStudentAnalysisPage />} />
+        <Route path="account" element={<DoctorAccount />} />
+      </Route>
 
 
       {/* Admin */}
-      
+
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminHome />} />
         <Route path="register" element={<RegistrationPage />} />
@@ -128,6 +129,9 @@ const App = () => (
         <Route path="support" element={<AdminSupportPage />} />
         <Route path="account" element={<AccountPage />} />
       </Route>
+
+      {/* Super Admin */}
+      <Route path="/super-admin-dashboard" element={<SuperAdminDashboard />} />
 
       {/* Common */}
       <Route path="/support" element={<Support />} />

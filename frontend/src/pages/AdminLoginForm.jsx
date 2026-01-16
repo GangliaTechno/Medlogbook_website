@@ -31,6 +31,7 @@ const AdminLoginForm = () => {
       if (role === "admin") navigate("/admin", { replace: true });
       else if (role === "doctor") navigate("/doctor", { replace: true });
       else if (role === "student") navigate("/logbookpage", { replace: true });
+      else if (role === "superadmin") navigate("/super-admin-dashboard", { replace: true });
     } catch {
       alert("Invalid email or password");
     }
