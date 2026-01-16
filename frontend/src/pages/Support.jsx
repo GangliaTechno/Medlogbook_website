@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { FaInfoCircle, FaComment } from "react-icons/fa";
 import Notification from "../Components/Notification";
-import studentPanelBg from "../assets/studentPanelBg.png";
+import studentPanelBg from "../assets/studentPanelBg_updated.png";
 
 const Support = () => {
   const [supportType, setSupportType] = useState("");

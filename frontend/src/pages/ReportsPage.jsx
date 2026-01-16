@@ -24,7 +24,7 @@ import {
 } from "react-icons/fa";
 import "../styles.css";
 import Notification from "../Components/Notification";
-import studentPanelBg from "../assets/studentPanelBg.png";
+import studentPanelBg from "../assets/studentPanelBg_updated.png";
 
 const API_URL = "https://medlogbook-website.onrender.com/api/auth";
 

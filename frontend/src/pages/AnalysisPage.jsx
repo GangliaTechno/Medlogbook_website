@@ -16,7 +16,7 @@ import {
 } from "recharts";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import studentPanelBg from "../assets/studentPanelBg.png";
+import studentPanelBg from "../assets/studentPanelBg_updated.png";
 
 const COLORS = ["#2563eb", "#0ea5e9", "#22c55e", "#f59e0b"];
 
