@@ -21,6 +21,7 @@ const AccountPage = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const userEmail = user?.email?.email || user?.email || "";
+  const userRole = user?.role || localStorage.getItem('role') || 'student';
 
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState({
@@ -190,14 +191,14 @@ const AccountPage = () => {
                 <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Country
                 </label>
-                <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                  <FaGlobe className="text-slate-400 mr-3" />
+                <div className={`relative flex items-center ${userRole === 'student' ? 'bg-slate-50' : 'bg-white'} border border-slate-200 rounded-xl px-4 py-3 ${userRole !== 'student' ? 'focus-within:ring-2 focus-within:ring-blue-500 transition-all' : ''}`}>
+                  <FaGlobe className={`${userRole === 'student' ? 'text-slate-400' : 'text-blue-500'} mr-3`} />
                   <select
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    disabled={true}
-                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-500 focus:outline-none cursor-not-allowed"
+                    disabled={userRole === 'student'}
+                    className={`w-full appearance-none bg-transparent text-base font-medium ${userRole === 'student' ? 'text-slate-500 cursor-not-allowed' : 'text-slate-700 cursor-pointer'} focus:outline-none`}
                   >
                     <option value="">Select country</option>
                     <option value="India">India</option>
@@ -214,14 +215,14 @@ const AccountPage = () => {
                 <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Training Year
                 </label>
-                <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                  <FaGraduationCap className="text-slate-400 mr-3" />
+                <div className={`relative flex items-center ${userRole === 'student' ? 'bg-slate-50' : 'bg-white'} border border-slate-200 rounded-xl px-4 py-3 ${userRole !== 'student' ? 'focus-within:ring-2 focus-within:ring-blue-500 transition-all' : ''}`}>
+                  <FaGraduationCap className={`${userRole === 'student' ? 'text-slate-400' : 'text-blue-500'} mr-3`} />
                   <select
                     name="trainingYear"
                     value={formData.trainingYear}
                     onChange={handleChange}
-                    disabled={true}
-                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-500 focus:outline-none cursor-not-allowed"
+                    disabled={userRole === 'student'}
+                    className={`w-full appearance-none bg-transparent text-base font-medium ${userRole === 'student' ? 'text-slate-500 cursor-not-allowed' : 'text-slate-700 cursor-pointer'} focus:outline-none`}
                   >
                     <option value="">Select year</option>
                     {(isIndia
@@ -242,14 +243,14 @@ const AccountPage = () => {
                 <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Hospital
                 </label>
-                <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                  <FaHospital className="text-slate-400 mr-3" />
+                <div className={`relative flex items-center ${userRole === 'student' ? 'bg-slate-50' : 'bg-white'} border border-slate-200 rounded-xl px-4 py-3 ${userRole !== 'student' ? 'focus-within:ring-2 focus-within:ring-blue-500 transition-all' : ''}`}>
+                  <FaHospital className={`${userRole === 'student' ? 'text-slate-400' : 'text-blue-500'} mr-3`} />
                   <select
                     name="hospital"
                     value={formData.hospital}
                     onChange={handleChange}
-                    disabled={true}
-                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-500 focus:outline-none cursor-not-allowed"
+                    disabled={userRole === 'student'}
+                    className={`w-full appearance-none bg-transparent text-base font-medium ${userRole === 'student' ? 'text-slate-500 cursor-not-allowed' : 'text-slate-700 cursor-pointer'} focus:outline-none`}
                   >
                     <option value="">Select hospital</option>
                     {(isIndia
@@ -270,14 +271,14 @@ const AccountPage = () => {
                 <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Specialty
                 </label>
-                <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                  <FaUserMd className="text-slate-400 mr-3" />
+                <div className={`relative flex items-center ${userRole === 'student' ? 'bg-slate-50' : 'bg-white'} border border-slate-200 rounded-xl px-4 py-3 ${userRole !== 'student' ? 'focus-within:ring-2 focus-within:ring-blue-500 transition-all' : ''}`}>
+                  <FaUserMd className={`${userRole === 'student' ? 'text-slate-400' : 'text-blue-500'} mr-3`} />
                   <select
                     name="specialty"
                     value={formData.specialty}
                     onChange={handleChange}
-                    disabled={true}
-                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-500 focus:outline-none cursor-not-allowed"
+                    disabled={userRole === 'student'}
+                    className={`w-full appearance-none bg-transparent text-base font-medium ${userRole === 'student' ? 'text-slate-500 cursor-not-allowed' : 'text-slate-700 cursor-pointer'} focus:outline-none`}
                   >
                     <option value="">Select specialty</option>
                     {(isIndia

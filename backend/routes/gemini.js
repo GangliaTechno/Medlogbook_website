@@ -9,7 +9,7 @@ require('dotenv').config();
 // Gemini client setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const upload = multer({ dest: 'uploads/' });
-const USE_MOCK_AI = true; 
+const USE_MOCK_AI = false;
 
 
 
