@@ -1,7 +1,10 @@
 
 
 
+
+
 // Load environment variables FIRST, before any other imports
+require('dotenv').config();
 
 const express = require('express');
 const multer = require("multer");

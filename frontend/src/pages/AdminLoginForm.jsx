@@ -121,7 +121,8 @@ const AdminLoginForm = () => {
           <button
             type="button"
             onClick={() => {
-              window.location.href = 'https://medlogbook-website.onrender.com/api/auth/google';
+              const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth';
+              window.location.href = `${apiUrl}/google`;
             }}
             className="w-full py-4 px-6 rounded-full bg-white border-2 border-gray-300 
                        hover:border-gray-400 hover:shadow-lg transition-all duration-200
