@@ -24,7 +24,7 @@ import {
   FaEdit,
   FaSearch
 } from "react-icons/fa";
-import studentPanelBg from "../assets/studentPanelBg.png";
+import studentPanelBg from "../assets/studentPanelBg_updated.png";
 
 const ViewEntriesPage = () => {
   const [entries, setEntries] = useState([]);
