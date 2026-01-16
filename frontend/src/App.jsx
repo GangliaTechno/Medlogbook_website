@@ -12,6 +12,7 @@ import RegistrationPage from "./pages/RegistrationPage";
 import VerifyOtp from "./pages/VerifyOtp";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import SocialAuthCallback from "./pages/SocialAuthCallback";
 
 /* Common Pages */
 import AccountPage from "./pages/AccountPage";
@@ -81,6 +82,7 @@ const App = () => (
         path="/reset-password/:userId/:token"
         element={<ResetPassword />}
       />
+      <Route path="/auth/callback" element={<SocialAuthCallback />} />
 
       {/* Student */}
       <Route element={<StudentWrapper />}>
@@ -100,25 +102,25 @@ const App = () => (
 
       {/* Doctor (UNCHANGED) */}
       <Route path="/doctor/*" element={<DoctorLayout />}>
-  <Route index element={<DoctorHome />} />
+        <Route index element={<DoctorHome />} />
 
-  <Route path="view-students" element={<DoctorLogbook />} />
-  <Route path="student-entries" element={<StudentEntries />} />
+        <Route path="view-students" element={<DoctorLogbook />} />
+        <Route path="student-entries" element={<StudentEntries />} />
 
-  {/* ✅ MOST SPECIFIC FIRST */}
-  <Route path="categories/add" element={<AddCategory />} />
-  <Route path="categories" element={<CategoryList />} />
-  <Route path="categories/:category" element={<CategoryForm />} />
+        {/* ✅ MOST SPECIFIC FIRST */}
+        <Route path="categories/add" element={<AddCategory />} />
+        <Route path="categories" element={<CategoryList />} />
+        <Route path="categories/:category" element={<CategoryForm />} />
 
-  <Route path="assign-task" element={<AssignTaskPage />} />
-  <Route path="assigned-tasks" element={<AssignedTasksPage />} />
-  <Route path="student-analysis" element={<DoctorStudentAnalysisPage />} />
-  <Route path="account" element={<DoctorAccount />} />
-</Route>
+        <Route path="assign-task" element={<AssignTaskPage />} />
+        <Route path="assigned-tasks" element={<AssignedTasksPage />} />
+        <Route path="student-analysis" element={<DoctorStudentAnalysisPage />} />
+        <Route path="account" element={<DoctorAccount />} />
+      </Route>
 
 
       {/* Admin */}
-      
+
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminHome />} />
         <Route path="register" element={<RegistrationPage />} />

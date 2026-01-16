@@ -10,6 +10,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet'); // Security middleware
 const rateLimit = require('express-rate-limit'); // Rate limiting
+const session = require('express-session');
+const passport = require('./config/passport-config');
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
@@ -97,6 +99,22 @@ app.use(cors({
 
 // Explicitly handle preflight requests
 app.options('*', cors());
+
+// Session configuration (required for Passport)
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 // File upload configuration with better error handling
