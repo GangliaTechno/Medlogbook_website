@@ -55,6 +55,10 @@ passport.use(
                     role: 'student', // Default role, can be changed later
                     specialty: 'General', // Default specialty
                     status: 'approved', // Auto-approve Google users
+                    // Add default values for required student fields
+                    country: 'Not specified',
+                    trainingYear: 'Not specified',
+                    hospital: 'Not specified',
                 });
 
                 await newUser.save();
