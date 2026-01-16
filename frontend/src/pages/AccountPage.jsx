@@ -136,7 +136,7 @@ const AccountPage = () => {
             Account Settings
           </h1>
           <p className="text-base text-slate-500">
-            Manage your profile details and preferences.
+            View your profile details and update your password.
           </p>
         </div>
 
@@ -190,13 +190,14 @@ const AccountPage = () => {
                 <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Country
                 </label>
-                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
-                  <FaGlobe className="text-blue-500 mr-3" />
+                <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+                  <FaGlobe className="text-slate-400 mr-3" />
                   <select
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer"
+                    disabled={true}
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-500 focus:outline-none cursor-not-allowed"
                   >
                     <option value="">Select country</option>
                     <option value="India">India</option>
@@ -213,14 +214,14 @@ const AccountPage = () => {
                 <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Training Year
                 </label>
-                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
-                  <FaGraduationCap className="text-blue-500 mr-3" />
+                <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+                  <FaGraduationCap className="text-slate-400 mr-3" />
                   <select
                     name="trainingYear"
                     value={formData.trainingYear}
                     onChange={handleChange}
-                    disabled={!formData.country}
-                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer disabled:text-slate-400"
+                    disabled={true}
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-500 focus:outline-none cursor-not-allowed"
                   >
                     <option value="">Select year</option>
                     {(isIndia
@@ -241,14 +242,14 @@ const AccountPage = () => {
                 <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Hospital
                 </label>
-                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
-                  <FaHospital className="text-blue-500 mr-3" />
+                <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+                  <FaHospital className="text-slate-400 mr-3" />
                   <select
                     name="hospital"
                     value={formData.hospital}
                     onChange={handleChange}
-                    disabled={!formData.country}
-                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer disabled:text-slate-400"
+                    disabled={true}
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-500 focus:outline-none cursor-not-allowed"
                   >
                     <option value="">Select hospital</option>
                     {(isIndia
@@ -269,14 +270,14 @@ const AccountPage = () => {
                 <label className="block text-base font-bold text-slate-700 mb-2 ml-1">
                   Specialty
                 </label>
-                <div className="relative flex items-center bg-white border border-slate-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
-                  <FaUserMd className="text-blue-500 mr-3" />
+                <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+                  <FaUserMd className="text-slate-400 mr-3" />
                   <select
                     name="specialty"
                     value={formData.specialty}
                     onChange={handleChange}
-                    disabled={!formData.country}
-                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-700 focus:outline-none cursor-pointer disabled:text-slate-400"
+                    disabled={true}
+                    className="w-full appearance-none bg-transparent text-base font-medium text-slate-500 focus:outline-none cursor-not-allowed"
                   >
                     <option value="">Select specialty</option>
                     {(isIndia

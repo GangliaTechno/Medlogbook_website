@@ -1,10 +1,10 @@
 const bcrypt = require("bcryptjs"); // Only import bcrypt once
 const argon2 = require("argon2"); // Import argon2 once
-const User = require('../models/User'); 
-const PendingUser = require("../models/PendingUser"); 
-const UserOtpVerification = require("../models/UserOtpVerification"); 
+const User = require('../models/User');
+const PendingUser = require("../models/PendingUser");
+const UserOtpVerification = require("../models/UserOtpVerification");
 const { sendEmail } = require("../services/emailService.js");
-const jwt = require('jsonwebtoken');  
+const jwt = require('jsonwebtoken');
 
 
 
@@ -61,7 +61,7 @@ exports.signup = async (req, res) => {
       password: hashedPassword,
       specialty,
       role,
-        status: "pending",
+      status: "pending",
     };
 
     if (role === "student") {
@@ -95,14 +95,14 @@ exports.signup = async (req, res) => {
     // Send OTP email to the user
     try {
       // 2. Then send welcome email with password
-const passwordEmailSent = await sendEmail(
-  email,
-  "Welcome to Medical LogBook - Your Login Credentials",
-  { password }, // pass password in payload
-  "sendPassword" // new template you'll define
-);
+      const passwordEmailSent = await sendEmail(
+        email,
+        "Welcome to Medical LogBook - Your Login Credentials",
+        { password }, // pass password in payload
+        "sendPassword" // new template you'll define
+      );
 
-} catch (emailErr) {
+    } catch (emailErr) {
       console.error("❌ Failed to send OTP email:", emailErr);
       return res.status(200).json({ message: "User registered successfully." });
     }
@@ -129,38 +129,38 @@ exports.login = async (req, res) => {
   }
 
   try {
-        // ✅ Direct login for admin
+    // ✅ Direct login for admin
     if (email === "admin@logbook.com" && password === "admin1") {
       return res.status(200).json({
         message: "Admin login successful",
-       role: "admin",
+        role: "admin",
         user: { email: "admin@logbook.com", role: "admin" }
       });
     }
 
-        const pendingUser = await PendingUser.findOne({ email: req.body.email });
+    const pendingUser = await PendingUser.findOne({ email: req.body.email });
     if (pendingUser) {
       return res.status(403).json({ error: "Account pending approval" });
     }
-    
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-        if (user.status === "pending") {
+    if (user.status === "pending") {
       return res.status(403).json({ error: "Account pending approval" });
     }
-    
+
     const isMatch = await argon2.verify(user.password, password); // 👈 using argon2.verify here!
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    res.status(200).json({ 
-      message: "Login successful", 
-      role: user.role, 
-      user 
+    res.status(200).json({
+      message: "Login successful",
+      role: user.role,
+      user
     });
 
   } catch (error) {
@@ -174,39 +174,39 @@ exports.login = async (req, res) => {
 
 // ✅ Fetch user by email
 exports.getUserByEmail = async (req, res) => {
-    try {
-        const email = decodeURIComponent(req.params.email);
+  try {
+    const email = decodeURIComponent(req.params.email);
 
-        const user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        res.json(user);
-    } catch (error) {
-        console.error("Error fetching user:", error);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+  }
 }
 
 // Fetch all approved students (exclude doctors)
 exports.getAllUsers = async (req, res) => {
   try {
     const { specialty } = req.query;
- // GET /api/auth/users/all
-const User = require("../models/User");
+    // GET /api/auth/users/all
+    const User = require("../models/User");
 
-const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find({}, "-password"); // exclude password
-    res.status(200).json(users);
-  } catch (err) {
-    console.error("Error fetching users:", err);
-    res.status(500).json({ message: "Failed to fetch users" });
-  }
-};
+    const getAllUsers = async (req, res) => {
+      try {
+        const users = await User.find({}, "-password"); // exclude password
+        res.status(200).json(users);
+      } catch (err) {
+        console.error("Error fetching users:", err);
+        res.status(500).json({ message: "Failed to fetch users" });
+      }
+    };
 
-module.exports = { getAllUsers };
+    module.exports = { getAllUsers };
 
     // ✅ Only include approved students
     let query = { role: "student", status: "approved" };
@@ -227,99 +227,99 @@ module.exports = { getAllUsers };
 
 
 exports.getUsersByRole = async (req, res) => {
-    const { role } = req.params;
-    const specialtyFilter = req.query.specialty; // ✅ Get specialty filter from query params
+  const { role } = req.params;
+  const specialtyFilter = req.query.specialty; // ✅ Get specialty filter from query params
 
-    if (role !== "student" && role !== "doctor") {
-        return res.status(400).json({ error: "Invalid role specified" });
+  if (role !== "student" && role !== "doctor") {
+    return res.status(400).json({ error: "Invalid role specified" });
+  }
+
+  try {
+    let query = { role: "student" }; // ✅ Only fetch students
+    if (specialtyFilter) {
+      query.specialty = specialtyFilter; // ✅ Filter by specialty
     }
 
-    try {
-        let query = { role: "student" }; // ✅ Only fetch students
-        if (specialtyFilter) {
-            query.specialty = specialtyFilter; // ✅ Filter by specialty
-        }
-
-        const users = await User.find(query, "fullName email role specialty");
-        res.status(200).json(users);
-    } catch (error) {
-        console.error("❌ Error fetching users:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+    const users = await User.find(query, "fullName email role specialty");
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("❌ Error fetching users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 
 exports.getAllRegisteredUsers = async (req, res) => {
-    try {
-        const users = await User.find({}, "fullName email role specialty status country trainingYear hospital");
-        res.status(200).json(users);
-    } catch (error) {
-        console.error("Error fetching all users:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+  try {
+    const users = await User.find({}, "fullName email role specialty status country trainingYear hospital");
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 
 
 // Update user details
 exports.updateUser = async (req, res) => {
-    const { originalEmail, email, fullName, password, country, trainingYear, hospital, specialty } = req.body;
+  const { originalEmail, email, fullName, password, country, trainingYear, hospital, specialty } = req.body;
 
-    if (!email) {
-        return res.status(400).json({ error: "Email is required to update user details" });
+  if (!email) {
+    return res.status(400).json({ error: "Email is required to update user details" });
+  }
+
+  try {
+    const updateFields = { fullName, email, country, trainingYear, hospital, specialty };
+
+    // 🔹 Update password only if provided
+    if (password) {
+      updateFields.password = await argon2.hash(password);
     }
 
-    try {
-        const updateFields = { fullName, email, country, trainingYear, hospital, specialty };
+    const updatedUser = await User.findOneAndUpdate(
+      { email: originalEmail },
+      updateFields,
+      { new: true }
+    );
 
-        // 🔹 Update password only if provided
-        if (password) {
-            updateFields.password = password;
-        }
-
-        const updatedUser = await User.findOneAndUpdate(
-            { email: originalEmail }, 
-            updateFields, 
-            { new: true }
-        );
-
-        if (!updatedUser) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        res.status(200).json({ message: "User details updated successfully", user: updatedUser });
-    } catch (error) {
-        console.error("Error updating user:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
     }
+
+    res.status(200).json({ message: "User details updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 // exports.updateUserStatus = async (req, res) => {
 //     const { email, status } = req.body;
-  
+
 //     if (!email || !status) {
 //       return res.status(400).json({ error: "Email and status are required." });
 //     }
-  
+
 //     try {
 //       const user = await User.findOneAndUpdate(
 //         { email },
 //         { status },
 //         { new: true }
 //       );
-  
+
 //       if (!user) {
 //         return res.status(404).json({ error: "User not found." });
 //       }
-  
+
 //       res.status(200).json({ message: `User status updated to ${status}` });
 //     } catch (error) {
 //       console.error("Error updating user status:", error);
 //       res.status(500).json({ error: "Internal Server Error" });
 //     }
 //   };
-  
-  // Backend - update user role
+
+// Backend - update user role
 // Route: PUT /api/auth/user/update-role
 exports.updateUserRole = async (req, res) => {
   const { email, role } = req.body;
@@ -378,14 +378,14 @@ exports.updateUserRole = async (req, res) => {
 
 exports.updateUserStatus = async (req, res) => {
   const { email, status } = req.body;
-console.log("Incoming body for updateUserStatus:", req.body);
+  console.log("Incoming body for updateUserStatus:", req.body);
   if (!email || !status) {
     return res.status(400).json({ error: "Email and status are required." });
   }
 
   const mappedStatus = status === "enabled" ? "approved"
-                    : status === "disabled" ? "rejected"
-                    : null;
+    : status === "disabled" ? "rejected"
+      : null;
 
   if (!mappedStatus) {
     return res.status(400).json({ error: "Invalid status value." });
@@ -439,74 +439,74 @@ console.log("Incoming body for updateUserStatus:", req.body);
 
 // Delete user account
 exports.deleteUser = async (req, res) => {
-    const { email } = req.params; // ✅ Get email from request params
+  const { email } = req.params; // ✅ Get email from request params
 
-    if (!email) {
-        return res.status(400).json({ error: "Email is required to delete user" });
+  if (!email) {
+    return res.status(400).json({ error: "Email is required to delete user" });
+  }
+
+  try {
+    const deletedUser = await User.findOneAndDelete({ email });
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    try {
-        const deletedUser = await User.findOneAndDelete({ email });
-
-        if (!deletedUser) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        res.status(200).json({ message: "User deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting user:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 
 };
 
 
 exports.getUserDetailsByEmail = async (req, res) => {
-    try {
-        const { email } = req.params; // Ensure email is passed
-        if (!email) return res.status(400).json({ message: "Email is required" });
+  try {
+    const { email } = req.params; // Ensure email is passed
+    if (!email) return res.status(400).json({ message: "Email is required" });
 
-        const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: "User not found" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-        res.json({
-            fullName: user.fullName,
-            email: user.email,
-            selectedHospital: user.hospital,
-            selectedSpecialty: user.specialty,
-            selectedTrainingYear: user.trainingYear,
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
+    res.json({
+      fullName: user.fullName,
+      email: user.email,
+      selectedHospital: user.hospital,
+      selectedSpecialty: user.specialty,
+      selectedTrainingYear: user.trainingYear,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
 
 
 // exports.verifyOTP = async (req, res) => {
 //     const { email, otp } = req.body;
 //     console.log("Incoming verifyOTP request body:", req.body);
-  
+
 //     try {
 //       const otpRecord = await UserOtpVerification.findOne({ email });
 //       if (!otpRecord) {
 //         return res.status(400).json({ success: false, message: "No pending verification found." });
 //       }
-  
+
 //       if (otpRecord.expiresAt < Date.now()) {
 //         await UserOtpVerification.updateOne({ email }, { $unset: { otp: "" } });
 //         return res.status(400).json({ success: false, message: "OTP expired. Request a new one." });
 //       }
-  
+
 //       const validOtp = await bcrypt.compare(otp, otpRecord.otp);
 //       if (!validOtp) {
 //         return res.status(400).json({ success: false, message: "Invalid OTP. Try again." });
 //       }
-  
+
 //       const pendingUser = await PendingUser.findOne({ email });
 //       if (!pendingUser) {
 //         return res.status(400).json({ success: false, message: "User data not found." });
 //       }
-  
+
 //       const newUserData = {
 //         fullName: pendingUser.fullName || pendingUser.name || "",
 //         email: pendingUser.email,
@@ -519,12 +519,12 @@ exports.getUserDetailsByEmail = async (req, res) => {
 //         isVerified: true,
 //         createdAt: new Date(),
 //       };
-  
+
 //       const newUser = await User.create(newUserData);
-  
+
 //       await UserOtpVerification.deleteMany({ email });
 //       await PendingUser.deleteMany({ email });
-  
+
 //       return res.json({ success: true, message: "User verified and registered successfully.", user: newUser });
 //     } catch (error) {
 //       console.error("❌ Error verifying OTP:", error.stack || error);
@@ -601,89 +601,89 @@ exports.verifyOTP = async (req, res) => {
   }
 };
 
-  exports.forgotPassword = async (req, res) => {
-    const { email } = req.body;
-  
-    try {
-      const user = await User.findOne({ email });
-  
-      if (!user) {
-        return res.status(404).json({ success: false, message: "User not found." });
-      }
-  
-      // Create JWT token
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "8h",
-      });
-  
-      // Use CLIENT_URL from environment variables
-      const resetLink = `${process.env.CLIENT_URL}/reset-password/${user._id}/${token}`;
-  
-      const emailSent = await sendEmail(
-        email,
-        "Reset Your Password - Medical-LogBook",
-        resetLink,
-        "resetPassword"
-      );
-  
-      if (!emailSent) {
-        return res.status(500).json({ success: false, message: "Error sending reset email." });
-      }
-  
-      res.json({ success: true, message: "Reset email sent." });
-    } catch (error) {
-      console.error("Error in forgotPassword:", error);
-      res.status(500).json({ success: false, message: "Internal server error." });
-    }
-  };
-  
-  exports.resetPassword = async (req, res) => {
-    const { id, token } = req.params;
-    const { password } = req.body;
-  
-    try {
-      // Verify JWT token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  
-      // Check if the decoded token's id matches the user id in the URL
-      if (!decoded || decoded.id !== id) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid or expired reset token.",
-        });
-      }
-  
-      // Find the user
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: "User not found.",
-        });
-      }
-  
-      // Hash new password
-      const hashedPassword = await argon2.hash(password);
-  
-      // Update user's password
-      user.password = hashedPassword;
-      await user.save();
-  
-      res.json({
-        success: true,
-        message: "Password updated successfully.",
-      });
-    } catch (error) {
-      console.error("Error resetting password:", error.message);
-      res.status(500).json({
-        success: false,
-        message: "Failed to reset password. Token may have expired or is invalid.",
-      });
-    }
-  };
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
 
-  
-  
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    // Create JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "8h",
+    });
+
+    // Use CLIENT_URL from environment variables
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${user._id}/${token}`;
+
+    const emailSent = await sendEmail(
+      email,
+      "Reset Your Password - Medical-LogBook",
+      resetLink,
+      "resetPassword"
+    );
+
+    if (!emailSent) {
+      return res.status(500).json({ success: false, message: "Error sending reset email." });
+    }
+
+    res.json({ success: true, message: "Reset email sent." });
+  } catch (error) {
+    console.error("Error in forgotPassword:", error);
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { id, token } = req.params;
+  const { password } = req.body;
+
+  try {
+    // Verify JWT token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Check if the decoded token's id matches the user id in the URL
+    if (!decoded || decoded.id !== id) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired reset token.",
+      });
+    }
+
+    // Find the user
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await argon2.hash(password);
+
+    // Update user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Password updated successfully.",
+    });
+  } catch (error) {
+    console.error("Error resetting password:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to reset password. Token may have expired or is invalid.",
+    });
+  }
+};
+
+
+
 exports.getPendingUsers = async (req, res) => {
   try {
     const pendingUsers = await PendingUser.find({ otpVerified: true, status: "pending" });
