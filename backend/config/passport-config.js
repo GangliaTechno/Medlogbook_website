@@ -18,57 +18,61 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // Google OAuth Strategy
-passport.use(
-    new GoogleStrategy(
-        {
-            clientID: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
-        },
-        async (accessToken, refreshToken, profile, done) => {
-            try {
-                // Check if user already exists with this Google ID
-                let user = await User.findOne({ googleId: profile.id });
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    passport.use(
+        new GoogleStrategy(
+            {
+                clientID: process.env.GOOGLE_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
+            },
+            async (accessToken, refreshToken, profile, done) => {
+                try {
+                    // Check if user already exists with this Google ID
+                    let user = await User.findOne({ googleId: profile.id });
 
-                if (user) {
-                    // User exists, return user
-                    return done(null, user);
+                    if (user) {
+                        // User exists, return user
+                        return done(null, user);
+                    }
+
+                    // Check if user exists with this email (link accounts)
+                    user = await User.findOne({ email: profile.emails[0].value });
+
+                    if (user) {
+                        // Link Google account to existing user
+                        user.googleId = profile.id;
+                        user.authProvider = 'google';
+                        await user.save();
+                        return done(null, user);
+                    }
+
+                    // Create new user
+                    const newUser = new User({
+                        fullName: profile.displayName,
+                        email: profile.emails[0].value,
+                        googleId: profile.id,
+                        authProvider: 'google',
+                        role: 'student', // Default role, can be changed later
+                        specialty: 'General', // Default specialty
+                        status: 'approved', // Auto-approve Google users
+                        // Add default values for required student fields
+                        country: 'Not specified',
+                        trainingYear: 'Not specified',
+                        hospital: 'Not specified',
+                    });
+
+                    await newUser.save();
+                    done(null, newUser);
+                } catch (error) {
+                    console.error('Error in Google Strategy:', error);
+                    done(error, null);
                 }
-
-                // Check if user exists with this email (link accounts)
-                user = await User.findOne({ email: profile.emails[0].value });
-
-                if (user) {
-                    // Link Google account to existing user
-                    user.googleId = profile.id;
-                    user.authProvider = 'google';
-                    await user.save();
-                    return done(null, user);
-                }
-
-                // Create new user
-                const newUser = new User({
-                    fullName: profile.displayName,
-                    email: profile.emails[0].value,
-                    googleId: profile.id,
-                    authProvider: 'google',
-                    role: 'student', // Default role, can be changed later
-                    specialty: 'General', // Default specialty
-                    status: 'approved', // Auto-approve Google users
-                    // Add default values for required student fields
-                    country: 'Not specified',
-                    trainingYear: 'Not specified',
-                    hospital: 'Not specified',
-                });
-
-                await newUser.save();
-                done(null, newUser);
-            } catch (error) {
-                console.error('Error in Google Strategy:', error);
-                done(error, null);
             }
-        }
-    )
-);
+        )
+    );
+} else {
+    console.warn('⚠️  GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET missing in .env. Google OAuth disabled.');
+}
 
 module.exports = passport;

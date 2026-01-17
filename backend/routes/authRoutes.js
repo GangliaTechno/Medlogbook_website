@@ -26,10 +26,6 @@ router.post('/verify-otp', authController.verifyOTP);
 router.post('/forgot-password', authController.forgotPassword);
 router.post("/reset-password/:id/:token", authController.resetPassword);
 router.get('/pending-users', authController.getPendingUsers);
-<<<<<<< HEAD
-router.post("/approve-pending-user",authController.approvePendingUser);
-router.get('/pending-users/all', authController.getAllPendingUsers);
-=======
 router.post("/approve-pending-user", authController.approvePendingUser);
 router.get('/pending-users/all', authController.getAllPendingUsers);
 
@@ -56,6 +52,4 @@ router.get('/google/callback',
         res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/auth/callback?token=${token}&role=${req.user.role}`);
     }
 );
-
->>>>>>> 4a23658e2cbf9b45119c6f89b840bf3f7f97b845
 module.exports = router;

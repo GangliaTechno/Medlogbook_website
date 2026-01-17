@@ -1,14 +1,8 @@
 
 
 
-<<<<<<< HEAD
-// Load environment variables FIRST, before any other imports
-=======
-
-
 // Load environment variables FIRST, before any other imports
 require('dotenv').config();
->>>>>>> 4a23658e2cbf9b45119c6f89b840bf3f7f97b845
 
 const express = require('express');
 const multer = require("multer");
@@ -17,11 +11,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet'); // Security middleware
 const rateLimit = require('express-rate-limit'); // Rate limiting
-<<<<<<< HEAD
-=======
 const session = require('express-session');
 const passport = require('./config/passport-config');
->>>>>>> 4a23658e2cbf9b45119c6f89b840bf3f7f97b845
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
@@ -110,8 +101,6 @@ app.use(cors({
 // Explicitly handle preflight requests
 app.options('*', cors());
 
-<<<<<<< HEAD
-=======
 // Session configuration (required for Passport)
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
@@ -127,8 +116,6 @@ app.use(session({
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
-
->>>>>>> 4a23658e2cbf9b45119c6f89b840bf3f7f97b845
 
 // File upload configuration with better error handling
 const storage = multer.diskStorage({

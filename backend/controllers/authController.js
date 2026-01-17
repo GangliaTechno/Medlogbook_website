@@ -119,16 +119,27 @@ exports.signup = async (req, res) => {
 
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
 
-  console.log('Received email:', email);
-  console.log('Received password:', password);
+  if (email) email = email.toLowerCase().trim();
+  if (password) password = password.trim();
+
+  console.log('Login attempt for email:', email);
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
 
   try {
+    // ✅ Direct login for superadmin
+    if (email === "superadmin@logbook.com" && password === "superadmin1") {
+      return res.status(200).json({
+        message: "Super Admin login successful",
+        role: "superadmin",
+        user: { email: "superadmin@logbook.com", role: "superadmin" }
+      });
+    }
+
     // ✅ Direct login for admin
     if (email === "admin@logbook.com" && password === "admin1") {
       return res.status(200).json({
@@ -138,7 +149,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    const pendingUser = await PendingUser.findOne({ email: req.body.email });
+    const pendingUser = await PendingUser.findOne({ email });
     if (pendingUser) {
       return res.status(403).json({ error: "Account pending approval" });
     }
@@ -152,7 +163,21 @@ exports.login = async (req, res) => {
       return res.status(403).json({ error: "Account pending approval" });
     }
 
-    const isMatch = await argon2.verify(user.password, password); // 👈 using argon2.verify here!
+    let isMatch = false;
+    try {
+      if (user.password.startsWith('$argon2')) {
+        isMatch = await argon2.verify(user.password, password);
+      } else if (user.password.startsWith('$2a$') || user.password.startsWith('$2b$')) {
+        isMatch = await bcrypt.compare(password, user.password);
+      } else {
+        // Unknown hash format or plain text (not recommended)
+        isMatch = user.password === password;
+      }
+    } catch (verifyError) {
+      console.error('Password verification error:', verifyError);
+      isMatch = false;
+    }
+
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -193,21 +218,6 @@ exports.getUserByEmail = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const { specialty } = req.query;
-    // GET /api/auth/users/all
-    const User = require("../models/User");
-
-    const getAllUsers = async (req, res) => {
-      try {
-        const users = await User.find({}, "-password"); // exclude password
-        res.status(200).json(users);
-      } catch (err) {
-        console.error("Error fetching users:", err);
-        res.status(500).json({ message: "Failed to fetch users" });
-      }
-    };
-
-    module.exports = { getAllUsers };
-
     // ✅ Only include approved students
     let query = { role: "student", status: "approved" };
 
@@ -235,7 +245,7 @@ exports.getUsersByRole = async (req, res) => {
   }
 
   try {
-    let query = { role: "student" }; // ✅ Only fetch students
+    let query = { role }; // ✅ Use the role from params
     if (specialtyFilter) {
       query.specialty = specialtyFilter; // ✅ Filter by specialty
     }
