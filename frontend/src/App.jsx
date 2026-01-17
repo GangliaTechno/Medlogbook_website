@@ -12,7 +12,7 @@ import RegistrationPage from "./pages/RegistrationPage";
 import VerifyOtp from "./pages/VerifyOtp";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import SocialAuthCallback from "./pages/SocialAuthCallback";
 
 /* Common Pages */
 import AccountPage from "./pages/AccountPage";
@@ -82,6 +82,7 @@ const App = () => (
         path="/reset-password/:userId/:token"
         element={<ResetPassword />}
       />
+      <Route path="/auth/callback" element={<SocialAuthCallback />} />
 
       {/* Student */}
       <Route element={<StudentWrapper />}>
@@ -129,9 +130,6 @@ const App = () => (
         <Route path="support" element={<AdminSupportPage />} />
         <Route path="account" element={<AccountPage />} />
       </Route>
-
-      {/* Super Admin */}
-      <Route path="/super-admin-dashboard" element={<SuperAdminDashboard />} />
 
       {/* Common */}
       <Route path="/support" element={<Support />} />

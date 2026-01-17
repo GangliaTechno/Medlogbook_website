@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/auth";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAPI) => {
   try {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +30,7 @@ export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAP
 // Signup User
 export const signupUser = createAsyncThunk("auth/signup", async (userData, thunkAPI) => {
   try {
-    const response = await fetch(`${API_URL}/signup`, {
+    const response = await fetch(`${API_URL}/api/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,6 +66,12 @@ const authSlice = createSlice({
     updateUserLocally: (state, action) => {
       state.user = action.payload;
       localStorage.setItem("user", JSON.stringify(action.payload));
+    },
+    setUser: (state, action) => {
+      state.user = action.payload.user;
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("role", action.payload.role);
     }
   },
 
@@ -98,5 +104,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, updateUserLocally } = authSlice.actions;
+export const { logout, updateUserLocally, setUser } = authSlice.actions;
 export default authSlice.reducer;

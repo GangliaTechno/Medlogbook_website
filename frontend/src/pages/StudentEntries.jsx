@@ -39,7 +39,7 @@ import studentPanelBg from "../assets/studentPanelBg_updated.png";
 
 const StudentEntries = () => {
 
-  const USE_MOCK_AI_SUMMARY = true;
+  const USE_MOCK_AI_SUMMARY = false;
 
   const location = useLocation();
   const navigate = useNavigate();

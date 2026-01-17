@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
 
   password: {
     type: String,
+<<<<<<< HEAD
     required: true,
   },
 
@@ -25,6 +26,29 @@ const userSchema = new mongoose.Schema({
   trainingYear: { type: String, required: function() { return this.role === 'student'; } },
   hospital: { type: String, required: function() { return this.role === 'student'; } },
   
+=======
+    required: function () {
+      // Password is only required for local auth (non-Google users)
+      return !this.googleId;
+    },
+  },
+
+  googleId: {
+    type: String,
+    sparse: true,  // Allows multiple null values but unique non-null values
+  },
+
+  authProvider: {
+    type: String,
+    enum: ['local', 'google'],
+    default: 'local',
+  },
+
+  country: { type: String, required: function () { return this.role === 'student'; } },
+  trainingYear: { type: String, required: function () { return this.role === 'student'; } },
+  hospital: { type: String, required: function () { return this.role === 'student'; } },
+
+>>>>>>> 4a23658e2cbf9b45119c6f89b840bf3f7f97b845
   specialty: {
     type: String,
     required: true,
@@ -40,7 +64,11 @@ const userSchema = new mongoose.Schema({
     enum: ["pending", "approved", "rejected"],
     default: "pending"
   },
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 4a23658e2cbf9b45119c6f89b840bf3f7f97b845
 });
 
 // Create the User model
